@@ -1,0 +1,67 @@
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Virtual Environment ──────────────────────────────
+venv/
+.venv/
+env/
+backend/venv/
+backend/.venv/
+.pytest_cache/
+backend/.pytest_cache/
+
+# ── Environment Variables ────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── IDE ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Node / Frontend ─────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.next/
+
+# ── Database ─────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+slicktrace.db
+
+# ── OpenDrift Output ─────────────────────────────────
+*.nc
+opendrift_output/
+drift_output/
+
+# ── Data Cache ───────────────────────────────────────
+data/cache/
+*.parquet
+
+# ── Docker ───────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Logs ─────────────────────────────────────────────
+logs/
+*.log

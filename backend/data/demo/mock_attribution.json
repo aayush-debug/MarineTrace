@@ -1,0 +1,94 @@
+[
+  {
+    "rank": 1,
+    "vessel_name": "MV Ocean Star",
+    "mmsi": "419001234",
+    "score": 91.0,
+    "confidence": "high",
+    "feature_scores": {
+      "spatial": 94.0,
+      "temporal": 97.0,
+      "trajectory": 91.0,
+      "behaviour": 87.0,
+      "vessel_relevance": 95.0
+    },
+    "reasons": [
+      "Passed within 2.3 km of estimated origin",
+      "Present during estimated spill window (13 AIS positions)",
+      "Trajectory intersected origin region",
+      "Sudden speed change of 7.1 knots detected",
+      "Vessel type (Oil Tanker) commonly associated with oil transport"
+    ],
+    "investigative_priority": "HIGH",
+    "vessel_type": "Oil Tanker",
+    "flag": "PA",
+    "trajectory": {
+      "type": "LineString",
+      "coordinates": [
+        [73.180, 18.920],
+        [73.195, 18.910],
+        [73.205, 18.905],
+        [73.220, 18.890]
+      ]
+    }
+  },
+  {
+    "rank": 2,
+    "vessel_name": "MT Blue Horizon",
+    "mmsi": "538006789",
+    "score": 72.0,
+    "confidence": "medium",
+    "feature_scores": {
+      "spatial": 75.0,
+      "temporal": 82.0,
+      "trajectory": 70.0,
+      "behaviour": 40.0,
+      "vessel_relevance": 90.0
+    },
+    "reasons": [
+      "Approached to 5.4 km of estimated origin",
+      "Present during estimated spill window",
+      "Vessel type (Chemical Tanker) commonly associated with oil transport"
+    ],
+    "investigative_priority": "MEDIUM",
+    "vessel_type": "Chemical Tanker",
+    "flag": "MH",
+    "trajectory": {
+      "type": "LineString",
+      "coordinates": [
+        [73.220, 18.880],
+        [73.230, 18.860],
+        [73.240, 18.840]
+      ]
+    }
+  },
+  {
+    "rank": 3,
+    "vessel_name": "MV Pacific Trader",
+    "mmsi": "356001111",
+    "score": 46.0,
+    "confidence": "low",
+    "feature_scores": {
+      "spatial": 45.0,
+      "temporal": 60.0,
+      "trajectory": 40.0,
+      "behaviour": 20.0,
+      "vessel_relevance": 50.0
+    },
+    "reasons": [
+      "Approached to 14.4 km of estimated origin",
+      "Present near the tail of estimated spill window"
+    ],
+    "investigative_priority": "LOW",
+    "vessel_type": "Cargo Ship",
+    "flag": "LR",
+    "trajectory": {
+      "type": "LineString",
+      "coordinates": [
+        [73.150, 18.950],
+        [73.120, 18.930],
+        [73.090, 18.900]
+      ]
+    }
+  }
+]
