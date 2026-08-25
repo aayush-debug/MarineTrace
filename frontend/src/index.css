@@ -2,43 +2,73 @@
 
 @layer base {
   :root {
-    --bg-void: #06090f;
-    --bg-primary: #0a0e17;
-    --bg-surface: #101726;
-    --bg-card: #151f33;
-    --bg-card-hover: #1c2a45;
-    --bg-overlay: rgba(10, 14, 23, 0.85);
+    /* Core backgrounds */
+    --bg-void: #05080f;
+    --bg-primary: #080d18;
+    --bg-surface: #0d1427;
+    --bg-card: #111827;
+    --bg-card-hover: #162033;
+    --bg-overlay: rgba(8, 13, 24, 0.92);
 
-    --border-subtle: rgba(255, 255, 255, 0.08);
+    /* Borders */
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-mid: rgba(255, 255, 255, 0.10);
     --border-strong: rgba(255, 255, 255, 0.16);
-    --border-cyan: rgba(6, 182, 212, 0.4);
-    --border-amber: rgba(245, 158, 11, 0.4);
-    --border-red: rgba(239, 68, 68, 0.4);
+    --border-cyan: rgba(6, 182, 212, 0.35);
+    --border-amber: rgba(245, 158, 11, 0.35);
+    --border-red: rgba(239, 68, 68, 0.35);
+    --border-emerald: rgba(16, 185, 129, 0.35);
 
+    /* Text */
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
-    --text-dim: #64748b;
+    --text-dim: #475569;
+    --text-ultra-dim: #334155;
 
-    --accent-cyan: #06b6d4;
-    --accent-blue: #3b82f6;
-    --accent-amber: #f59e0b;
-    --accent-red: #ef4444;
-    --accent-emerald: #10b981;
-    --accent-indigo: #6366f1;
+    /* Accent colors */
+    --cyan: #06b6d4;
+    --cyan-dim: #0891b2;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --emerald: #10b981;
+    --indigo: #6366f1;
+    --rose: #f43f5e;
+
+    /* Glow shadows */
+    --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.25);
+    --glow-red: 0 0 20px rgba(239, 68, 68, 0.3);
+    --glow-amber: 0 0 20px rgba(245, 158, 11, 0.25);
+    --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.2);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: var(--bg-void);
     color: var(--text-main);
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     overflow-x: hidden;
+  }
+
+  /* Monospace data — all tabular figures */
+  .font-mono, code, pre, [class*="font-mono"] {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 }
 
-/* Custom Scrollbars */
+/* ============================================================
+   CUSTOM SCROLLBARS
+   ============================================================ */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
@@ -48,77 +78,291 @@
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #2d3f5c;
 }
 
-/* Leaflet Container Styles */
+/* ============================================================
+   LEAFLET DARK MARITIME THEME
+   ============================================================ */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #080c14 !important;
-  font-family: inherit !important;
+  background: #050a10 !important;
+  font-family: 'JetBrains Mono', monospace !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: #101726 !important;
+  background: #0d1427 !important;
   color: #f1f5f9 !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(6, 182, 212, 0.25) !important;
   border-radius: 8px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
-  padding: 4px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(6, 182, 212, 0.1) !important;
+  padding: 2px !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
 }
 
 .leaflet-popup-tip {
-  background: #101726 !important;
+  background: #0d1427 !important;
+}
+
+.leaflet-popup-tip-container {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.leaflet-control-zoom {
+  border: 1px solid #1e293b !important;
+  border-radius: 6px !important;
+  overflow: hidden;
 }
 
 .leaflet-control-zoom a {
-  background-color: #101726 !important;
-  color: #94a3b8 !important;
-  border-color: #1e293b !important;
+  background-color: #0d1427 !important;
+  color: #64748b !important;
+  border-bottom: 1px solid #1e293b !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.15s ease;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #1e293b !important;
+  background-color: #162033 !important;
   color: #06b6d4 !important;
 }
 
 .leaflet-control-attribution {
-  background: rgba(10, 14, 23, 0.8) !important;
-  color: #64748b !important;
-  font-size: 10px !important;
+  background: rgba(5, 8, 15, 0.85) !important;
+  color: #334155 !important;
+  font-size: 9px !important;
+  border-top: 1px solid #1e293b !important;
 }
 
 .leaflet-control-attribution a {
-  color: #06b6d4 !important;
+  color: #475569 !important;
 }
 
-/* Radar & Pulse Animation */
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+/* Pulsing origin beacon */
 @keyframes pulse-ring {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.8;
-  }
-  80%, 100% {
-    transform: scale(2.2);
-    opacity: 0;
-  }
+  0% { transform: scale(0.6); opacity: 0.8; }
+  80%, 100% { transform: scale(2.4); opacity: 0; }
 }
 
 .pulsing-origin-ring {
   animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
-/* Print Styles for Reports */
+/* Scan-line shimmer on data cards */
+@keyframes scan-line {
+  0% { background-position: 0% -100%; }
+  100% { background-position: 0% 200%; }
+}
+
+/* Radar sweep */
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+  animation: radar-sweep 3s linear infinite;
+}
+
+/* Signal blink */
+@keyframes signal-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.signal-blink {
+  animation: signal-blink 1.8s ease-in-out infinite;
+}
+
+/* Fade in slide up */
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-slide-up 0.3s ease-out forwards;
+}
+
+/* Slide in from right */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-in-right 0.25s ease-out forwards;
+}
+
+/* Data counter odometer tick */
+@keyframes counter-tick {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Progress bar fill */
+@keyframes bar-fill {
+  from { width: 0%; }
+  to { width: var(--bar-width); }
+}
+
+.animate-bar-fill {
+  animation: bar-fill 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Glow pulse on primary suspect */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(244, 63, 94, 0.3), 0 0 0 1px rgba(244, 63, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.5), 0 0 0 1px rgba(244, 63, 94, 0.35);
+  }
+}
+
+.glow-pulse-red {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.2), 0 0 0 1px rgba(6, 182, 212, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(6, 182, 212, 0.4), 0 0 0 1px rgba(6, 182, 212, 0.3);
+  }
+}
+
+.glow-pulse-cyan {
+  animation: glow-pulse-cyan 3s ease-in-out infinite;
+}
+
+/* ============================================================
+   SHARED DATA CARD STYLES
+   ============================================================ */
+
+.data-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.data-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-mid);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.kpi-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Status dot indicator */
+.status-dot-online {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  animation: signal-blink 2s ease-in-out infinite;
+}
+
+.status-dot-offline {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.status-dot-degraded {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: signal-blink 1s ease-in-out infinite;
+}
+
+/* Divider */
+.data-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+  margin: 8px 0;
+}
+
+/* ============================================================
+   PRINT STYLES — OFFICIAL DOSSIER
+   ============================================================ */
 @media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body {
     background: #ffffff !important;
-    color: #000000 !important;
+    color: #111827 !important;
+    font-size: 11px !important;
+    font-family: 'Inter', sans-serif !important;
   }
+
   .no-print {
     display: none !important;
   }
+
   .print-only {
     display: block !important;
+  }
+
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+  }
+
+  .print-avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* Leaflet map doesn't print well — hide it */
+  .leaflet-container {
+    display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 20mm 15mm;
   }
 }
