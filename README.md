@@ -34,6 +34,16 @@ Satellite SAR Image
 
 ## Quick Start
 
+### ML (Oil Spill Detection Pipeline)
+```bash
+cd ml
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python inspect_compatibility.py
+python run_all_tests.py
+```
+
 ### Backend
 ```bash
 cd backend
@@ -64,20 +74,23 @@ python run_demo.py
 ## Project Structure
 
 ```
-slicktrace/
-├── backend/
-│   ├── app/              # FastAPI application
-│   │   ├── api/          # Route handlers
-│   │   ├── models/       # Pydantic schemas
-│   │   ├── services/     # Business logic
-│   │   ├── core/         # Config & logging
-│   │   ├── db/           # Database abstraction
-│   │   └── utils/        # Geo & time helpers
+marinetrace/
+├── backend/              # FastAPI backend & orchestration
+│   ├── app/              # API routes, models, services
 │   ├── drift/            # OpenDrift integration
 │   ├── ais/              # AIS client & filtering
 │   ├── attribution/      # Scoring engine
 │   └── data/demo/        # Demo scenario data
 ├── frontend/             # React + TypeScript dashboard
+├── ml/                   # Sentinel-1 SAR Oil Spill Detection Pipeline
+│   ├── models/           # U-Net ResNet-34 segmentation network
+│   ├── preprocessing/    # Dual-pol radiometric calibration & patch extraction
+│   ├── features/         # Geometric & morphological slick feature extractors
+│   ├── inference/        # Pure JSON API interface & pipeline runners
+│   ├── training/         # Custom loss functions & training scripts
+│   ├── checkpoints/      # Model weights (best_model.pth)
+│   ├── data/             # Synthetic fixtures & sample GeoTIFF
+│   └── tests/            # Automated test suite
 ├── docs/                 # API contract & architecture
 └── docker-compose.yml
 ```

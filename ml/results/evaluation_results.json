@@ -1,0 +1,15 @@
+{
+  "threshold": 0.95,
+  "dice": 0.610585143541425,
+  "iou": 0.4394548832576338,
+  "precision": 0.43945909191027904,
+  "recall": 0.9999782078101029,
+  "f1": 0.6105851392995524,
+  "pixel_accuracy": 0.8883609771728346,
+  "false_positive_rate": 0.12234531772574994,
+  "false_negative_rate": 2.179218967921422e-05,
+  "true_positives": 45887,
+  "false_positives": 58530,
+  "true_negatives": 419870,
+  "false_negatives": 1
+}

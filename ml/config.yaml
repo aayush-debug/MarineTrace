@@ -1,0 +1,130 @@
+# ==============================================================================
+# SlickTrace ML Pipeline — Configuration
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------------------------
+dataset:
+  name: "Sentinel-1 SAR Oil Spill Image Dataset (Zenodo)"
+  source_urls:
+    part1_images: "https://zenodo.org/records/8346860/files/01_Train_Val_Oil_Spill_images.7z"
+    part1_masks: "https://zenodo.org/records/8346860/files/01_Train_Val_Oil_Spill_mask.7z"
+    part2_no_oil_images: "https://zenodo.org/records/8253899/files/01_Train_Val_No_Oil_Images.7z"
+    part2_no_oil_masks: "https://zenodo.org/records/8253899/files/01_Train_Val_No_Oil_mask.7z"
+    part2_lookalike_images: "https://zenodo.org/records/8253899/files/01_Train_Val_Lookalike_images.7z"
+    part2_lookalike_masks: "https://zenodo.org/records/8253899/files/01_Train_Val_Lookalike_mask.7z"
+    part3: "https://zenodo.org/records/13761290"
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  # Image properties
+  original_size: 2048
+  channels: 2  # VV + VH
+  representation: "sigma0_db"  # Sigma0 in decibels
+
+# ------------------------------------------------------------------------------
+# Preprocessing
+# ------------------------------------------------------------------------------
+preprocessing:
+  patch_size: 256
+  patch_stride: 256  # Non-overlapping by default; set < patch_size for overlap
+  min_valid_fraction: 0.8  # Skip patches with > 20% invalid/nodata pixels
+  min_oil_fraction: 0.0  # Keep all patches including pure background
+  nodata_value: null  # Auto-detect from TIFF metadata
+  normalization: "minmax"  # "minmax" or "zscore"
+  # Per-channel normalization bounds (approximate for Sigma0 dB)
+  # These should be refined based on actual data statistics
+  norm_bounds:
+    vv_min: -30.0
+    vv_max: 0.0
+    vh_min: -35.0
+    vh_max: -5.0
+
+# ------------------------------------------------------------------------------
+# Data Splitting
+# ------------------------------------------------------------------------------
+splitting:
+  # Scene-level split (patches from the same image stay together)
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  seed: 42
+
+# ------------------------------------------------------------------------------
+# Model
+# ------------------------------------------------------------------------------
+model:
+  architecture: "Unet"
+  encoder_name: "resnet34"
+  encoder_weights: "imagenet"
+  in_channels: 2  # VV + VH
+  classes: 1  # Oil probability
+  activation: null  # No activation — output raw logits for BCEWithLogitsLoss
+  image_size: 256
+
+# ------------------------------------------------------------------------------
+# Training
+# ------------------------------------------------------------------------------
+training:
+  optimizer: "AdamW"
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-4
+  epochs: 50
+  batch_size: 8
+  num_workers: 0
+  seed: 42
+  # Early stopping
+  early_stopping_patience: 10
+  early_stopping_min_delta: 1.0e-4
+  # Learning rate scheduler
+  scheduler: "CosineAnnealingLR"
+  scheduler_T_max: 50
+  scheduler_eta_min: 1.0e-6
+  # Checkpointing
+  checkpoint_dir: "checkpoints"
+  save_best_only: true
+  monitor_metric: "val_dice"
+
+# ------------------------------------------------------------------------------
+# Loss
+# ------------------------------------------------------------------------------
+loss:
+  type: "combined"  # "bce", "dice", or "combined"
+  bce_weight: 0.5
+  dice_weight: 0.5
+  smooth: 1.0  # Smoothing factor for Dice loss
+
+# ------------------------------------------------------------------------------
+# Inference
+# ------------------------------------------------------------------------------
+inference:
+  default_threshold: 0.5
+  min_candidate_area_pixels: 100  # Ignore tiny detections
+  tile_overlap: 64  # Overlap for tiled inference on large images
+
+# ------------------------------------------------------------------------------
+# Candidate Extraction
+# ------------------------------------------------------------------------------
+candidates:
+  threshold: 0.5  # Oil probability threshold for binarization
+  min_area_pixels: 100
+  max_candidates: 50
+  compute_texture_features: false  # GLCM features — slow, disable by default
+
+# ------------------------------------------------------------------------------
+# Visualization
+# ------------------------------------------------------------------------------
+visualization:
+  output_dir: "results/visualizations"
+  dpi: 150
+  figsize: [18, 12]
+  colormap: "RdYlGn_r"  # Probability map colormap
+
+# ------------------------------------------------------------------------------
+# Paths
+# ------------------------------------------------------------------------------
+paths:
+  checkpoint_dir: "checkpoints"
+  results_dir: "results"
+  visualization_dir: "results/visualizations"
+  log_dir: "results/logs"

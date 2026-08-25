@@ -1,0 +1,235 @@
+{
+  "spill_detected": true,
+  "confidence": 0.7471548318862915,
+  "observation_time": null,
+  "image_path": "data/sample_s1.tif",
+  "model_version": "slicktrace-unet-v1",
+  "processing_time_seconds": 2.32,
+  "spill": {
+    "area_km2": null,
+    "area_pixels": 12223,
+    "centroid": {
+      "row": 248.45234394174915,
+      "col": 220.81043933567864
+    },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            142,
+            195
+          ],
+          [
+            314,
+            195
+          ],
+          [
+            314,
+            306
+          ],
+          [
+            142,
+            306
+          ],
+          [
+            142,
+            195
+          ]
+        ]
+      ],
+      "coordinate_system": "pixel"
+    },
+    "bounding_box": {
+      "min_row": 195,
+      "min_col": 142,
+      "max_row": 306,
+      "max_col": 314
+    }
+  },
+  "candidates": [
+    {
+      "candidate_id": 3,
+      "oil_probability": 0.7472,
+      "area_km2": null,
+      "area_pixels": 12223,
+      "centroid": {
+        "row": 248.45234394174915,
+        "col": 220.81043933567864
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              142,
+              195
+            ],
+            [
+              314,
+              195
+            ],
+            [
+              314,
+              306
+            ],
+            [
+              142,
+              306
+            ],
+            [
+              142,
+              195
+            ]
+          ]
+        ],
+        "coordinate_system": "pixel"
+      },
+      "properties": {
+        "perimeter": 1306.2306,
+        "aspect_ratio": 1.5495,
+        "eccentricity": 0.8118,
+        "solidity": 0.8498,
+        "orientation_degrees": -75.9796,
+        "compactness": 0.09,
+        "oil_probability_std": 0.1647,
+        "oil_probability_max": 1.0,
+        "mean_vv_db": -21.6792,
+        "std_vv_db": 8.6659,
+        "contrast_vv": 4.3785,
+        "mean_vh_db": -21.6038,
+        "std_vh_db": 8.6881,
+        "contrast_vh": 4.2983
+      }
+    },
+    {
+      "candidate_id": 2,
+      "oil_probability": 0.5539,
+      "area_km2": null,
+      "area_pixels": 138,
+      "centroid": {
+        "row": 156.95652173913044,
+        "col": 41.39855072463768
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              34,
+              145
+            ],
+            [
+              50,
+              145
+            ],
+            [
+              50,
+              173
+            ],
+            [
+              34,
+              173
+            ],
+            [
+              34,
+              145
+            ]
+          ]
+        ],
+        "coordinate_system": "pixel"
+      },
+      "properties": {
+        "perimeter": 108.7696,
+        "aspect_ratio": 1.75,
+        "eccentricity": 0.8934,
+        "solidity": 0.4876,
+        "orientation_degrees": -9.1179,
+        "compactness": 0.1466,
+        "oil_probability_std": 0.0417,
+        "oil_probability_max": 0.7066,
+        "mean_vv_db": -17.8382,
+        "std_vv_db": 7.247,
+        "contrast_vv": 0.5963,
+        "mean_vh_db": -17.4489,
+        "std_vh_db": 6.7743,
+        "contrast_vh": 0.2082
+      }
+    },
+    {
+      "candidate_id": 1,
+      "oil_probability": 0.5461,
+      "area_km2": null,
+      "area_pixels": 569,
+      "centroid": {
+        "row": 46.76977152899824,
+        "col": 156.76625659050967
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121,
+              31
+            ],
+            [
+              194,
+              31
+            ],
+            [
+              194,
+              65
+            ],
+            [
+              121,
+              65
+            ],
+            [
+              121,
+              31
+            ]
+          ]
+        ],
+        "coordinate_system": "pixel"
+      },
+      "properties": {
+        "perimeter": 399.4924,
+        "aspect_ratio": 2.1471,
+        "eccentricity": 0.9752,
+        "solidity": 0.3654,
+        "orientation_degrees": 79.0924,
+        "compactness": 0.0448,
+        "oil_probability_std": 0.0345,
+        "oil_probability_max": 0.6889,
+        "mean_vv_db": -18.0894,
+        "std_vv_db": 7.212,
+        "contrast_vv": 0.6121,
+        "mean_vh_db": -17.5134,
+        "std_vh_db": 7.3295,
+        "contrast_vh": -0.257
+      }
+    }
+  ],
+  "metadata": {
+    "model_architecture": "U-Net (ResNet34 encoder)",
+    "input_channels": [
+      "VV",
+      "VH"
+    ],
+    "input_representation": "Sigma0 (dB)",
+    "threshold_used": 0.5,
+    "georeferenced": false,
+    "crs": null,
+    "image_size": [
+      512,
+      512
+    ]
+  },
+  "limitations": [
+    "Model confidence is not a guarantee of oil presence.",
+    "Dark SAR features from low wind, biogenic slicks, or rain cells may produce false positives.",
+    "Geographic geometry accuracy depends on input image georeferencing quality.",
+    "This system does not perform vessel attribution."
+  ]
+}

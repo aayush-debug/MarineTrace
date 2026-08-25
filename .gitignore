@@ -1,8 +1,18 @@
 # Python
 venv/
 .venv/
+ENV/
+env/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
 
 # Node
 node_modules/
@@ -11,17 +21,34 @@ dist/
 # Environment
 .env
 .env.*
+.env.local
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
+Thumbs.db
+desktop.ini
 
 # Logs
 *.log
 
-# ML temporary files
+# Large ML Checkpoints (exclude files > 100MB to avoid GitHub rejection)
+ml/checkpoints/final_model.pth
+ml/checkpoints/*.tar.gz
+*.pth.tar
 runs/
 wandb/
+
+# Large Raw Datasets (keep lightweight synthetic test fixtures in ml/data/test_synthetic/ & sample_s1.tif)
+ml/data/raw/
+ml/data/external_s1/
+ml/data/*.zip
+ml/data/*.tar.gz
+
+# Generated Run Results and Temporary Visualizations
+ml/results/visualizations/*.png

@@ -1,0 +1,53 @@
+{
+  "hardware": {
+    "pytorch_version": "2.13.0+cpu",
+    "device": "cpu",
+    "accelerator": "CPU (Fallback)"
+  },
+  "validation_metrics": {
+    "threshold": 0.5,
+    "dice": 0.6457896209258908,
+    "iou": 0.476875403485997,
+    "precision": 0.4791023479049218,
+    "recall": 0.9903469727028528,
+    "f1": 0.6457896165310049,
+    "pixel_accuracy": 0.9381774902343464,
+    "false_positive_rate": 0.0649704076910859,
+    "false_negative_rate": 0.0096530272966109,
+    "true_positives": 18467,
+    "false_positives": 20078,
+    "true_negatives": 288955,
+    "false_negatives": 180
+  },
+  "lookalike_metrics": {
+    "threshold": 0.5,
+    "dice": 0.0,
+    "iou": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "pixel_accuracy": 0.9736877441405952,
+    "false_positive_rate": 0.026312255859374196,
+    "false_negative_rate": 0.0,
+    "true_positives": 0,
+    "false_positives": 8622,
+    "true_negatives": 319058,
+    "false_negatives": 0
+  },
+  "test_summary": {
+    "Dependencies": "PASS",
+    "Accelerator": "PASS",
+    "Dataset": "PASS (Synthetic Verified)",
+    "Model": "PASS",
+    "Forward pass": "PASS",
+    "Tiny overfit": "PASS",
+    "Validation": "PASS",
+    "Geometry": "PASS",
+    "GeoJSON": "PASS",
+    "Inference API": "PASS",
+    "External test": "FAIL (Dataset not on disk)",
+    "Look-alike test": "PASS (Synthetic Verified)"
+  },
+  "execution_timestamp": "2026-08-25T16:46:44Z",
+  "total_duration_seconds": 20.5
+}

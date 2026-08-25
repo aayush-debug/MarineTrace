@@ -1,0 +1,122 @@
+{
+    "spill_detected": true,
+    "confidence": 0.92,
+    "observation_time": "2024-03-15T10:23:45Z",
+    "image_path": "/path/to/sentinel1_image.tif",
+    "model_version": "slicktrace-unet-v1",
+    "processing_time_seconds": 2.34,
+    "spill": {
+        "area_km2": 18.4,
+        "area_pixels": 28672,
+        "centroid": {
+            "latitude": 18.721,
+            "longitude": 72.914
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [72.890, 18.735],
+                    [72.895, 18.740],
+                    [72.920, 18.738],
+                    [72.935, 18.725],
+                    [72.930, 18.710],
+                    [72.910, 18.705],
+                    [72.895, 18.710],
+                    [72.890, 18.735]
+                ]
+            ]
+        },
+        "bounding_box": {
+            "min_latitude": 18.705,
+            "max_latitude": 18.740,
+            "min_longitude": 72.890,
+            "max_longitude": 72.935
+        }
+    },
+    "candidates": [
+        {
+            "candidate_id": 1,
+            "oil_probability": 0.92,
+            "area_km2": 18.4,
+            "area_pixels": 28672,
+            "centroid": {
+                "latitude": 18.721,
+                "longitude": 72.914
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [72.890, 18.735],
+                        [72.895, 18.740],
+                        [72.920, 18.738],
+                        [72.935, 18.725],
+                        [72.930, 18.710],
+                        [72.910, 18.705],
+                        [72.895, 18.710],
+                        [72.890, 18.735]
+                    ]
+                ]
+            },
+            "properties": {
+                "perimeter_km": 12.3,
+                "aspect_ratio": 1.45,
+                "eccentricity": 0.67,
+                "solidity": 0.88,
+                "compactness": 0.72,
+                "orientation_degrees": 35.2,
+                "mean_vv_db": -18.5,
+                "mean_vh_db": -25.3,
+                "contrast_ratio": 3.2
+            }
+        },
+        {
+            "candidate_id": 2,
+            "oil_probability": 0.71,
+            "area_km2": 3.2,
+            "area_pixels": 4992,
+            "centroid": {
+                "latitude": 18.680,
+                "longitude": 72.950
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [72.940, 18.690],
+                        [72.945, 18.695],
+                        [72.960, 18.685],
+                        [72.955, 18.675],
+                        [72.940, 18.690]
+                    ]
+                ]
+            },
+            "properties": {
+                "perimeter_km": 5.8,
+                "aspect_ratio": 2.10,
+                "eccentricity": 0.82,
+                "solidity": 0.75,
+                "compactness": 0.55,
+                "orientation_degrees": 120.5,
+                "mean_vv_db": -16.2,
+                "mean_vh_db": -23.8,
+                "contrast_ratio": 2.1
+            }
+        }
+    ],
+    "metadata": {
+        "model_architecture": "U-Net (ResNet34 encoder)",
+        "input_channels": ["VV", "VH"],
+        "input_representation": "Sigma0 (dB)",
+        "threshold_used": 0.5,
+        "georeferenced": true,
+        "crs": "EPSG:4326"
+    },
+    "limitations": [
+        "Model confidence is not a guarantee of oil presence.",
+        "Dark SAR features from low wind, biogenic slicks, or rain cells may produce false positives.",
+        "Geographic geometry accuracy depends on input image georeferencing quality.",
+        "This system does not perform vessel attribution — downstream modules handle that."
+    ]
+}
