@@ -1,10 +1,10 @@
-# 🛢️ SlickTrace
+# 🛰️ MarineTrace
 
-**Intelligent Maritime Oil-Spill Investigation System**
+**AI-Powered Marine Oil-Spill Detection & Vessel Attribution System**
 
-SlickTrace combines satellite imagery analysis, ocean drift simulation, AIS vessel tracking, and explainable attribution scoring to help investigators identify potential sources of maritime oil spills.
+MarineTrace combines Sentinel-1 SAR satellite imagery analysis, oceanographic drift modeling (OpenDrift), historical AIS vessel tracking, and explainable multi-feature attribution scoring to help maritime authorities, Coast Guard, and pollution investigators identify potential sources of marine oil spills.
 
-> ⚠️ SlickTrace provides **investigative priority rankings**, not definitive responsibility claims.
+> ⚠️ MarineTrace provides **investigative decision-support priority rankings**, not legal adjudication.
 
 ## Architecture
 

@@ -1,106 +1,101 @@
-/* SlickTrace — Main Application */
+import React from 'react';
+import { InvestigationProvider, useInvestigation } from './context/InvestigationContext';
+import { TopNav } from './components/layout/TopNav';
+import { Sidebar } from './components/layout/Sidebar';
+import { Dashboard } from './pages/Dashboard';
+import { NewInvestigation } from './pages/NewInvestigation';
+import { Investigation } from './pages/Investigation';
+import { DriftAnalysis } from './pages/DriftAnalysis';
+import { VesselAttribution } from './pages/VesselAttribution';
+import { SatelliteImagery } from './pages/SatelliteImagery';
+import { Reports } from './pages/Reports';
+import { AlertCircle, X, Loader2 } from 'lucide-react';
 
-import { useState } from 'react';
-import './index.css';
-import type { InvestigationResponse } from './types/investigation';
-import { runDemoInvestigation } from './services/api';
-import InvestigationMap from './components/InvestigationMap';
-import InvestigationPanel from './components/InvestigationPanel';
-import UploadPanel from './components/UploadPanel';
-import MapLegend from './components/MapLegend';
+const MainLayout: React.FC = () => {
+  const { activePage, loading, loadingStep, error, clearError } = useInvestigation();
 
-function App() {
-  const [investigation, setInvestigation] = useState<InvestigationResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedVessel, setSelectedVessel] = useState<string | null>(null);
-
-  const handleRunDemo = async () => {
-    setLoading(true);
-    setError(null);
-    setSelectedVessel(null);
-    try {
-      const result = await runDemoInvestigation();
-      setInvestigation(result);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Failed to connect to backend. Is it running on :8000?'
-      );
-    } finally {
-      setLoading(false);
+  const renderActivePage = () => {
+    switch (activePage) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'new-investigation':
+        return <NewInvestigation />;
+      case 'investigation':
+        return <Investigation />;
+      case 'drift':
+        return <DriftAnalysis />;
+      case 'attribution':
+        return <VesselAttribution />;
+      case 'satellite':
+        return <SatelliteImagery />;
+      case 'reports':
+        return <Reports />;
+      default:
+        return <Dashboard />;
     }
   };
 
-  const handleRunInvestigation = async (time: string) => {
-    // Placeholder for real investigation with uploaded image
-    handleRunDemo();
-  };
-
-  const handleReset = () => {
-    setInvestigation(null);
-    setError(null);
-    setSelectedVessel(null);
-  };
-
   return (
-    <div className="app">
-      {/* Header */}
-      <header className="header">
-        <div className="header__logo">
-          <span className="header__logo-icon">🛢️</span>
-          <span className="header__logo-text">SlickTrace</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {investigation && (
-            <button
-              className="btn btn--secondary"
-              style={{ padding: '6px 14px', fontSize: 12 }}
-              onClick={handleReset}
-            >
-              ← New Investigation
-            </button>
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#060a12] text-slate-100 select-none">
+      {/* Top Command Center Header */}
+      <TopNav />
+
+      {/* Main Horizontal Split: Sidebar + Page Viewport */}
+      <div className="flex-1 flex overflow-hidden relative">
+        <Sidebar />
+
+        <main className="flex-1 flex flex-col min-h-0 min-w-0 relative overflow-hidden">
+          {renderActivePage()}
+
+          {/* Global Loading Overlay */}
+          {loading && (
+            <div className="absolute inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center font-mono space-y-4">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-slate-800 border-t-cyan-400 animate-spin" />
+                <Loader2 className="w-8 h-8 text-cyan-400 absolute inset-0 m-auto animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-slate-100 tracking-wider">
+                  MARINETRACE MULTI-STAGE PIPELINE RUNNING
+                </h3>
+                <p className="text-xs text-cyan-400 font-semibold animate-pulse">
+                  {loadingStep || 'Executing analysis pipeline...'}
+                </p>
+                <p className="text-[10px] text-slate-500 max-w-sm">
+                  Correlating Sentinel-1 SAR detections with OpenDrift hydrodynamic backtracking and historical AIS positions.
+                </p>
+              </div>
+            </div>
           )}
-          <div className="header__status">
-            <span className="header__status-dot" />
-            <span>System Online</span>
-          </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Map (always visible) */}
-        <div style={{ flex: 1, position: 'relative' }}>
-          <InvestigationMap
-            data={investigation}
-            selectedVessel={selectedVessel}
-            onSelectVessel={setSelectedVessel}
-          />
-          {investigation && <MapLegend />}
-        </div>
-
-        {/* Side Panel */}
-        {investigation ? (
-          <InvestigationPanel
-            data={investigation}
-            selectedVessel={selectedVessel}
-            onSelectVessel={setSelectedVessel}
-          />
-        ) : (
-          <div className="side-panel">
-            <UploadPanel
-              onRunDemo={handleRunDemo}
-              onRunInvestigation={handleRunInvestigation}
-              loading={loading}
-              error={error}
-            />
-          </div>
-        )}
+          {/* Global Error Toast */}
+          {error && (
+            <div className="absolute bottom-4 right-4 z-50 bg-rose-950/90 border border-rose-500/50 rounded-lg p-3.5 shadow-2xl max-w-md font-mono text-xs text-rose-200 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-4">
+              <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <strong className="block text-rose-300 font-bold mb-0.5">
+                  SYSTEM NOTIFICATION
+                </strong>
+                <p className="text-[11px] leading-relaxed">{error}</p>
+              </div>
+              <button
+                onClick={clearError}
+                className="text-rose-400 hover:text-rose-200 transition-colors p-0.5"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );
-}
+};
 
-export default App;
+export default function App() {
+  return (
+    <InvestigationProvider>
+      <MainLayout />
+    </InvestigationProvider>
+  );
+}
