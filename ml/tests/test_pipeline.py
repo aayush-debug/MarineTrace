@@ -1,5 +1,5 @@
 """
-SlickTrace — Pipeline Smoke Tests
+MarineTrace — Pipeline Smoke Tests
 
 Comprehensive CPU-only tests covering all pipeline components.
 Uses small synthetic tensors — no dataset download required.

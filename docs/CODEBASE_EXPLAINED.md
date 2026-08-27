@@ -1,6 +1,6 @@
-# SlickTrace — Complete Codebase Architecture & File Reference
+# MarineTrace — Complete Codebase Architecture & File Reference
 
-> **Comprehensive guide explaining every file, module, algorithm, and data model implemented in the SlickTrace platform.**
+> **Comprehensive guide explaining every file, module, algorithm, and data model implemented in the MarineTrace platform.**
 
 ---
 
@@ -26,7 +26,7 @@
 
 ## 1. Executive Summary
 
-SlickTrace is an automated intelligence platform for investigating marine oil spills. Given a satellite observation (SAR imagery) of an oil slick, the system executes an integrated physical-geospatial pipeline:
+MarineTrace is an automated intelligence platform for investigating marine oil spills. Given a satellite observation (SAR imagery) of an oil slick, the system executes an integrated physical-geospatial pipeline:
 1. **Detection**: Ingests oil slick geometry, centroid, confidence, and timestamp from the ML model.
 2. **Reverse Drift Simulation**: Backtracks the spill using ocean currents and wind vectors (via OpenDrift or geometric ensemble fallback) to reconstruct where and when the spill occurred (Origin Zone + Time Window).
 3. **Forward Drift Forecast**: Predicts where the spill will drift over the next 24 hours.
@@ -101,7 +101,7 @@ SlickTrace is an automated intelligence platform for investigating marine oil sp
 ## 3. Project Directory Tree
 
 ```
-slicktrace/
+marinetrace/
 ├── .env.example                     # Template for environment variables
 ├── .env                             # Local environment configuration (ignored by git)
 ├── .gitignore                       # Git ignore rules for Python, Node, DB, caches

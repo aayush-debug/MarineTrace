@@ -1,4 +1,4 @@
-"""SlickTrace — database package init."""
+"""MarineTrace — database package init."""
 
 from app.db.repository import (
     InvestigationRepository,

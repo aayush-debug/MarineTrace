@@ -14,7 +14,7 @@ services:
       - .env
     environment:
       # Override to use SQLite inside the container (no Postgres needed for demo)
-      DATABASE_URL: "sqlite:///./slicktrace.db"
+      DATABASE_URL: "sqlite:///./marinetrace.db"
     volumes:
       # Mount only source code — NOT the whole /app dir (preserves pip-installed packages)
       - ./backend/app:/app/app

@@ -1,4 +1,4 @@
-# SlickTrace — ML Pipeline for SAR Oil Spill Detection
+# MarineTrace — ML Pipeline for SAR Oil Spill Detection
 
 > Automated marine oil-spill detection and segmentation from Sentinel-1 SAR imagery.
 
@@ -186,7 +186,7 @@ The `detect_oil()` function returns a JSON-serializable dictionary:
     "confidence": 0.91,
     "observation_time": null,
     "image_path": "path/to/image.tif",
-    "model_version": "slicktrace-unet-v1",
+    "model_version": "marinetrace-unet-v1",
     "processing_time_seconds": 2.34,
     "spill": {
         "area_km2": 18.4,

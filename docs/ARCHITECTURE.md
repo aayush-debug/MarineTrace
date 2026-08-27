@@ -1,4 +1,4 @@
-# SlickTrace Architecture
+# MarineTrace Architecture
 
 ## System Overview
 

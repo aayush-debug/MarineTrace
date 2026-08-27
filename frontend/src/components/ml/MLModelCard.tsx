@@ -50,7 +50,7 @@ export const MLModelCard: React.FC<MLModelCardProps> = ({ compact = false }) => 
         <div className="flex items-center gap-2">
           <Cpu className="w-4 h-4 text-indigo-400" />
           <span className="text-[10px] font-bold text-slate-300 tracking-widest uppercase">
-            SlickTrace ML Detection Engine
+            MarineTrace ML Detection Engine
           </span>
         </div>
         <span className="text-[9px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-bold">

@@ -1,5 +1,5 @@
 """
-SlickTrace — Visualization
+MarineTrace — Visualization
 
 Generates 6-panel visualization figures:
 1. Original VV channel

@@ -1,5 +1,5 @@
 """
-SlickTrace — Segmentation Loss Functions
+MarineTrace — Segmentation Loss Functions
 
 Combined BCE + Dice loss for oil spill segmentation,
 handling the severe class imbalance (small oil regions vs. large background).

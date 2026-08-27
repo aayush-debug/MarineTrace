@@ -1,5 +1,5 @@
 """
-SlickTrace — Complete ML Validation Pipeline
+MarineTrace — Complete ML Validation Pipeline
 
 Executes the full 21-step validation checklist for the oil-spill segmentation model.
 
@@ -33,7 +33,7 @@ def main():
     metrics_output = {}
 
     print("=" * 60)
-    print("      SLICKTRACE ML VALIDATION PIPELINE EXECUTION")
+    print("      MARINETRACE ML VALIDATION PIPELINE EXECUTION")
     print("=" * 60)
 
     # --------------------------------------------------------------------------
@@ -223,7 +223,11 @@ def main():
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
-    model = create_model(config)
+    config_model = dict(config)
+    sub_cfg = dict(config_model.get("model", {}))
+    sub_cfg["encoder_weights"] = None
+    config_model["model"] = sub_cfg
+    model = create_model(config_model)
     model = model.to(device)
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -362,7 +366,7 @@ def main():
             ground_truth=gt,
             prob_map=prob,
             binary_pred=binary,
-            title=f"Validation Sample #{idx+1} — SlickTrace",
+            title=f"Validation Sample #{idx+1} — MarineTrace",
             output_path=str(out_img_path),
         )
 
@@ -502,7 +506,7 @@ def main():
     )
 
     print("\n" + "=" * 50)
-    print("SLICKTRACE ML VALIDATION")
+    print("MARINETRACE ML VALIDATION")
     print("=" * 50)
     print(f"Dataset:          {results_summary.get('Dataset', 'FAIL')}")
     print(f"Model:            {results_summary.get('Model', 'FAIL')}")

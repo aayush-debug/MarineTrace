@@ -1,5 +1,5 @@
 # ==============================================================================
-# SlickTrace ML Pipeline — Configuration
+# MarineTrace ML Pipeline — Configuration
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ loss:
 # Inference
 # ------------------------------------------------------------------------------
 inference:
-  default_threshold: 0.5
+  default_threshold: 0.35
   min_candidate_area_pixels: 100  # Ignore tiny detections
   tile_overlap: 64  # Overlap for tiled inference on large images
 
@@ -106,7 +106,7 @@ inference:
 # Candidate Extraction
 # ------------------------------------------------------------------------------
 candidates:
-  threshold: 0.5  # Oil probability threshold for binarization
+  threshold: 0.35  # Oil probability threshold for binarization
   min_area_pixels: 100
   max_candidates: 50
   compute_texture_features: false  # GLCM features — slow, disable by default

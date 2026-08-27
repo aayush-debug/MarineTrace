@@ -1,5 +1,5 @@
 """
-SlickTrace — API Interface
+MarineTrace — API Interface
 
 The clean Python interface for the backend developer.
 
@@ -38,7 +38,14 @@ def _load_model(checkpoint_path: str, config: dict, device: torch.device):
     """Load model from checkpoint."""
     from models.unet import create_model
 
-    model = create_model(config)
+    # If checkpoint exists, skip downloading ImageNet weights since all weights are loaded from checkpoint
+    model_cfg = dict(config)
+    if os.path.exists(checkpoint_path):
+        sub_cfg = dict(model_cfg.get("model", {}))
+        sub_cfg["encoder_weights"] = None
+        model_cfg["model"] = sub_cfg
+
+    model = create_model(model_cfg)
 
     if os.path.exists(checkpoint_path):
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
@@ -218,7 +225,7 @@ def detect_oil(
         "confidence": float(candidates[0]["oil_probability"]) if candidates else 0.0,
         "observation_time": None,  # To be filled by backend from image metadata
         "image_path": str(image_path),
-        "model_version": "slicktrace-unet-v1",
+        "model_version": "marinetrace-unet-v1",
         "processing_time_seconds": round(processing_time, 2),
     }
 
@@ -303,7 +310,7 @@ def detect_oil_mock(image_path: str = "") -> dict:
         "confidence": 0.92,
         "observation_time": None,
         "image_path": str(image_path),
-        "model_version": "slicktrace-mock-v1",
+        "model_version": "marinetrace-mock-v1",
         "processing_time_seconds": 0.01,
         "spill": {
             "area_km2": 18.4,

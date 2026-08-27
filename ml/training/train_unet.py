@@ -1,5 +1,5 @@
 """
-SlickTrace — U-Net Training Script
+MarineTrace — U-Net Training Script
 
 Trains a U-Net model for SAR oil spill segmentation using PyTorch.
 

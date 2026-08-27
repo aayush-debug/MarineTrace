@@ -1,4 +1,4 @@
-# SlickTrace API Contract
+# MarineTrace API Contract
 
 > Interface specification between the ML component and the backend system.
 > All geometry uses GeoJSON-compatible structures.

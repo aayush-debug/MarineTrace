@@ -3,7 +3,7 @@
     "confidence": 0.92,
     "observation_time": "2024-03-15T10:23:45Z",
     "image_path": "/path/to/sentinel1_image.tif",
-    "model_version": "slicktrace-unet-v1",
+    "model_version": "marinetrace-unet-v1",
     "processing_time_seconds": 2.34,
     "spill": {
         "area_km2": 18.4,

@@ -1,4 +1,4 @@
-"""SlickTrace — FastAPI application entry point."""
+"""MarineTrace — FastAPI application entry point."""
 
 from contextlib import asynccontextmanager
 
@@ -12,14 +12,14 @@ from app.core.logging import logger
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup / shutdown lifecycle."""
-    logger.info("🛢️  SlickTrace starting — %s", settings.app_name)
+    logger.info("🛢️  MarineTrace starting — %s", settings.app_name)
     logger.info("   Debug: %s | Log level: %s", settings.debug, settings.log_level)
     yield
-    logger.info("🛢️  SlickTrace shutting down")
+    logger.info("🛢️  MarineTrace shutting down")
 
 
 app = FastAPI(
-    title="SlickTrace",
+    title="MarineTrace",
     description="Intelligent Maritime Oil-Spill Investigation System",
     version="0.1.0",
     lifespan=lifespan,

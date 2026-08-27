@@ -1,5 +1,5 @@
 """
-SlickTrace — Candidate Feature Extraction
+MarineTrace — Candidate Feature Extraction
 
 After U-Net segmentation, this module:
 1. Thresholds the probability map → binary mask

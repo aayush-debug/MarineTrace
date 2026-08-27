@@ -1,5 +1,5 @@
 """
-SlickTrace — CLI Inference Script
+MarineTrace — CLI Inference Script
 
 Usage:
     python inference/predict.py --image path/to/sentinel1.tif
@@ -19,7 +19,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 def main():
     parser = argparse.ArgumentParser(
-        description="SlickTrace — Oil spill detection from SAR imagery"
+        description="MarineTrace — Oil spill detection from SAR imagery"
     )
     parser.add_argument(
         "--image", type=str, required=True,
@@ -166,7 +166,7 @@ def main():
                 prob_map=prob_map,
                 binary_pred=binary_pred,
                 candidates=result.get("candidates"),
-                title=f"SlickTrace Detection — {Path(args.image).name}",
+                title=f"MarineTrace Detection — {Path(args.image).name}",
                 output_path=vis_path,
             )
         except Exception as e:

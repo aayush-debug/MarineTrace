@@ -180,7 +180,7 @@ export const Dashboard: React.FC = () => {
           <TrendingUp className="w-3 h-3 text-indigo-400" />
           <span className="tracking-widest uppercase text-indigo-400/70">Model Performance</span>
           <span className="text-slate-700">·</span>
-          <span>slicktrace-unet-v1</span>
+          <span>marinetrace-unet-v1</span>
         </div>
         <div className="flex items-center gap-3">
           {ML_PERF.map((m) => (

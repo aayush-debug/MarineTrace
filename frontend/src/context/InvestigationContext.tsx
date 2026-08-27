@@ -23,6 +23,8 @@ export type PageId =
   | 'satellite'
   | 'reports';
 
+export type BasemapStyle = 'dark' | 'satellite' | 'ocean' | 'standard';
+
 export interface LayerVisibility {
   spill: boolean;
   origin: boolean;
@@ -30,6 +32,10 @@ export interface LayerVisibility {
   vessels: boolean;
   tracks: boolean;
   forecast: boolean;
+  eez: boolean;
+  lanes: boolean;
+  platforms: boolean;
+  seamarks: boolean;
 }
 
 interface InvestigationContextType {
@@ -49,6 +55,10 @@ interface InvestigationContextType {
   layers: LayerVisibility;
   setLayers: React.Dispatch<React.SetStateAction<LayerVisibility>>;
   toggleLayer: (layer: keyof LayerVisibility) => void;
+  basemap: BasemapStyle;
+  setBasemap: (style: BasemapStyle) => void;
+  measuring: boolean;
+  setMeasuring: (active: boolean) => void;
   executeDemo: () => Promise<void>;
   executeInvestigation: (req: InvestigationRequest) => Promise<void>;
   loadInvestigationById: (id: string) => void;
@@ -63,6 +73,10 @@ const DEFAULT_LAYERS: LayerVisibility = {
   vessels: true,
   tracks: true,
   forecast: true,
+  eez: true,
+  lanes: true,
+  platforms: true,
+  seamarks: false,
 };
 
 const DEFAULT_HEALTH: SystemHealth = {
@@ -96,6 +110,8 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loadingStep, setLoadingStep] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [layers, setLayers] = useState<LayerVisibility>(DEFAULT_LAYERS);
+  const [basemap, setBasemap] = useState<BasemapStyle>('dark');
+  const [measuring, setMeasuring] = useState<boolean>(false);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>(DEFAULT_HEALTH);
   const [environmental] = useState<EnvironmentalConditions>(DEFAULT_ENVIRONMENTAL);
 
@@ -245,6 +261,10 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
         layers,
         setLayers,
         toggleLayer,
+        basemap,
+        setBasemap,
+        measuring,
+        setMeasuring,
         executeDemo,
         executeInvestigation,
         loadInvestigationById,

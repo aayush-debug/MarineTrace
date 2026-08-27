@@ -22,7 +22,7 @@ import { MLModelCard } from '../components/ml/MLModelCard';
 const ML_MOCK_RESULT = {
   spill_detected: true,
   confidence: 0.92,
-  model_version: 'slicktrace-unet-v1',
+  model_version: 'marinetrace-unet-v1',
   processing_time_seconds: 2.34,
   metadata: {
     model_architecture: 'U-Net (ResNet34 encoder)',

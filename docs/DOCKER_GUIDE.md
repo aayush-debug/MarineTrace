@@ -1,6 +1,6 @@
-# SlickTrace — Docker Deployment & Hosting Guide
+# MarineTrace — Docker Deployment & Hosting Guide
 
-This guide explains how to build, run, test, and host the **SlickTrace Backend** (and the full stack) using Docker and Docker Compose.
+This guide explains how to build, run, test, and host the **MarineTrace Backend** (and the full stack) using Docker and Docker Compose.
 
 ---
 
@@ -30,14 +30,14 @@ To run Docker on your machine:
 │                    Docker Host Environment                   │
 │                                                              │
 │  ┌─────────────────────────┐      ┌────────────────────────┐ │
-│  │   slicktrace-backend    │      │  slicktrace-frontend   │ │
+│  │   marinetrace-backend    │      │  marinetrace-frontend   │ │
 │  │   (FastAPI + Uvicorn)   │◄────►│    (Vite + React TS)   │ │
 │  │   Port: 8000            │      │    Port: 5173          │ │
 │  └────────────┬────────────┘      └────────────────────────┘ │
 │               │                                              │
 │               ▼                                              │
 │  ┌─────────────────────────┐                                 │
-│  │   slicktrace-postgres   │                                 │
+│  │   marinetrace-postgres   │                                 │
 │  │   (PostGIS 16-3.4)      │                                 │
 │  │   Port: 5432 (Internal) │                                 │
 │  └─────────────────────────┘                                 │
@@ -60,7 +60,7 @@ Edit `.env` with your desired configuration (or leave defaults for mock/demo mod
 ### Step 2: Build the Backend Docker Image
 Navigate to the root directory and build the backend image:
 ```bash
-docker build -t slicktrace-backend -f backend/Dockerfile backend/
+docker build -t marinetrace-backend -f backend/Dockerfile backend/
 ```
 *What this does:*
 1. Uses `python:3.11-slim` as the base image.
@@ -72,11 +72,11 @@ docker build -t slicktrace-backend -f backend/Dockerfile backend/
 ### Step 3: Run the Container
 ```bash
 docker run -d \
-  --name slicktrace-api \
+  --name marinetrace-api \
   -p 8000:8000 \
   --env-file .env \
   --restart unless-stopped \
-  slicktrace-backend
+  marinetrace-backend
 ```
 
 ### Step 4: Verify the Backend is Running
@@ -169,8 +169,8 @@ Here is how you can deploy the Docker container to various cloud providers:
    ```
 4. Clone your repository:
    ```bash
-   git clone <your-repo-url> slicktrace
-   cd slicktrace
+   git clone <your-repo-url> marinetrace
+   cd marinetrace
    cp .env.example .env
    ```
 5. Run with Docker Compose:
@@ -181,12 +181,12 @@ Here is how you can deploy the Docker container to various cloud providers:
 ### Option 4: Google Cloud Run
 1. Build and push image to Google Artifact Registry:
    ```bash
-   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/slicktrace-backend backend/
+   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/marinetrace-backend backend/
    ```
 2. Deploy to Cloud Run:
    ```bash
-   gcloud run deploy slicktrace-backend \
-     --image gcr.io/YOUR_PROJECT_ID/slicktrace-backend \
+   gcloud run deploy marinetrace-backend \
+     --image gcr.io/YOUR_PROJECT_ID/marinetrace-backend \
      --platform managed \
      --allow-unauthenticated \
      --port 8000
@@ -200,10 +200,10 @@ Here is how you can deploy the Docker container to various cloud providers:
 |--------|---------|
 | **View running containers** | `docker ps` |
 | **View all containers** | `docker ps -a` |
-| **View backend logs** | `docker logs -f slicktrace-api` |
-| **Open shell inside container** | `docker exec -it slicktrace-api /bin/bash` |
-| **Run CLI demo inside container** | `docker exec -it slicktrace-api python ../run_demo.py` |
-| **Restart container** | `docker restart slicktrace-api` |
-| **Stop container** | `docker stop slicktrace-api` |
-| **Remove container** | `docker rm -f slicktrace-api` |
+| **View backend logs** | `docker logs -f marinetrace-api` |
+| **Open shell inside container** | `docker exec -it marinetrace-api /bin/bash` |
+| **Run CLI demo inside container** | `docker exec -it marinetrace-api python ../run_demo.py` |
+| **Restart container** | `docker restart marinetrace-api` |
+| **Stop container** | `docker stop marinetrace-api` |
+| **Remove container** | `docker rm -f marinetrace-api` |
 | **Clean up unused images/containers** | `docker system prune -f` |

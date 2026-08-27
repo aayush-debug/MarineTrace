@@ -1,4 +1,4 @@
-"""SlickTrace configuration — loads from .env with sensible defaults."""
+"""MarineTrace configuration — loads from .env with sensible defaults."""
 
 from pathlib import Path
 from pydantic_settings import BaseSettings
@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables / .env file."""
 
     # ── General ──────────────────────────────────────
-    app_name: str = "SlickTrace"
+    app_name: str = "MarineTrace"
     debug: bool = False
     log_level: str = "INFO"
     backend_host: str = "0.0.0.0"
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     copernicus_password: str = ""
 
     # ── Database ─────────────────────────────────────
-    database_url: str = "sqlite:///./slicktrace.db"
+    database_url: str = "sqlite:///./marinetrace.db"
 
     # ── Drift Configuration ──────────────────────────
     drift_backward_hours: int = 24

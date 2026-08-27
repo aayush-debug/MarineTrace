@@ -1,1 +1,1 @@
-"""SlickTrace — empty package marker."""
+"""MarineTrace — empty package marker."""

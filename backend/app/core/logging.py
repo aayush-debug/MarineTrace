@@ -1,4 +1,4 @@
-"""SlickTrace structured logging."""
+"""MarineTrace structured logging."""
 
 import logging
 import sys
@@ -6,7 +6,7 @@ import sys
 
 def setup_logging(level: str = "INFO") -> logging.Logger:
     """Configure and return the application logger."""
-    logger = logging.getLogger("slicktrace")
+    logger = logging.getLogger("marinetrace")
     logger.setLevel(getattr(logging, level.upper(), logging.INFO))
 
     if not logger.handlers:

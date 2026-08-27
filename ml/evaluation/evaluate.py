@@ -1,5 +1,5 @@
 """
-SlickTrace — Model Evaluation
+MarineTrace — Model Evaluation
 
 Computes segmentation metrics on the test set:
 - Dice, IoU, Precision, Recall, F1, Pixel Accuracy

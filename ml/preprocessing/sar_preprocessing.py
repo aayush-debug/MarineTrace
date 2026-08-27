@@ -1,5 +1,5 @@
 """
-SlickTrace — SAR Image Preprocessing
+MarineTrace — SAR Image Preprocessing
 
 Handles Sentinel-1 Sigma0 (dB) imagery:
 - Invalid value handling (NaN, Inf, nodata)

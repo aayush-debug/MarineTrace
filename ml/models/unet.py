@@ -1,5 +1,5 @@
 """
-SlickTrace — U-Net Model for SAR Oil Spill Segmentation
+MarineTrace — U-Net Model for SAR Oil Spill Segmentation
 
 Uses segmentation_models_pytorch with an ImageNet-pretrained encoder
 adapted for 2-channel SAR input (VV + VH).

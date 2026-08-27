@@ -1,4 +1,4 @@
-# SlickTrace ML Pipeline — Inspection & Compatibility Report
+# MarineTrace ML Pipeline — Inspection & Compatibility Report
 
 **Generated:** 2026-08-25 17:16:34 UTC  
 **System OS:** Windows 11 (AMD64)  
@@ -24,7 +24,7 @@
 
 The reference repository [oceanhackweek/ohw23_proj_oil](https://github.com/oceanhackweek/ohw23_proj_oil) was evaluated across all dimensions:
 
-| Attribute | OHW23 Implementation | SlickTrace Requirement | Compatibility Assessment |
+| Attribute | OHW23 Implementation | MarineTrace Requirement | Compatibility Assessment |
 |---|---|---|---|
 | **Satellite / Sensor** | COSMO-SkyMed (SAR-2000, X-band) | Sentinel-1 (C-band) | ❌ Incompatible (different wavelength physics) |
 | **Polarization** | VV only (1 channel) | VV + VH dual-pol (2 channels) | ❌ Incompatible (cannot capture cross-pol contrast) |
@@ -156,7 +156,7 @@ result = detect_oil("path/to/sentinel1_image.tif")
 
 ```text
 ============================================================
-SLICKTRACE ML INSPECTION & COMPATIBILITY SUMMARY
+MARINETRACE ML INSPECTION & COMPATIBILITY SUMMARY
 ============================================================
 [PASS] Environment & Dependency Check
 [PASS] OHW23 Prior Work Evaluation (References Kept, Code Isolated)

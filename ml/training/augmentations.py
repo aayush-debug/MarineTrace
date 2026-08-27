@@ -1,5 +1,5 @@
 """
-SlickTrace — Data Augmentations for SAR Imagery
+MarineTrace — Data Augmentations for SAR Imagery
 
 Physically reasonable augmentations applied identically to image and mask.
 Uses albumentations for consistent spatial transforms.

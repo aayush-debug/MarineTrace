@@ -1,5 +1,5 @@
 """
-Database models and repository abstraction layer for SlickTrace.
+Database models and repository abstraction layer for MarineTrace.
 Designed so SQLite/JSON can be easily swapped for PostgreSQL + PostGIS.
 """
 
@@ -41,7 +41,7 @@ class SQLiteInvestigationRepository(InvestigationRepository):
     (id, created_at, status, confidence, vessel_count).
     """
 
-    def __init__(self, db_path: str | Path = "slicktrace.db"):
+    def __init__(self, db_path: str | Path = "marinetrace.db"):
         self.db_path = str(db_path)
         self._init_db()
 

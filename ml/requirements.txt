@@ -1,5 +1,5 @@
 # ==============================================================================
-# SlickTrace ML Pipeline — Python Dependencies
+# MarineTrace ML Pipeline — Python Dependencies
 # ==============================================================================
 
 # Core ML

@@ -23,3 +23,20 @@ async def test_mock_ml_client_output():
     assert spill.geometry is not None
     assert spill.geometry.type == "Polygon"
     assert len(spill.geometry.coordinates[0]) >= 4
+
+
+@pytest.mark.asyncio
+async def test_real_ml_client_output():
+    from app.services.ml_client import RealMLClient
+
+    ml = RealMLClient()
+    obs_time = datetime(2026, 8, 25, 10, 30, 0, tzinfo=timezone.utc)
+    spill = await ml.detect_oil(None, obs_time)
+
+    assert isinstance(spill, SpillDetection)
+    assert spill.spill_detected is True
+    assert 0.0 <= spill.confidence <= 1.0
+    assert spill.area_km2 > 0
+    assert spill.centroid is not None
+    assert spill.geometry is not None
+    assert spill.geometry.type == "Polygon"

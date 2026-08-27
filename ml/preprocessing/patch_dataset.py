@@ -1,5 +1,5 @@
 """
-SlickTrace — Patch Dataset
+MarineTrace — Patch Dataset
 
 Handles:
 - Patching 2048×2048 SAR images into 256×256 tiles

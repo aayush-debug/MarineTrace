@@ -1,5 +1,5 @@
 """
-SlickTrace — Inspection & Compatibility Evaluation Suite
+MarineTrace — Inspection & Compatibility Evaluation Suite
 
 Performs automated inspection of existing resources, Sentinel-1 data formats,
 hardware/software stack, geospatial transforms, and backend API contracts.
@@ -252,7 +252,7 @@ def run_full_inspection():
     # --------------------------------------------------------------------------
     # Build Markdown Document
     # --------------------------------------------------------------------------
-    md = f"""# SlickTrace ML Pipeline — Inspection & Compatibility Report
+    md = f"""# MarineTrace ML Pipeline — Inspection & Compatibility Report
 
 **Generated:** {timestamp}  
 **System OS:** {env_data['os']}  
@@ -278,7 +278,7 @@ def run_full_inspection():
 
 The reference repository [oceanhackweek/ohw23_proj_oil](https://github.com/oceanhackweek/ohw23_proj_oil) was evaluated across all dimensions:
 
-| Attribute | OHW23 Implementation | SlickTrace Requirement | Compatibility Assessment |
+| Attribute | OHW23 Implementation | MarineTrace Requirement | Compatibility Assessment |
 |---|---|---|---|
 | **Satellite / Sensor** | COSMO-SkyMed (SAR-2000, X-band) | Sentinel-1 (C-band) | ❌ Incompatible (different wavelength physics) |
 | **Polarization** | VV only (1 channel) | VV + VH dual-pol (2 channels) | ❌ Incompatible (cannot capture cross-pol contrast) |
@@ -410,7 +410,7 @@ result = detect_oil("path/to/sentinel1_image.tif")
 
 ```text
 ============================================================
-SLICKTRACE ML INSPECTION & COMPATIBILITY SUMMARY
+MARINETRACE ML INSPECTION & COMPATIBILITY SUMMARY
 ============================================================
 [PASS] Environment & Dependency Check
 [PASS] OHW23 Prior Work Evaluation (References Kept, Code Isolated)

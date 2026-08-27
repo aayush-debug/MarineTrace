@@ -73,15 +73,21 @@ python run_demo.py
 
 ## Project Structure
 
+For a detailed breakdown of every module, algorithm, and file, see **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)**.
+
 ```
-marinetrace/
-├── backend/              # FastAPI backend & orchestration
-│   ├── app/              # API routes, models, services
-│   ├── drift/            # OpenDrift integration
-│   ├── ais/              # AIS client & filtering
-│   ├── attribution/      # Scoring engine
-│   └── data/demo/        # Demo scenario data
-├── frontend/             # React + TypeScript dashboard
+MarineTrace/
+├── backend/              # FastAPI backend, simulation engines, AIS, attribution
+│   ├── app/              # API routes, models, services, core, db
+│   ├── ais/              # AIS client, trajectory analysis, & 3-stage filtering
+│   ├── attribution/      # 5-factor scoring engine & vessel ranking
+│   ├── drift/            # OpenDrift Lagrangian backtracking & forecasting
+│   └── tests/            # Automated pytest test suite
+├── frontend/             # React 19 + TypeScript + Vite interactive dashboard
+│   ├── src/api/          # Modular API client services
+│   ├── src/components/   # Domain-specific UI (map, charts, drift, vessel, satellite)
+│   ├── src/pages/        # Dashboard, Investigation, Drift, Reports, Satellites
+│   └── src/context/      # Unified investigation state management
 ├── ml/                   # Sentinel-1 SAR Oil Spill Detection Pipeline
 │   ├── models/           # U-Net ResNet-34 segmentation network
 │   ├── preprocessing/    # Dual-pol radiometric calibration & patch extraction
@@ -89,10 +95,11 @@ marinetrace/
 │   ├── inference/        # Pure JSON API interface & pipeline runners
 │   ├── training/         # Custom loss functions & training scripts
 │   ├── checkpoints/      # Model weights (best_model.pth)
-│   ├── data/             # Synthetic fixtures & sample GeoTIFF
-│   └── tests/            # Automated test suite
-├── docs/                 # API contract & architecture
-└── docker-compose.yml
+│   └── tests/            # Automated ML validation suite
+├── docs/                 # API contract, architecture, codebase & Docker guides
+├── docker-compose.yml    # Full-stack container orchestration
+├── marinetrace.db        # SQLite investigation database
+└── run_demo.py           # Standalone CLI investigation runner
 ```
 
 ## API Endpoints

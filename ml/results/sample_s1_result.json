@@ -2,9 +2,9 @@
   "spill_detected": true,
   "confidence": 0.7471548318862915,
   "observation_time": null,
-  "image_path": "data/sample_s1.tif",
-  "model_version": "slicktrace-unet-v1",
-  "processing_time_seconds": 2.32,
+  "image_path": "ml/data/sample_s1.tif",
+  "model_version": "marinetrace-unet-v1",
+  "processing_time_seconds": 9.01,
   "spill": {
     "area_km2": null,
     "area_pixels": 12223,

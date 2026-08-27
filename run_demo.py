@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SlickTrace Demo Runner — runs the full investigation pipeline from CLI.
+MarineTrace Demo Runner — runs the full investigation pipeline from CLI.
 
 This is the "definition of done" script.  When this runs successfully,
 the backend is complete.
@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 BANNER = """
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║   🛢️  S L I C K T R A C E                                    ║
+║   🛰️  M A R I N E T R A C E                                  ║
 ║   Intelligent Maritime Oil-Spill Investigation System        ║
 ║                                                              ║
 ║   ⚠️  SYNTHETIC / REPLAYABLE INVESTIGATION SCENARIO          ║
