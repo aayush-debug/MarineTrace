@@ -107,11 +107,3 @@ marinetrace/
 | `POST` | `/drift/forward` | Run forward drift prediction |
 | `GET` | `/vessels/search` | Search AIS vessels by area/time |
 
-## Team
-
-- **Person 1 (ML)**: Sentinel-1 SAR → U-Net → XGBoost → Oil spill detection
-- **Person 2 (Systems)**: Backend, drift, AIS, attribution, frontend
-
-## License
-
-Hackathon project — internal use only.
