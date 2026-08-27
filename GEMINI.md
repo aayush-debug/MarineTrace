@@ -19,11 +19,11 @@ It detects slicks from Sentinel-1 SAR satellite imagery, models reverse/forward 
 
 | Layer | Component | Technologies |
 | :--- | :--- | :--- |
-| **ML Engine** | SAR Slick Segmentation | PyTorch 2.13, `segmentation-models-pytorch` 0.5, U-Net (ResNet-34 backbone), Apple MPS GPU / CUDA / CPU |
+| **ML Engine** | SAR Slick Segmentation | PyTorch 2.13, `segmentation-models-pytorch` 0.5, U-Net (ResNet-34 backbone, 24.4M params), Apple MPS GPU / CUDA / CPU |
 | **Backend API** | REST & WebSockets | FastAPI, Uvicorn, Pydantic v2, SQLite (`aiosqlite`), `httpx`, `websockets` |
-| **Frontend UI** | Maritime GIS Dashboard | React 19, TypeScript 5, Vite 6, Leaflet GIS, TailwindCSS, Lucide Icons |
+| **Frontend UI** | Maritime GIS Command Center | React 19, TypeScript 5, Vite 6, Leaflet GIS (`react-leaflet`), TailwindCSS v4, Recharts, Lucide Icons |
 | **AIS Tracking** | Live & Historical Feed | **AISStream.io** (live WebSocket) + **Datalastic API** + Deterministic **MockAISClient** fallback |
-| **Drift Engine** | Metocean Simulation | **OpenDrift 1.14** (`OceanDrift`) driven by **Copernicus Marine** (`uo`, `vo` currents) + Geometric fallback |
+| **Drift Engine** | Metocean Simulation | **OpenDrift 1.14** (`OceanDrift`) driven by **Copernicus Marine** (`uo`, `vo` surface current grids) + Geometric fallback |
 | **Attribution** | Suspect Scoring Engine | 5-Factor mathematical model (Spatial 30%, Temporal 25%, Trajectory 20%, Behaviour 15%, Vessel Risk 10%) |
 
 ---
@@ -36,13 +36,15 @@ MarineTrace/
 ├── GEMINI.md                        # Gemini / workspace agent context mirror
 ├── PROJECT_STRUCTURE.md             # In-depth architectural layout & component inventory
 ├── README.md                        # Project landing documentation & quickstart
-├── docker-compose.yml               # Container orchestration (FastAPI + Vite)
+├── docker-compose.yml               # Container orchestration (FastAPI backend service)
 ├── run_demo.py                      # Standalone zero-setup CLI demonstration runner
+├── marinetrace.db                   # SQLite investigation persistence database
+├── package.json                     # Root npm script delegation to frontend
 ├── .env.example                     # Environment configuration template
 │
-├── backend/                         # FastAPI Backend Application
+├── backend/                         # 🐍 FastAPI Backend Application
 │   ├── app/
-│   │   ├── main.py                  # API entry point & CORS configuration
+│   │   ├── main.py                  # API entry point, lifespan, & CORS configuration
 │   │   ├── api/routes/              # REST endpoints (investigation, vessels, drift, ping)
 │   │   ├── core/                    # Config (Pydantic Settings), logging
 │   │   ├── db/                      # SQLite persistence repository (aiosqlite)
@@ -50,24 +52,53 @@ MarineTrace/
 │   │   ├── services/
 │   │   │   ├── ml_client.py         # RealMLClient (direct U-Net) & MockMLClient
 │   │   │   ├── ais_service.py       # Multi-provider AIS coordinator & 3-stage filter
-│   │   │   ├── drift_service.py     # Backward & forward drift simulation service
+│   │   │   ├── copernicus_service.py# Copernicus Marine current fetching & NetCDF caching
+│   │   │   ├── drift_service.py     # OpenDrift & geometric metocean drift simulation
+│   │   │   ├── environmental_service.py # Metocean environmental data coordinator
 │   │   │   └── attribution_service.py # 5-factor mathematical attribution engine
-│   │   └── utils/                   # Geodesic math, bounding box expansion
+│   │   └── utils/                   # Geodesic math, bounding box expansion, time helpers
 │   ├── ais/                         # AISStreamClient, DatalasticClient, MockAISClient, filtering, trajectory
-│   ├── attribution/                 # Scoring dimensions, ranking, explanation generation
-│   ├── drift/                       # Backtracking, forecasting, OpenDrift wrapper
-│   ├── tests/                       # 20 automated pytest tests (all passing)
-│   └── requirements.txt             # Python dependencies
+│   ├── attribution/                 # Scoring dimensions, ranking, natural language justification
+│   ├── data/copernicus/             # Cached Copernicus Marine NetCDF current grids (*.nc)
+│   ├── drift/                       # Backtracking, forecasting, OpenDrift physical model runner
+│   ├── tests/                       # 30 automated pytest tests (all passing)
+│   └── requirements.txt             # Python dependencies (OpenDrift, Copernicus, FastAPI, etc.)
 │
-├── frontend/                        # React 19 + TypeScript + Vite Dashboard
+├── frontend/                        # ⚛️ React 19 + TypeScript + Vite Dashboard
+│   ├── package.json                 # React 19, Leaflet, Recharts, Lucide, Tailwind v4
+│   ├── vite.config.ts               # Vite configuration with Tailwind CSS plugin
+│   ├── tsconfig.json                # TypeScript compiler configuration
+│   ├── public/                      # Static assets & SAR preview composites
 │   └── src/
-│       ├── api/                     # Modular API client methods (investigations, spills, client)
-│       ├── components/map/          # MaritimeMap.tsx, Leaflet layers, AIS tracks, measurement tool
-│       ├── context/                 # InvestigationContext.tsx (global state)
-│       ├── pages/                   # Dashboard, Investigation, Drift, Reports, NewInvestigation
-│       └── types/                   # TypeScript interfaces
+│       ├── api/                     # Modular API client (auth, client, drift, investigations, sar, spcsft, spills, vessels)
+│       ├── components/              # Modular UI components
+│       │   ├── charts/              # AttributionRadarChart
+│       │   ├── drift/               # DriftTimelineControl, EnvironmentalConditionsCard
+│       │   ├── layout/              # Sidebar, TopNav
+│       │   ├── map/                 # MaritimeMap, MapLayerControls, MapLegend, MapZoomControl
+│       │   ├── ml/                  # MLModelCard
+│       │   ├── satellite/           # SARGisMapView, SARRasterViewer, SatelliteViewer, SARMetricsBadge
+│       │   ├── spill/               # SpillInfoPanel
+│       │   ├── timeline/            # InvestigationTimeline
+│       │   ├── ui/                  # ConfidenceGauge, PipelineProgressModal
+│       │   └── vessel/              # VesselRankList, VesselDetailPanel, ScoreBreakdownBar
+│       ├── context/                 # AuthContext, InvestigationContext, ThemeContext
+│       ├── data/demo/               # Deterministic demo and SAR raster fixtures
+│       ├── pages/                   # 10 Core Application Views:
+│       │   ├── Dashboard.tsx        # Command center overview with GIS map & active incidents
+│       │   ├── SatelliteImagery.tsx # Sentinel-1 SAR raster viewer (VV/VH, probability mask, GeoJSON)
+│       │   ├── SpaceShiftRealTime.tsx # Live satellite & real-time maritime vessel monitor
+│       │   ├── DriftAnalysis.tsx    # OpenDrift backtrack origin & forward forecast projection
+│       │   ├── Investigation.tsx    # Investigation drilldown & suspect vessel prioritization
+│       │   ├── NewInvestigation.tsx # Investigation creator with SAR GeoTIFF/image upload workflow
+│       │   ├── VesselAttribution.tsx# 5-factor scoring breakdown & trajectory inspection
+│       │   ├── Reports.tsx          # Forensic investigation report generation & PDF export
+│       │   ├── AccessLogs.tsx       # Security audit logs & user access history
+│       │   └── LoginPage.tsx        # Authentication & role-based dashboard access
+│       ├── types/                   # TypeScript schemas (auth, investigation, sar, spcsft)
+│       └── index.css                # Marine dark-mode design system, glassmorphism, & tokens
 │
-└── ml/                              # Machine Learning Pipeline
+└── ml/                              # 🧠 Machine Learning Pipeline
     ├── checkpoints/best_model.pth   # 93 MB trained U-Net ResNet-34 model checkpoint
     ├── data/sample_s1.tif           # Sample dual-pol Sentinel-1 SAR GeoTIFF (512x512)
     ├── inference/
@@ -85,32 +116,48 @@ MarineTrace/
 ## ⚙️ How to Run the System
 
 ### 1. Python Environment
-Always use the virtual environment at `backend/venv/`:
+Always use the virtual environment located at `backend/venv/`:
 ```bash
-# Python binary
+# Python binary path (from workspace root)
 backend/venv/bin/python3
 ```
 
 ### 2. Start Backend API (Port 8000)
+From the workspace root:
 ```bash
-cd backend && venv/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+cd backend && venv/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+*Or directly from root without changing directory:*
+```bash
+backend/venv/bin/python3 -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 3. Start Frontend Dashboard (Port 5173)
+From the workspace root:
 ```bash
-cd frontend && npm run dev -- --host
+npm run dev
+```
+*Or navigating into frontend directory:*
+```bash
+cd frontend && npm install && npm run dev -- --host
 ```
 
-### 4. Run Automated Test Suites (56 Total Tests)
+### 4. Build Frontend Production Bundle
 ```bash
-# Backend unit, API & AIS integration tests (20 tests)
+npm run build
+# (or: cd frontend && npm run build)
+```
+
+### 5. Run Automated Test Suites (66 Total Tests — 100% Passing)
+```bash
+# Backend unit, API, Copernicus, OpenDrift & AIS integration tests (30 tests)
 PYTHONPATH=backend backend/venv/bin/python3 -m pytest backend/tests -v
 
 # ML pipeline validation tests (36 tests)
 PYTHONPATH=ml backend/venv/bin/python3 -m pytest ml/tests -v
 ```
 
-### 5. Run Standalone CLI Demonstration
+### 6. Run Standalone CLI Demonstration
 ```bash
 backend/venv/bin/python3 run_demo.py
 ```
@@ -120,12 +167,26 @@ backend/venv/bin/python3 run_demo.py
 ## 🧠 ML Engine Facts & Performance
 
 - **Model Architecture**: Semantic Segmentation U-Net with ResNet-34 backbone (`segmentation_models_pytorch`).
-- **Parameter Count**: 24,433,233 (24.4 Million).
+- **Parameter Count**: 24,433,233 (24.4 Million parameters).
 - **Input Channels**: 2-channel SAR ($\sigma_{VV}^0, \sigma_{VH}^0$ in dB, normalized $[0, 1]$).
 - **Output Channel**: 1-channel pixel oil-slick probability map (sigmoid activated).
 - **Detection Threshold**: `0.35` (calibrated for Sentinel-1 C-band SAR).
 - **Model Caching**: `ml/inference/api_interface.py` utilizes in-memory model caching via `_MODEL_CACHE`, reducing inference latency from **2.06s → 0.28s**.
 - **Hardware Acceleration**: Automatically selects Apple Metal Performance Shaders (`mps`) on macOS, `cuda` on Nvidia GPUs, or `cpu`.
+
+---
+
+## 🌊 Metocean Drift Engine (Copernicus Marine + OpenDrift)
+
+MarineTrace uses a physical Lagrangian particle drift simulation:
+
+1. **Copernicus Marine Integration (`CopernicusService`)**:
+   - Queries `cmems_mod_glo_phy-cur_anfc_0.083deg_P1D-m` for surface current velocity vectors ($u_o, v_o$).
+   - Automatically caches NetCDF grids locally under `backend/data/copernicus/` to minimize external API calls.
+2. **OpenDrift 1.14 Runner (`OpenDriftRunner` & `OceanDrift`)**:
+   - **Reverse Drift (Backtracking)**: Seeds Lagrangian particles at slick observation coordinates and simulates backwards in time (step: 300s) to estimate release origin point ($L_0, \lambda_0$) and time window ($T_0$).
+   - **Forward Drift (Forecasting)**: Projects slick trajectory and dispersion envelope forward in time (up to 48 hours) for containment and shoreline impact planning.
+3. **Geometric Fallback**: Gracefully activates if NetCDF data or external providers are unreachable.
 
 ---
 
@@ -166,6 +227,8 @@ Attribution scores ($0 - 100$) are calculated dynamically from reconstructed ves
 | `POST` | `/demo/investigation` | Offline deterministic demonstration scenario |
 | `GET` | `/investigations` | List historical investigation records |
 | `GET` | `/investigation/{id}` | Retrieve specific investigation report |
+| `POST` | `/drift/backward` | Standalone backward drift simulation |
+| `POST` | `/drift/forward` | Standalone forward drift trajectory forecast |
 
 ---
 
@@ -178,6 +241,10 @@ Configuration is managed via Pydantic Settings in `backend/app/core/config.py`.
 AIS_API_KEY=your_key_here
 AIS_BASE_URL=wss://stream.aisstream.io/v0/stream
 AIS_PROVIDER=aisstream
+
+# Copernicus Marine Credentials (Optional for live fetch)
+COPERNICUSMARINE_SERVICE_USERNAME=your_copernicus_username
+COPERNICUSMARINE_SERVICE_PASSWORD=your_copernicus_password
 
 # ML Configuration
 USE_REAL_ML=true
@@ -202,4 +269,4 @@ DATABASE_URL=sqlite:///./marinetrace.db
 - **AIS Mock Fallback**: ✅ **READY** (Used in `/demo/investigation` or offline mode)
 - **5-Factor Attribution**: ✅ **WORKING** (Mathematical suspect ranking)
 - **Automated Tests**: ✅ **66/66 PASSING** (30 backend + 36 ML)
-- **Frontend Dashboard**: ✅ **WORKING** (React 19 Leaflet GIS on port 5173)
+- **Frontend Dashboard**: ✅ **WORKING** (React 19 + TypeScript + Vite 6 + Leaflet GIS on port 5173)

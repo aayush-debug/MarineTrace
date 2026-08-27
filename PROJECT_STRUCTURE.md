@@ -94,70 +94,61 @@ MarineTrace/
 │   ├── package.json                  # NPM dependencies (React 19, Leaflet, Recharts, Lucide, Tailwind v4)
 │   ├── tsconfig.json                 # TypeScript compiler configuration
 │   ├── vite.config.ts                # Vite build tool configuration with Tailwind plugin
-│   ├── public/                       # Static public assets
+│   ├── public/                       # Static public assets & SAR composite fixtures
 │   │   ├── favicon.svg               # MarineTrace satellite logo
-│   │   └── icons.svg                 # SVG sprite sheet
+│   │   ├── icons.svg                 # SVG sprite sheet
+│   │   └── sar/                      # Sample Sentinel-1 SAR composite & probability overlays
 │   └── src/                          # TypeScript source code
 │       ├── main.tsx                  # React application root mounting
 │       ├── App.tsx                   # Main router, navigation layout, & global modals
-│       ├── index.css                 # Design system tokens, glassmorphism, & animations
+│       ├── index.css                 # Design system tokens, marine dark-mode, glassmorphism, & animations
 │       ├── api/                      # Modular API client layer
+│       │   ├── auth.ts               # Authentication & token management API
 │       │   ├── client.ts             # Generic fetch wrapper with error handling & base URL
 │       │   ├── drift.ts              # Drift simulation API calls
 │       │   ├── investigations.ts     # Full investigation execution & retrieval
+│       │   ├── sar.ts                # SAR satellite detection & imagery APIs
+│       │   ├── spcsft.ts             # SpaceShift live satellite & AIS feed integration
 │       │   ├── spills.ts             # Spill detection endpoints
 │       │   └── vessels.ts            # Vessel track query endpoints
 │       ├── assets/                   # Images and branding assets
 │       ├── components/               # Organized domain-specific UI components
-│       │   ├── charts/               # Analytics & data visualizers
-│       │   │   └── AttributionRadarChart.tsx # 5-factor attribution radar chart
-│       │   ├── drift/                # Drift simulation controls & readouts
-│       │   │   ├── DriftTimelineControl.tsx # Step-by-step drift particle player
-│       │   │   └── EnvironmentalConditionsCard.tsx # Wind, current, and wave metrics card
-│       │   ├── layout/               # Shell layout components
-│       │   │   ├── Sidebar.tsx       # Primary collapsible navigation sidebar
-│       │   │   └── TopNav.tsx        # Breadcrumb, status indicator, and quick actions
-│       │   ├── map/                  # Leaflet geospatial mapping suite
-│       │   │   ├── MapBasemapSelector.tsx # Satellite, dark ocean, and nautical chart switcher
-│       │   │   ├── MapCoordinateHUD.tsx   # Real-time cursor coordinates & zoom HUD
-│       │   │   ├── MapLayerControls.tsx   # Toggleable layers (SAR, Slick, Drift, AIS, Heatmap)
-│       │   │   ├── MapLegend.tsx          # Color-coded interactive map legend
-│       │   │   ├── MapMeasureTool.tsx     # Distance & geodesic measuring tool
-│       │   │   ├── MapSearchBar.tsx       # Coordinate and vessel search bar
-│       │   │   ├── MaritimeMap.tsx        # High-performance Leaflet container with GeoJSON layers
-│       │   │   └── MaritimeOverlays.tsx   # EEZ boundaries, shipping lanes, MPAs, bathymetry
-│       │   ├── ml/                   # Machine learning metrics & inspection components
-│       │   │   └── MLModelCard.tsx   # U-Net confidence, IoU, and patch metrics
-│       │   ├── satellite/            # Satellite imagery components
-│       │   │   ├── SARMetricsBadge.tsx    # Polarization (VV/VH), incidence angle badge
-│       │   │   └── SatelliteViewer.tsx    # Split-screen comparison & SAR patch inspector
-│       │   ├── spill/                # Detected oil slick components
-│       │   │   └── SpillInfoPanel.tsx     # Slick area, confidence, coordinates, and shape metrics
-│       │   ├── timeline/             # Temporal inspection
-│       │   │   └── InvestigationTimeline.tsx # Incident timeline from release to observation
-│       │   ├── ui/                   # Reusable base UI primitives & feedback modals
-│       │   │   ├── ConfidenceGauge.tsx    # Radial SVG score gauge
-│       │   │   └── PipelineProgressModal.tsx # Live step-by-step pipeline status overlay
-│       │   └── vessel/               # Vessel attribution inspection
-│       │       ├── ScoreBreakdownBar.tsx  # Stacked 5-feature contribution bar
-│       │       ├── VesselDetailPanel.tsx  # Deep dive into suspect vessel history, MMSI, flag, anomaly
-│       │       └── VesselRankList.tsx     # Ranked suspect vessel leaderboard with priority medals
+│       │   ├── charts/               # AttributionRadarChart.tsx (5-factor attribution radar)
+│       │   ├── drift/                # DriftTimelineControl.tsx, EnvironmentalConditionsCard.tsx
+│       │   ├── layout/               # Sidebar.tsx, TopNav.tsx
+│       │   ├── map/                  # MaritimeMap.tsx, MapLayerControls.tsx, MapLegend.tsx, MapZoomControl.tsx
+│       │   ├── ml/                   # MLModelCard.tsx
+│       │   ├── satellite/            # SARGisMapView.tsx, SARRasterViewer.tsx, SatelliteViewer.tsx, SARMetricsBadge.tsx
+│       │   ├── spill/                # SpillInfoPanel.tsx
+│       │   ├── timeline/             # InvestigationTimeline.tsx
+│       │   ├── ui/                   # ConfidenceGauge.tsx, PipelineProgressModal.tsx
+│       │   └── vessel/               # VesselRankList.tsx, VesselDetailPanel.tsx, ScoreBreakdownBar.tsx
 │       ├── context/                  # State management
-│       │   └── InvestigationContext.tsx # Central store for active investigation, layers, & filters
+│       │   ├── AuthContext.tsx       # User session & role-based access management
+│       │   ├── InvestigationContext.tsx # Central store for active investigation, layers, & filters
+│       │   └── ThemeContext.tsx      # Dark/light theme provider
 │       ├── data/                     # Demo scenarios & fallback mocks
-│       │   └── demo/demoData.ts      # Offline demo dataset for presentations
-│       ├── pages/                    # Main application view pages
-│       │   ├── Dashboard.tsx         # Unified overview dashboard
-│       │   ├── DriftAnalysis.tsx     # Backward & forward drift simulation workbench
+│       │   ├── demo/demoData.ts      # Offline demo dataset for presentations
+│       │   └── demo/sarData.ts       # Synthetic SAR raster fixtures & polygon geometries
+│       ├── pages/                    # 10 Application Views
+│       │   ├── Dashboard.tsx         # Unified GIS overview dashboard
+│       │   ├── SatelliteImagery.tsx  # Sentinel-1 SAR imagery raster viewer & mask overlays
+│       │   ├── SpaceShiftRealTime.tsx# Real-time satellite & live AIS maritime tracker
+│       │   ├── DriftAnalysis.tsx     # Backward origin reconstruction & forward drift forecast
 │       │   ├── Investigation.tsx     # Full interactive map + attribution investigation workbench
 │       │   ├── NewInvestigation.tsx  # Upload GeoTIFF / manual coordinate investigation launcher
+│       │   ├── VesselAttribution.tsx # Deep-dive vessel ranking and 5-factor feature breakdown
 │       │   ├── Reports.tsx           # Formal investigative report generation & PDF export
-│       │   ├── SatelliteImagery.tsx  # Sentinel-1 SAR imagery browser & patch viewer
-│       │   └── VesselAttribution.tsx # Deep-dive vessel ranking and trajectory analysis
-│       ├── services/                 # Re-exported legacy service layer
-│       │   └── api.ts                # Unified API service exports
-│       └── types/                    # TypeScript interfaces & GeoJSON definitions
-│           └── investigation.ts      # InvestigationResponse, Vessel, Spill, Drift, Layer types
+│       │   ├── AccessLogs.tsx        # Security audit trail & authentication access logs
+│       │   └── LoginPage.tsx         # User authentication & role selector
+│       ├── services/                 # Unified API service layer
+│       │   └── api.ts                # API client exports
+│       ├── types/                    # TypeScript interfaces & GeoJSON definitions
+│       │   ├── auth.ts               # Auth credentials & user profile schemas
+│       │   ├── investigation.ts      # InvestigationResponse, Vessel, Spill, Drift types
+│       │   ├── sar.ts                # SAR candidate & raster layer interfaces
+│       │   └── spcsft.ts             # SpaceShift satellite & vessel stream types
+│       └── utils/                    # Map tile utilities & geometry helpers
 │
 ├── ml/                               # 🧠 Sentinel-1 SAR Oil Spill Detection Pipeline
 │   ├── config.yaml                   # Model hyperparameters, patch size, loss weights
