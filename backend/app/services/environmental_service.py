@@ -11,7 +11,13 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any
 
+from app.core.config import settings
 from app.core.logging import logger
+
+DATASET_ID = "cmems_mod_glo_phy-cur_anfc_0.083deg_P1D-m"
+VARIABLES = ["uo", "vo"]
+MIN_DEPTH = 0.494
+MAX_DEPTH = 5.0
 
 
 class EnvironmentalProvider(ABC):
@@ -83,12 +89,12 @@ class CopernicusProvider(EnvironmentalProvider):
     Uses the copernicusmarine Python package to fetch global ocean
     physics data (currents: uo, vo) and atmospheric data.
 
-    Requires COPERNICUS_USERNAME and COPERNICUS_PASSWORD in .env.
+    Reads credentials from settings or constructor parameters.
     """
 
     def __init__(self, username: str = "", password: str = ""):
-        self.username = username
-        self.password = password
+        self.username = username or settings.copernicus_username
+        self.password = password or settings.copernicus_password
 
     async def get_ocean_currents(
         self,
@@ -100,21 +106,23 @@ class CopernicusProvider(EnvironmentalProvider):
             import copernicusmarine
 
             ds = copernicusmarine.open_dataset(
-                dataset_id="cmems_mod_glo_phy_my_0.083deg_P1D-m",
-                variables=["uo", "vo"],
+                dataset_id=DATASET_ID,
+                variables=VARIABLES,
                 minimum_latitude=bbox[0],
                 minimum_longitude=bbox[1],
                 maximum_latitude=bbox[2],
                 maximum_longitude=bbox[3],
+                minimum_depth=MIN_DEPTH,
+                maximum_depth=MAX_DEPTH,
                 start_datetime=start_time.isoformat(),
                 end_datetime=end_time.isoformat(),
-                username=self.username,
-                password=self.password,
+                username=self.username or None,
+                password=self.password or None,
             )
             return {
                 "provider": "copernicus",
                 "dataset": ds,
-                "variables": ["uo", "vo"],
+                "variables": VARIABLES,
             }
         except Exception as e:
             logger.error("Copernicus data fetch failed: %s", e)
@@ -137,7 +145,15 @@ class EnvironmentalService:
     """Facade for environmental data — selects provider based on config."""
 
     def __init__(self, provider: EnvironmentalProvider | None = None):
-        self.provider = provider or MockEnvironmentalProvider()
+        if provider is not None:
+            self.provider = provider
+        elif settings.copernicus_username and settings.copernicus_password:
+            self.provider = CopernicusProvider(
+                username=settings.copernicus_username,
+                password=settings.copernicus_password,
+            )
+        else:
+            self.provider = MockEnvironmentalProvider()
 
     async def get_ocean_currents(self, bbox, start_time, end_time):
         return await self.provider.get_ocean_currents(bbox, start_time, end_time)

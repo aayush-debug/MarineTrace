@@ -34,8 +34,15 @@ def _get_device() -> torch.device:
     return torch.device("cpu")
 
 
+_MODEL_CACHE: dict[str, torch.nn.Module] = {}
+
+
 def _load_model(checkpoint_path: str, config: dict, device: torch.device):
-    """Load model from checkpoint."""
+    """Load model from checkpoint (cached)."""
+    cache_key = f"{checkpoint_path}:{device.type}"
+    if cache_key in _MODEL_CACHE:
+        return _MODEL_CACHE[cache_key]
+
     from models.unet import create_model
 
     # If checkpoint exists, skip downloading ImageNet weights since all weights are loaded from checkpoint
@@ -55,6 +62,7 @@ def _load_model(checkpoint_path: str, config: dict, device: torch.device):
 
     model = model.to(device)
     model.eval()
+    _MODEL_CACHE[cache_key] = model
     return model
 
 
@@ -155,9 +163,13 @@ def detect_oil(
         config = {}
 
     if checkpoint_path is None:
-        checkpoint_path = str(
-            PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model.pth"
-        )
+        env_ckpt = os.environ.get("ML_MODEL_PATH")
+        if env_ckpt and os.path.exists(env_ckpt):
+            checkpoint_path = env_ckpt
+        else:
+            checkpoint_path = str(
+                PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model.pth"
+            )
 
     if threshold is None:
         threshold = config.get("inference", {}).get("default_threshold", 0.5)

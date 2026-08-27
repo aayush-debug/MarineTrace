@@ -21,6 +21,7 @@ dist/
 # Environment
 .env
 .env.*
+!.env.example
 .env.local
 
 # IDE
@@ -52,3 +53,6 @@ ml/data/*.tar.gz
 
 # Generated Run Results and Temporary Visualizations
 ml/results/visualizations/*.png
+.vite/
+*.nc
+!backend/data/copernicus/*.nc

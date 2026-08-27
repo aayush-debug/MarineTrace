@@ -15,6 +15,12 @@ services:
     environment:
       # Override to use SQLite inside the container (no Postgres needed for demo)
       DATABASE_URL: "sqlite:///./marinetrace.db"
+      AIS_API_KEY: ${AIS_API_KEY:-}
+      AIS_BASE_URL: ${AIS_BASE_URL:-wss://stream.aisstream.io/v0/stream}
+      AIS_PROVIDER: ${AIS_PROVIDER:-aisstream}
+      COPERNICUSMARINE_SERVICE_USERNAME: ${COPERNICUSMARINE_SERVICE_USERNAME:-}
+      COPERNICUSMARINE_SERVICE_PASSWORD: ${COPERNICUSMARINE_SERVICE_PASSWORD:-}
+      USE_REAL_ML: "true"
     volumes:
       # Mount only source code — NOT the whole /app dir (preserves pip-installed packages)
       - ./backend/app:/app/app
@@ -31,28 +37,6 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 3
-
-  # ─────────────────────────────────────────────────
-  # Vite Frontend  →  http://localhost:5173
-  # ─────────────────────────────────────────────────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: marinetrace-frontend:latest
-    container_name: marinetrace-frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      # Hot-reload: mount only src so node_modules stays in the image
-      - ./frontend/src:/app/src
-      - ./frontend/index.html:/app/index.html
-      - ./frontend/public:/app/public
-    depends_on:
-      backend:
-        condition: service_healthy
-    restart: unless-stopped
-    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   marinetrace_db:

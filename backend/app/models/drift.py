@@ -36,6 +36,14 @@ class DriftTrajectory(BaseModel):
     points: list[list[float]] = Field(
         default_factory=list, description="[[lon, lat], …] trajectory points"
     )
+    drift_model: str = Field(
+        default="geometric_fallback",
+        description="'opendrift_copernicus' or 'geometric_fallback'",
+    )
+    forcing: str | None = Field(
+        default=None,
+        description="'Copernicus Marine' or 'Geometric Fallback'",
+    )
 
 
 class DriftResult(BaseModel):
@@ -45,3 +53,12 @@ class DriftResult(BaseModel):
     origin_time_window: DriftTimeWindow
     backward_trajectory: DriftTrajectory
     forward_trajectory: DriftTrajectory | None = None
+    drift_model: str = Field(
+        default="geometric_fallback",
+        description="'opendrift_copernicus' or 'geometric_fallback'",
+    )
+    forcing: str | None = Field(
+        default=None,
+        description="'Copernicus Marine' or 'Geometric Fallback'",
+    )
+

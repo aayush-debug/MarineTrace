@@ -61,6 +61,7 @@ MarineTrace/
 │   │   ├── services/                 # Business logic & domain service orchestrators
 │   │   │   ├── ais_service.py        # AIS query & filtering coordinator
 │   │   │   ├── attribution_service.py# Attribution engine coordinator
+│   │   │   ├── copernicus_service.py # Copernicus Marine real-time current fetching & NetCDF caching
 │   │   │   ├── drift_service.py      # OpenDrift & geometric drift orchestrator
 │   │   │   ├── environmental_service.py # Copernicus Metocean data fetcher
 │   │   │   └── ml_client.py          # HTTP client for ML pipeline (with MockMLClient fallback)
@@ -71,7 +72,8 @@ MarineTrace/
 │   │   ├── features.py               # 5-factor feature extractors (Spatial, Temporal, Trajectory, Behaviour, Relevance)
 │   │   ├── scoring.py                # Sigmoidal scoring & weighted aggregation
 │   │   └── ranking.py                # Candidate ranking & natural language justification generator
-│   ├── data/                         # Static demo datasets
+│   ├── data/                         # Cached metocean & demo datasets
+│   │   ├── copernicus/               # Downloaded Copernicus Marine NetCDF current grids
 │   │   └── demo/                     # Pre-cached demonstration scenarios
 │   ├── drift/                        # 🌊 Oceanographic Drift Modeling
 │   │   ├── backtracking.py           # Reverse Lagrangian particle simulation to locate spill origin
@@ -81,6 +83,8 @@ MarineTrace/
 │       ├── test_ais.py               # Tests for AIS filtering & trajectory analysis
 │       ├── test_api.py               # FastAPI endpoint tests
 │       ├── test_attribution.py       # Attribution scoring & ranking unit tests
+│       ├── test_copernicus_opendrift.py # OpenDrift + Copernicus real current simulation tests
+│       ├── test_datalastic_integration.py # Datalastic AIS API integration tests
 │       ├── test_drift.py             # Drift simulation tests
 │       └── test_ml_client.py         # ML client integration tests
 │

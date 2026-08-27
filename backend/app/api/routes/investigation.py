@@ -12,8 +12,11 @@ import time
 import uuid
 from datetime import datetime, timezone
 
+import os
+import sys
+from pathlib import Path
 from fastapi import APIRouter, HTTPException
-
+from app.core.config import settings
 from app.core.logging import logger
 from app.models.investigation import (
     InvestigationRequest,
@@ -24,14 +27,15 @@ from app.models.spill import SpillSummary
 from app.services.ais_service import AISService
 from app.services.attribution_service import AttributionService
 from app.services.drift_service import DriftService
-from app.services.ml_client import MockMLClient
+from app.services.ml_client import MockMLClient, RealMLClient
 
 from app.db.repository import SQLiteInvestigationRepository
 
 router = APIRouter(tags=["investigation"])
 
 # Service singletons
-_ml_client = MockMLClient()
+_mock_ml_client = MockMLClient()
+_real_ml_client = RealMLClient()
 _drift_service = DriftService()
 _ais_service = AISService()
 _attribution_service = AttributionService()
@@ -40,8 +44,61 @@ _attribution_service = AttributionService()
 _repo = SQLiteInvestigationRepository()
 
 
+@router.post("/detect")
+async def detect_spill(request: dict):
+    """
+    Direct ML SAR image oil spill detection.
+    Accepts JSON with:
+      - image: path to SAR GeoTIFF or base64 encoded data (optional, falls back to sample_s1.tif)
+      - threshold: detection confidence threshold (float, optional)
+    """
+    ml_dir = Path(__file__).resolve().parents[4] / "ml"
+    if str(ml_dir) not in sys.path:
+        sys.path.insert(0, str(ml_dir))
+
+    from inference.api_interface import detect_oil
+
+    image_data = request.get("image")
+    threshold = request.get("threshold", 0.35)
+
+    target_image = None
+    temp_file = None
+    try:
+        if image_data:
+            if image_data.startswith("data:") or len(image_data) > 500:
+                import base64
+                import tempfile
+                payload = image_data.split(",", 1)[1] if "," in image_data else image_data
+                raw_bytes = base64.b64decode(payload)
+                tmp = tempfile.NamedTemporaryFile(suffix=".tif", delete=False)
+                tmp.write(raw_bytes)
+                tmp.flush()
+                tmp.close()
+                target_image = tmp.name
+                temp_file = tmp.name
+            elif Path(image_data).exists():
+                target_image = str(Path(image_data).resolve())
+
+        if not target_image:
+            target_image = str(ml_dir / "data" / "sample_s1.tif")
+
+        return detect_oil(target_image, threshold=threshold)
+    except Exception as e:
+        logger.error("Detection error: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if temp_file and os.path.exists(temp_file):
+            try:
+                os.unlink(temp_file)
+            except OSError:
+                pass
+
+
 @router.post("/investigate", response_model=InvestigationResponse)
-async def investigate(request: InvestigationRequest):
+async def investigate(
+    request: InvestigationRequest,
+    force_mock_ais: bool = False,
+):
     """
     Run a full investigation pipeline.
 
@@ -58,7 +115,8 @@ async def investigate(request: InvestigationRequest):
     try:
         # ── Step 1: ML Oil Detection ─────────────────────
         logger.info("[1/4] Running oil-spill detection...")
-        spill = await _ml_client.detect_oil(
+        ml_client = _real_ml_client if settings.use_real_ml else _mock_ml_client
+        spill = await ml_client.detect_oil(
             image_data=request.image,
             observation_time=request.observation_time,
         )
@@ -97,7 +155,8 @@ async def investigate(request: InvestigationRequest):
 
         # ── Step 3: AIS Reconstruction ───────────────────
         logger.info("[3/4] Reconstructing AIS traffic...")
-        all_tracks, filtered = await _ais_service.get_candidate_vessels(drift)
+        ais_service = AISService(force_mock=force_mock_ais)
+        all_tracks, filtered = await ais_service.get_candidate_vessels(drift)
         logger.info(
             "  %d vessels found, %d candidates after filtering",
             len(all_tracks), len(filtered),
@@ -160,8 +219,8 @@ async def demo_investigation():
         observation_time=obs_time,
     )
 
-    # Run through the same pipeline with mock services
-    response = await investigate(request)
+    # Run through the same pipeline with mock services for deterministic demo
+    response = await investigate(request, force_mock_ais=True)
     response.is_demo = True
     response.investigation_id = "DEMO-001"
     await _repo.save(response)

@@ -13,14 +13,22 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
 # System packages:
-#   gcc         — compile C extensions (shapely wheels)
-#   libgeos-dev — Shapely geometry operations
-#   libproj-dev — Pyproj / coordinate transforms
-#   curl        — Docker HEALTHCHECK
+#   gcc / g++     — compile C/C++ extensions
+#   libgeos-dev   — Shapely geometry operations
+#   libproj-dev   — Pyproj / coordinate transforms
+#   libnetcdf-dev — NetCDF C libraries
+#   libhdf5-dev   — HDF5 storage
+#   liblzma-dev   — XZ compression for roaring-landmask
+#   curl          — Docker HEALTHCHECK
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    g++ \
     libgeos-dev \
     libproj-dev \
+    proj-bin \
+    libnetcdf-dev \
+    libhdf5-dev \
+    liblzma-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 

@@ -77,7 +77,10 @@ class RealMLClient(MLClientInterface):
     async def detect_oil(
         self, image_data: str | None, observation_time: datetime
     ) -> SpillDetection:
+        import os
         import sys
+        import base64
+        import tempfile
         from pathlib import Path
 
         ml_dir = Path(__file__).resolve().parent.parent.parent.parent / "ml"
@@ -86,47 +89,73 @@ class RealMLClient(MLClientInterface):
 
         from inference.api_interface import detect_oil
 
-        target_image = (
-            image_data
-            if (image_data and Path(image_data).exists())
-            else str(ml_dir / "data" / "sample_s1.tif")
-        )
-        logger.info("RealMLClient: executing real U-Net inference on %s", target_image)
+        target_image = None
+        temp_file_to_clean = None
 
-        res = detect_oil(target_image)
-        spill = res.get("spill") or {}
+        try:
+            if image_data:
+                # Check if it's base64 encoded image data
+                if image_data.startswith("data:") or len(image_data) > 500:
+                    payload = image_data
+                    if "," in payload:
+                        payload = payload.split(",", 1)[1]
+                    try:
+                        raw_bytes = base64.b64decode(payload)
+                        tmp = tempfile.NamedTemporaryFile(suffix=".tif", delete=False)
+                        tmp.write(raw_bytes)
+                        tmp.flush()
+                        tmp.close()
+                        target_image = tmp.name
+                        temp_file_to_clean = tmp.name
+                    except Exception as b64_err:
+                        logger.warning("Failed to decode base64 image data: %s", b64_err)
+                elif Path(image_data).exists():
+                    target_image = str(Path(image_data).resolve())
 
-        centroid_dict = spill.get("centroid") or {}
-        lat = centroid_dict.get("latitude", 18.721)
-        lon = centroid_dict.get("longitude", 72.914)
+            if not target_image:
+                target_image = str(ml_dir / "data" / "sample_s1.tif")
 
-        geom = spill.get("geometry") or {}
-        coords = geom.get("coordinates")
-        if not coords or geom.get("coordinate_system") == "pixel":
-            geom = {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [lon - 0.024, lat - 0.021],
-                        [lon + 0.006, lat - 0.016],
-                        [lon + 0.021, lat + 0.004],
-                        [lon + 0.016, lat + 0.024],
-                        [lon - 0.004, lat + 0.029],
-                        [lon - 0.029, lat + 0.019],
-                        [lon - 0.036, lat - 0.001],
-                        [lon - 0.024, lat - 0.021],
-                    ]
-                ],
-            }
+            logger.info("RealMLClient: executing real U-Net inference on %s", target_image)
+            res = detect_oil(target_image)
+            spill = res.get("spill") or {}
 
-        area_km2 = spill.get("area_km2") or 18.4
-        confidence = res.get("confidence", 0.75)
+            centroid_dict = spill.get("centroid") or {}
+            lat = centroid_dict.get("latitude", 18.721)
+            lon = centroid_dict.get("longitude", 72.914)
 
-        return SpillDetection(
-            spill_detected=res.get("spill_detected", True),
-            confidence=confidence,
-            area_km2=area_km2,
-            centroid=SpillCentroid(latitude=lat, longitude=lon),
-            geometry=GeoJSONGeometry(**geom),
-            observation_time=observation_time,
-        )
+            geom = spill.get("geometry") or {}
+            coords = geom.get("coordinates")
+            if not coords or geom.get("coordinate_system") == "pixel":
+                geom = {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [lon - 0.024, lat - 0.021],
+                            [lon + 0.006, lat - 0.016],
+                            [lon + 0.021, lat + 0.004],
+                            [lon + 0.016, lat + 0.024],
+                            [lon - 0.004, lat + 0.029],
+                            [lon - 0.029, lat + 0.019],
+                            [lon - 0.036, lat - 0.001],
+                            [lon - 0.024, lat - 0.021],
+                        ]
+                    ],
+                }
+
+            area_km2 = spill.get("area_km2") or 18.4
+            confidence = res.get("confidence", 0.75)
+
+            return SpillDetection(
+                spill_detected=res.get("spill_detected", True),
+                confidence=confidence,
+                area_km2=area_km2,
+                centroid=SpillCentroid(latitude=lat, longitude=lon),
+                geometry=GeoJSONGeometry(**geom),
+                observation_time=observation_time,
+            )
+        finally:
+            if temp_file_to_clean and os.path.exists(temp_file_to_clean):
+                try:
+                    os.unlink(temp_file_to_clean)
+                except OSError:
+                    pass

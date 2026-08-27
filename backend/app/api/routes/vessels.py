@@ -6,12 +6,57 @@ from datetime import datetime
 
 from fastapi import APIRouter, Query
 
+from app.core.config import settings
 from app.models.vessel import VesselTrack
-from ais.client import MockAISClient
+from ais.client import (
+    AISClientInterface,
+    AISStreamClient,
+    DatalasticClient,
+    MockAISClient,
+)
 
 router = APIRouter(prefix="/vessels", tags=["vessels"])
 
-_ais_client = MockAISClient()
+
+def _get_ais_client() -> AISClientInterface:
+    if settings.ais_api_key and settings.ais_api_key.strip():
+        prov = (settings.ais_provider or "").lower()
+        url = (settings.ais_base_url or "").lower()
+        if prov == "datalastic" or "datalastic" in url:
+            return DatalasticClient(
+                api_key=settings.ais_api_key.strip(),
+                base_url=settings.ais_base_url,
+            )
+        return AISStreamClient(
+            api_key=settings.ais_api_key.strip(),
+            base_url=settings.ais_base_url if "stream.aisstream.io" in url else "wss://stream.aisstream.io/v0/stream",
+        )
+    return MockAISClient()
+
+
+@router.get("/status")
+async def get_ais_status():
+    """
+    Check AIS provider configuration and API connectivity.
+    Never exposes API keys.
+    """
+    client = _get_ais_client()
+    provider_name = type(client).__name__
+    is_configured = bool(settings.ais_api_key and settings.ais_api_key.strip())
+
+    auth_status = "N/A (Mock)"
+    if hasattr(client, "check_connection"):
+        ok, msg = await client.check_connection()
+        auth_status = msg
+    elif not is_configured:
+        auth_status = "Missing AIS_API_KEY (Using MockAISClient fallback)"
+
+    return {
+        "provider": provider_name,
+        "is_configured": is_configured,
+        "base_url": settings.ais_base_url if is_configured else None,
+        "auth_status": auth_status,
+    }
 
 
 @router.get("/search", response_model=list[VesselTrack])
@@ -24,7 +69,8 @@ async def search_vessels(
     end_time: datetime = Query(...),
 ):
     """Search AIS vessels within a bounding box and time range."""
-    tracks = await _ais_client.get_historical_tracks(
+    client = _get_ais_client()
+    tracks = await client.get_historical_tracks(
         min_lat, max_lat, min_lon, max_lon, start_time, end_time,
     )
     return tracks
@@ -32,12 +78,11 @@ async def search_vessels(
 
 @router.get("/{mmsi}", response_model=VesselTrack | None)
 async def get_vessel(mmsi: str):
-    """Get vessel details by MMSI (from last search results)."""
-    # In production, this would query the database
-    # For now, search through mock data
+    """Get vessel details by MMSI (from search results)."""
     from datetime import timezone
 
-    tracks = await _ais_client.get_historical_tracks(
+    client = _get_ais_client()
+    tracks = await client.get_historical_tracks(
         17.0, 20.0, 71.0, 74.0,
         datetime(2026, 8, 24, tzinfo=timezone.utc),
         datetime(2026, 8, 26, tzinfo=timezone.utc),

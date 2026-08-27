@@ -15,9 +15,14 @@ class Settings(BaseSettings):
     backend_host: str = "0.0.0.0"
     backend_port: int = 8000
 
+    # ── ML Model ─────────────────────────────────────
+    use_real_ml: bool = True
+    ml_model_path: str = ""
+
     # ── AIS API ──────────────────────────────────────
     ais_api_key: str = ""
-    ais_base_url: str = "https://api.datalastic.com/api/v0"
+    ais_base_url: str = "wss://stream.aisstream.io/v0/stream"
+    ais_provider: str = "aisstream"
 
     # ── Copernicus Marine ────────────────────────────
     copernicus_username: str = ""
@@ -45,9 +50,14 @@ class Settings(BaseSettings):
     )
 
     model_config = {
-        "env_file": ".env",
+        "env_file": [
+            str(Path(__file__).resolve().parents[3] / ".env"),
+            ".env",
+            "../.env",
+        ],
         "env_file_encoding": "utf-8",
         "case_sensitive": False,
+        "extra": "ignore",
     }
 
     @property

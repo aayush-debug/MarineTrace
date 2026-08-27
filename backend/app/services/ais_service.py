@@ -9,15 +9,49 @@ from app.core.logging import logger
 from app.models.drift import DriftResult
 from app.models.vessel import VesselTrack
 from app.utils.geo import expand_bbox
-from ais.client import AISClientInterface, MockAISClient
+from ais.client import (
+    AISClientInterface,
+    AISStreamClient,
+    DatalasticClient,
+    MockAISClient,
+)
 from ais.filtering import filter_all
 
 
 class AISService:
     """High-level AIS interface — fetch + filter in one call."""
 
-    def __init__(self, client: AISClientInterface | None = None):
-        self.client = client or MockAISClient()
+    def __init__(
+        self,
+        client: AISClientInterface | None = None,
+        force_mock: bool = False,
+    ):
+        if client:
+            self.client = client
+            self.provider_name = type(client).__name__
+        elif force_mock:
+            self.client = MockAISClient()
+            self.provider_name = "Mock (forced)"
+        elif settings.ais_api_key and settings.ais_api_key.strip():
+            prov = (settings.ais_provider or "").lower()
+            url = (settings.ais_base_url or "").lower()
+            if prov == "datalastic" or "datalastic" in url:
+                self.client = DatalasticClient(
+                    api_key=settings.ais_api_key.strip(),
+                    base_url=settings.ais_base_url,
+                )
+                self.provider_name = "Datalastic"
+            else:
+                self.client = AISStreamClient(
+                    api_key=settings.ais_api_key.strip(),
+                    base_url=settings.ais_base_url if "stream.aisstream.io" in url else "wss://stream.aisstream.io/v0/stream",
+                )
+                self.provider_name = "AISStream"
+        else:
+            self.client = MockAISClient()
+            self.provider_name = "Mock"
+
+        logger.info("AIS provider: %s", self.provider_name)
 
     async def get_candidate_vessels(
         self, drift: DriftResult,

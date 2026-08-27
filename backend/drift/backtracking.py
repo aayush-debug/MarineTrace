@@ -52,6 +52,86 @@ def _seed_points_in_polygon(
     return lons, lats
 
 
+def run_backward_opendrift(
+    spill: SpillDetection,
+    backward_hours: int | None = None,
+    timestep_minutes: int | None = None,
+    nc_file: str | None = None,
+) -> DriftResult:
+    """
+    Real OpenDrift backward simulation driven by Copernicus ocean currents.
+    """
+    from drift.opendrift_runner import run_simulation
+
+    bh = backward_hours or settings.drift_backward_hours
+    ts = timestep_minutes or settings.drift_timestep_minutes
+    obs_time = spill.observation_time or datetime(2026, 8, 25, 10, 30, 0, tzinfo=timezone.utc)
+    centroid = spill.centroid
+
+    # Seed particles inside spill geometry if available, else around centroid
+    n_particles = 30
+    if spill.geometry and spill.geometry.type == "Polygon" and spill.geometry.coordinates:
+        seed_lons, seed_lats = _seed_points_in_polygon(spill.geometry.coordinates[0], n_particles)
+    else:
+        rng = np.random.default_rng(42)
+        seed_lons = [float(centroid.longitude + rng.normal(0, 0.005)) for _ in range(n_particles)]
+        seed_lats = [float(centroid.latitude + rng.normal(0, 0.005)) for _ in range(n_particles)]
+
+    reader_files = [nc_file] if nc_file else None
+
+    sim_res = run_simulation(
+        seed_lon=seed_lons,
+        seed_lat=seed_lats,
+        seed_time=obs_time,
+        duration_hours=bh,
+        timestep_minutes=ts,
+        backward=True,
+        reader_files=reader_files,
+    )
+
+    trajectory_points = sim_res["trajectory_points"]
+    timestamps = sim_res["times"]
+    final_points = sim_res["final_points"]
+
+    if not final_points or len(final_points) == 0:
+        origin_lat = trajectory_points[-1][1]
+        origin_lon = trajectory_points[-1][0]
+        final_points = [(origin_lon, origin_lat)]
+    else:
+        origin_lon, origin_lat = centroid_of_points(final_points)
+
+    origin_zone = polygon_from_points(final_points, buffer_deg=0.02)
+
+    return DriftResult(
+        origin=DriftOrigin(
+            latitude=round(origin_lat, 5),
+            longitude=round(origin_lon, 5),
+            confidence=0.88,
+            geometry=GeoJSONGeometry(
+                type=origin_zone["type"],
+                coordinates=origin_zone["coordinates"],
+            ),
+        ),
+        origin_time_window=DriftTimeWindow(
+            start=obs_time - timedelta(hours=bh),
+            end=obs_time - timedelta(hours=max(bh - 6, 0)),
+        ),
+        backward_trajectory=DriftTrajectory(
+            direction="backward",
+            points=trajectory_points,
+            timestamps=timestamps,
+            geometry=GeoJSONGeometry(
+                type="LineString",
+                coordinates=trajectory_points,
+            ),
+            drift_model="opendrift_copernicus",
+            forcing=sim_res.get("forcing", "Copernicus Marine"),
+        ),
+        drift_model="opendrift_copernicus",
+        forcing=sim_res.get("forcing", "Copernicus Marine"),
+    )
+
+
 def run_backward_mock(
     spill: SpillDetection,
     backward_hours: int | None = None,
@@ -69,7 +149,7 @@ def run_backward_mock(
 
     logger.info("Mock backward drift: %dh, %d steps", bh, n_steps)
 
-    obs_time = spill.observation_time or datetime(2026, 8, 25, 10, 30, 0)
+    obs_time = spill.observation_time or datetime(2026, 8, 25, 10, 30, 0, tzinfo=timezone.utc)
     centroid = spill.centroid
 
     # Simulated current: ~0.5 knot SW current → spill came from NE
@@ -133,5 +213,10 @@ def run_backward_mock(
                 type="LineString",
                 coordinates=trajectory_points,
             ),
+            drift_model="geometric_fallback",
+            forcing="Geometric Fallback",
         ),
+        drift_model="geometric_fallback",
+        forcing="Geometric Fallback",
     )
+
