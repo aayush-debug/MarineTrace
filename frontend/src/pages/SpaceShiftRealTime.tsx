@@ -27,6 +27,7 @@ import {
 import { useInvestigation } from '../context/InvestigationContext';
 import { BASEMAP_CONFIGS, type BasemapType } from '../utils/mapTiles';
 import type { SpaceShiftJobRequest } from '../types/spcsft';
+import { getPolygonPositions } from '../components/map/MaritimeMap';
 
 // Custom Auto Bounds Fitter for Space Shift map
 const MapBoundsFitter: React.FC<{
@@ -338,32 +339,34 @@ export const SpaceShiftRealTime: React.FC = () => {
             {/* Render Space Shift Detected Oil Slicks */}
             {spcsftLiveDetections.map((det) => {
               const isSelected = selectedSpcsftDetection?.detection_id === det.detection_id;
+              const mainPositions = getPolygonPositions(det.geometry);
+              const corePositions = getPolygonPositions(det.core_geometry);
 
               return (
                 <React.Fragment key={det.detection_id}>
                   {/* Sheen Filaments */}
-                  {det.sheen_geometry?.map((sheen, sIdx) => (
-                    <Polygon
-                      key={`${det.detection_id}-sheen-${sIdx}`}
-                      positions={(sheen.coordinates as number[][][])[0].map(
-                        (c) => [c[1], c[0]] as [number, number]
-                      )}
-                      pathOptions={{
-                        color: '#fb7185',
-                        fillColor: '#e11d48',
-                        fillOpacity: 0.25,
-                        weight: 1.5,
-                        dashArray: '3 4',
-                      }}
-                    />
-                  ))}
+                  {det.sheen_geometry?.map((sheen, sIdx) => {
+                    const sheenPositions = getPolygonPositions(sheen);
+                    if (sheenPositions.length === 0) return null;
+                    return (
+                      <Polygon
+                        key={`${det.detection_id}-sheen-${sIdx}`}
+                        positions={sheenPositions}
+                        pathOptions={{
+                          color: '#fb7185',
+                          fillColor: '#e11d48',
+                          fillOpacity: 0.25,
+                          weight: 1.5,
+                          dashArray: '3 4',
+                        }}
+                      />
+                    );
+                  })}
 
                   {/* Main Slick Body */}
-                  {det.geometry?.coordinates?.[0] && (
+                  {mainPositions.length > 0 && (
                     <Polygon
-                      positions={(det.geometry.coordinates as number[][][])[0].map(
-                        (c) => [c[1], c[0]] as [number, number]
-                      )}
+                      positions={mainPositions}
                       pathOptions={{
                         color: isSelected ? '#38bdf8' : det.severity === 'CRITICAL' ? '#f43f5e' : '#f59e0b',
                         fillColor: det.severity === 'CRITICAL' ? '#be123c' : '#d97706',
@@ -386,11 +389,9 @@ export const SpaceShiftRealTime: React.FC = () => {
                   )}
 
                   {/* Heavy Crude Mousse Core */}
-                  {det.core_geometry?.coordinates?.[0] && (
+                  {corePositions.length > 0 && (
                     <Polygon
-                      positions={(det.core_geometry.coordinates as number[][][])[0].map(
-                        (c) => [c[1], c[0]] as [number, number]
-                      )}
+                      positions={corePositions}
                       pathOptions={{
                         color: '#fda4af',
                         fillColor: '#881337',

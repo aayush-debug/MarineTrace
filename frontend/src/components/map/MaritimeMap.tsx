@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import L from 'leaflet';
 import {
   MapContainer,
   TileLayer,
   Polygon,
   Polyline,
   CircleMarker,
+  Marker,
   Popup,
   useMap,
 } from 'react-leaflet';
@@ -13,6 +15,137 @@ import { useInvestigation } from '../../context/InvestigationContext';
 import type { VesselAttribution } from '../../types/investigation';
 import { BASEMAP_CONFIGS } from '../../utils/mapTiles';
 import { MapZoomControl } from './MapZoomControl';
+
+/**
+ * Robustly unwrap GeoJSON polygon coordinate arrays to [lat, lon][] Leaflet positions
+ */
+export function getPolygonPositions(geom?: any): [number, number][] {
+  if (!geom || !geom.coordinates) return [];
+  try {
+    let ring = geom.coordinates;
+    while (Array.isArray(ring) && Array.isArray(ring[0]) && Array.isArray(ring[0][0])) {
+      ring = ring[0];
+    }
+    if (!Array.isArray(ring)) return [];
+    return ring
+      .filter((pt: any) => Array.isArray(pt) && pt.length >= 2 && !isNaN(Number(pt[0])) && !isNaN(Number(pt[1])))
+      .map((pt: any) => {
+        const c0 = Number(pt[0]);
+        const c1 = Number(pt[1]);
+        // GeoJSON is [lon, lat], Leaflet requires [lat, lon]
+        return [c1, c0] as [number, number];
+      });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Dynamically extract or compute spill centroid
+ */
+export function getSpillCentroid(spill?: any): [number, number] | null {
+  if (!spill) return null;
+  if (spill.centroid?.latitude && spill.centroid?.longitude) {
+    return [spill.centroid.latitude, spill.centroid.longitude];
+  }
+  const positions = getPolygonPositions(spill.geometry);
+  if (positions.length === 0) return null;
+  const avgLat = positions.reduce((sum, p) => sum + p[0], 0) / positions.length;
+  const avgLon = positions.reduce((sum, p) => sum + p[1], 0) / positions.length;
+  return [avgLat, avgLon];
+}
+
+/**
+ * Calculate directional heading in degrees from trajectory or explicit heading
+ */
+export function calculateHeading(
+  polyCoords: [number, number][],
+  explicitHeading?: number | null,
+  explicitCourse?: number | null
+): number {
+  if (typeof explicitHeading === 'number' && !isNaN(explicitHeading) && explicitHeading >= 0) {
+    return explicitHeading;
+  }
+  if (typeof explicitCourse === 'number' && !isNaN(explicitCourse) && explicitCourse >= 0) {
+    return explicitCourse;
+  }
+  if (polyCoords.length >= 2) {
+    const pPrev = polyCoords[polyCoords.length - 2];
+    const pLast = polyCoords[polyCoords.length - 1];
+    const dLat = pLast[0] - pPrev[0];
+    const dLon = pLast[1] - pPrev[1];
+    let angle = (Math.atan2(dLon, dLat) * 180) / Math.PI;
+    if (angle < 0) angle += 360;
+    return Math.round(angle);
+  }
+  return 0;
+}
+
+/**
+ * Generate forward heading projection vector (where the vessel is heading)
+ */
+export function getHeadingVector(
+  pos: [number, number],
+  headingDeg: number,
+  lengthKm = 2.5
+): [number, number][] {
+  const rad = (headingDeg * Math.PI) / 180;
+  const latDelta = (lengthKm * Math.cos(rad)) / 111.0;
+  const lonDelta = (lengthKm * Math.sin(rad)) / (111.0 * Math.cos((pos[0] * Math.PI) / 180.0));
+  return [pos, [pos[0] + latDelta, pos[1] + lonDelta]];
+}
+
+/**
+ * Create custom SVG Directional Vessel Icon with Arrow Pointer
+ */
+export function createVesselDirectionalIcon(
+  headingDeg: number,
+  palette: { stroke: string; fill: string },
+  isSelected: boolean,
+  rank: number
+): L.DivIcon {
+  const size = isSelected ? 34 : 26;
+  const strokeColor = isSelected ? '#ffffff' : palette.stroke;
+  const fillColor = isSelected ? '#f43f5e' : palette.fill;
+
+  const pulseEffect = isSelected
+    ? `<div style="position: absolute; inset: -4px; border-radius: 9999px; background: rgba(244,63,94,0.35); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>`
+    : '';
+
+  const rankBadge =
+    rank <= 3
+      ? `<div style="position: absolute; top: -6px; right: -6px; font-size: 9px; font-weight: 800; font-family: monospace; background: #0f172a; color: ${palette.stroke}; border: 1px solid ${palette.stroke}; border-radius: 9999px; padding: 0 4px; line-height: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">#${rank}</div>`
+      : '';
+
+  const html = `
+    <div style="position: relative; width: ${size}px; height: ${size}px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      ${pulseEffect}
+      <div style="transform: rotate(${headingDeg}deg); width: ${size}px; height: ${size}px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">
+        <svg viewBox="0 0 24 24" width="${size}" height="${size}" style="overflow: visible;">
+          <!-- Directional Maritime Vessel Hull Arrow -->
+          <path
+            d="M 12 1 L 20 20 L 12 15 L 4 20 Z"
+            fill="${fillColor}"
+            stroke="${strokeColor}"
+            stroke-width="${isSelected ? 2 : 1.5}"
+            stroke-linejoin="round"
+          />
+          <!-- Center Bridge Dot -->
+          <circle cx="12" cy="11" r="2.2" fill="#ffffff" />
+        </svg>
+      </div>
+      ${rankBadge}
+    </div>
+  `;
+
+  return L.divIcon({
+    html,
+    className: 'vessel-directional-marker',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2],
+  });
+}
 
 // Custom Auto Bounds Fitter
 const MapBoundsFitter: React.FC<{
@@ -46,9 +179,9 @@ const MapBoundsFitter: React.FC<{
 };
 
 const RANK_PALETTE: Record<number, { stroke: string; fill: string; name: string }> = {
-  1: { stroke: '#f43f5e', fill: '#f43f5e', name: 'Rank #1 Suspect (High)' },
-  2: { stroke: '#f59e0b', fill: '#f59e0b', name: 'Rank #2 Suspect (Med)' },
-  3: { stroke: '#06b6d4', fill: '#06b6d4', name: 'Rank #3 Candidate' },
+  1: { stroke: '#f43f5e', fill: '#be123c', name: 'Rank #1 Suspect (High)' },
+  2: { stroke: '#f59e0b', fill: '#b45309', name: 'Rank #2 Suspect (Med)' },
+  3: { stroke: '#06b6d4', fill: '#0e7490', name: 'Rank #3 Candidate' },
 };
 
 export const MaritimeMap: React.FC<{
@@ -66,18 +199,34 @@ export const MaritimeMap: React.FC<{
   } = useInvestigation();
 
   // Extract all points for bounds fitting
-  const allCoords: [number, number][] = [];
-  if (investigation?.spill?.geometry?.coordinates?.[0]) {
-    investigation.spill.geometry.coordinates[0].forEach((c: number[]) => {
-      allCoords.push([c[1], c[0]]);
-    });
-  }
-  if (investigation?.drift?.origin) {
-    allCoords.push([investigation.drift.origin.latitude, investigation.drift.origin.longitude]);
-  }
+  const allCoords = useMemo(() => {
+    const coords: [number, number][] = [];
+    if (investigation?.spill?.geometry) {
+      coords.push(...getPolygonPositions(investigation.spill.geometry));
+    }
+    if (investigation?.drift?.origin) {
+      coords.push([investigation.drift.origin.latitude, investigation.drift.origin.longitude]);
+    }
+    return coords;
+  }, [investigation]);
 
   const defaultCenter: [number, number] = [18.95, 72.30];
   const activeBasemap = BASEMAP_CONFIGS[basemap] || BASEMAP_CONFIGS['google-hybrid'];
+
+  const spillPolygonPositions = useMemo(
+    () => (investigation?.spill?.geometry ? getPolygonPositions(investigation.spill.geometry) : []),
+    [investigation?.spill?.geometry]
+  );
+
+  const corePolygonPositions = useMemo(
+    () => (investigation?.spill?.core_geometry ? getPolygonPositions(investigation.spill.core_geometry) : []),
+    [investigation?.spill?.core_geometry]
+  );
+
+  const calculatedSpillCentroid = useMemo(
+    () => (investigation?.spill ? getSpillCentroid(investigation.spill) : null),
+    [investigation?.spill]
+  );
 
   return (
     <div className="w-full relative overflow-hidden bg-[#070b12]" style={{ height }}>
@@ -104,9 +253,7 @@ export const MaritimeMap: React.FC<{
             {/* 0. Sentinel-1 SAR Satellite Acquisition Swath Footprint */}
             {investigation.spill.sar_swath && (
               <Polygon
-                positions={investigation.spill.sar_swath.coordinates[0].map(
-                  (c: number[]) => [c[1], c[0]] as [number, number]
-                )}
+                positions={getPolygonPositions(investigation.spill.sar_swath)}
                 pathOptions={{
                   color: '#38bdf8',
                   fillColor: '#0284c7',
@@ -130,32 +277,32 @@ export const MaritimeMap: React.FC<{
             {layers.spill && (
               <>
                 {/* 1a. Secondary Sheen Filaments / Dispersed Droplets */}
-                {investigation.spill.sheen_geometry?.map((sheen, idx) => (
-                  <Polygon
-                    key={`sheen-${idx}`}
-                    positions={sheen.coordinates[0].map(
-                      (c: number[]) => [c[1], c[0]] as [number, number]
-                    )}
-                    pathOptions={{
-                      color: '#fb7185',
-                      fillColor: '#e11d48',
-                      fillOpacity: 0.22,
-                      weight: 1,
-                      dashArray: '2, 3',
-                    }}
-                  />
-                ))}
+                {investigation.spill.sheen_geometry?.map((sheen, idx) => {
+                  const sheenPositions = getPolygonPositions(sheen);
+                  if (sheenPositions.length === 0) return null;
+                  return (
+                    <Polygon
+                      key={`sheen-${idx}`}
+                      positions={sheenPositions}
+                      pathOptions={{
+                        color: '#fb7185',
+                        fillColor: '#e11d48',
+                        fillOpacity: 0.22,
+                        weight: 1,
+                        dashArray: '2, 3',
+                      }}
+                    />
+                  );
+                })}
 
                 {/* 1b. Main Oil Slick Sheen Layer (Multi-branched organic shape) */}
-                {investigation.spill.geometry && (
+                {spillPolygonPositions.length > 0 && (
                   <Polygon
-                    positions={investigation.spill.geometry.coordinates[0].map(
-                      (c: number[]) => [c[1], c[0]] as [number, number]
-                    )}
+                    positions={spillPolygonPositions}
                     pathOptions={{
                       color: '#f43f5e',
                       fillColor: '#be123c',
-                      fillOpacity: 0.35,
+                      fillOpacity: 0.38,
                       weight: 2,
                       className: 'slick-sheen-polygon',
                     }}
@@ -181,11 +328,9 @@ export const MaritimeMap: React.FC<{
                 )}
 
                 {/* 1c. Heavy Crude Emulsion Mousse Core */}
-                {investigation.spill.core_geometry && (
+                {corePolygonPositions.length > 0 && (
                   <Polygon
-                    positions={investigation.spill.core_geometry.coordinates[0].map(
-                      (c: number[]) => [c[1], c[0]] as [number, number]
-                    )}
+                    positions={corePolygonPositions}
                     pathOptions={{
                       color: '#fda4af',
                       fillColor: '#881337',
@@ -203,59 +348,69 @@ export const MaritimeMap: React.FC<{
                   </Polygon>
                 )}
 
-                {/* 1d. Spill Center Target Tag */}
-                <CircleMarker
-                  center={[18.822, 72.418]}
-                  radius={4}
-                  pathOptions={{
-                    color: '#f43f5e',
-                    fillColor: '#ffffff',
-                    fillOpacity: 1,
-                    weight: 2,
-                  }}
-                />
+                {/* 1d. Dynamic Spill Center Target Tag */}
+                {calculatedSpillCentroid && (
+                  <CircleMarker
+                    center={calculatedSpillCentroid}
+                    radius={5}
+                    pathOptions={{
+                      color: '#f43f5e',
+                      fillColor: '#ffffff',
+                      fillOpacity: 1,
+                      weight: 2,
+                    }}
+                  >
+                    <Popup>
+                      <div className="text-xs p-1 font-mono">
+                        <strong className="text-rose-400">📍 Oil Spill Centroid</strong>
+                        <div>{calculatedSpillCentroid[0].toFixed(4)}°N, {calculatedSpillCentroid[1].toFixed(4)}°E</div>
+                      </div>
+                    </Popup>
+                  </CircleMarker>
+                )}
               </>
             )}
 
             {/* 1b. Space Shift (SateAIs™) Real-Time API Oil Slicks */}
-            {layers.spcsft && spcsftLiveDetections.map((det) => (
-              <React.Fragment key={`map-spcsft-${det.detection_id}`}>
-                {det.geometry?.coordinates?.[0] && (
-                  <Polygon
-                    positions={(det.geometry.coordinates as number[][][])[0].map(
-                      (c) => [c[1], c[0]] as [number, number]
-                    )}
-                    pathOptions={{
-                      color: det.severity === 'CRITICAL' ? '#f43f5e' : '#38bdf8',
-                      fillColor: det.severity === 'CRITICAL' ? '#be123c' : '#0284c7',
-                      fillOpacity: 0.35,
-                      weight: 2,
-                      dashArray: '4 4',
-                    }}
-                  >
-                    <Popup>
-                      <div className="p-2 space-y-1.5 font-mono text-xs text-slate-800 min-w-[220px]">
-                        <div className="flex items-center justify-between border-b pb-1 font-bold">
-                          <span className="text-cyan-700">🛰️ Space Shift SateAIs™</span>
-                          <span className="text-rose-600">{(det.confidence * 100).toFixed(0)}% Match</span>
+            {layers.spcsft &&
+              spcsftLiveDetections.map((det) => {
+                const detPositions = getPolygonPositions(det.geometry);
+                if (detPositions.length === 0) return null;
+                return (
+                  <React.Fragment key={`map-spcsft-${det.detection_id}`}>
+                    <Polygon
+                      positions={detPositions}
+                      pathOptions={{
+                        color: det.severity === 'CRITICAL' ? '#f43f5e' : '#38bdf8',
+                        fillColor: det.severity === 'CRITICAL' ? '#be123c' : '#0284c7',
+                        fillOpacity: 0.35,
+                        weight: 2,
+                        dashArray: '4 4',
+                      }}
+                    >
+                      <Popup>
+                        <div className="p-2 space-y-1.5 font-mono text-xs text-slate-800 min-w-[220px]">
+                          <div className="flex items-center justify-between border-b pb-1 font-bold">
+                            <span className="text-cyan-700">🛰️ Space Shift SateAIs™</span>
+                            <span className="text-rose-600">{(det.confidence * 100).toFixed(0)}% Match</span>
+                          </div>
+                          <div className="text-[11px] text-slate-600">
+                            <div><strong>Location:</strong> {det.zone_name}</div>
+                            <div><strong>Area:</strong> {det.area_km2.toFixed(1)} km²</div>
+                            <div><strong>Type:</strong> {det.slick_type}</div>
+                          </div>
+                          <button
+                            onClick={() => launchInvestigationFromSpcsft(det.detection_id)}
+                            className="w-full mt-1.5 py-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded text-[11px] flex items-center justify-center gap-1 transition-colors"
+                          >
+                            <span>⚡ Investigate Slick</span>
+                          </button>
                         </div>
-                        <div className="text-[11px] text-slate-600">
-                          <div><strong>Location:</strong> {det.zone_name}</div>
-                          <div><strong>Area:</strong> {det.area_km2.toFixed(1)} km²</div>
-                          <div><strong>Type:</strong> {det.slick_type}</div>
-                        </div>
-                        <button
-                          onClick={() => launchInvestigationFromSpcsft(det.detection_id)}
-                          className="w-full mt-1.5 py-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded text-[11px] flex items-center justify-center gap-1 transition-colors"
-                        >
-                          <span>⚡ Investigate Slick</span>
-                        </button>
-                      </div>
-                    </Popup>
-                  </Polygon>
-                )}
-              </React.Fragment>
-            ))}
+                      </Popup>
+                    </Polygon>
+                  </React.Fragment>
+                );
+              })}
 
             {/* 2. MULTI-TIER PROBABILISTIC ORIGIN ZONES */}
             {layers.origin && (
@@ -263,15 +418,15 @@ export const MaritimeMap: React.FC<{
                 {/* 2a. Multi-tier Confidence Envelopes (90%, 70%, 50%) */}
                 {investigation.drift.origin.confidence_zones ? (
                   investigation.drift.origin.confidence_zones.map((zone, idx) => {
+                    const zonePositions = getPolygonPositions(zone.geometry);
+                    if (zonePositions.length === 0) return null;
                     const opacities = [0.08, 0.18, 0.35];
                     const weights = [1, 1.5, 2];
                     const dashes = ['3, 6', '4, 4', undefined];
                     return (
                       <Polygon
                         key={`conf-zone-${idx}`}
-                        positions={zone.geometry.coordinates[0].map(
-                          (c: number[]) => [c[1], c[0]] as [number, number]
-                        )}
+                        positions={zonePositions}
                         pathOptions={{
                           color: '#f59e0b',
                           fillColor: '#d97706',
@@ -292,9 +447,7 @@ export const MaritimeMap: React.FC<{
                 ) : (
                   investigation.drift.origin.geometry && (
                     <Polygon
-                      positions={investigation.drift.origin.geometry.coordinates[0].map(
-                        (c: number[]) => [c[1], c[0]] as [number, number]
-                      )}
+                      positions={getPolygonPositions(investigation.drift.origin.geometry)}
                       pathOptions={{
                         color: '#f59e0b',
                         fillColor: '#f59e0b',
@@ -348,9 +501,7 @@ export const MaritimeMap: React.FC<{
                 {/* 3a. Drift Uncertainty Dispersion Corridor */}
                 {investigation.drift.backward_trajectory.uncertainty_corridor && (
                   <Polygon
-                    positions={investigation.drift.backward_trajectory.uncertainty_corridor.coordinates[0].map(
-                      (c: number[]) => [c[1], c[0]] as [number, number]
-                    )}
+                    positions={getPolygonPositions(investigation.drift.backward_trajectory.uncertainty_corridor)}
                     pathOptions={{
                       color: '#38bdf8',
                       fillColor: '#0284c7',
@@ -451,7 +602,7 @@ export const MaritimeMap: React.FC<{
               </Polyline>
             )}
 
-            {/* 5. AIS CANDIDATE VESSEL TRACKS */}
+            {/* 5. AIS CANDIDATE VESSEL TRACKS WITH DIRECTIONAL HEADING ARROWS */}
             {layers.vessels &&
               investigation.vessels.map((vessel) => (
                 <VesselTrackLayer
@@ -477,19 +628,28 @@ const VesselTrackLayer: React.FC<{
   isSelected: boolean;
   showTrack: boolean;
   onSelect: () => void;
-  }> = ({ vessel, isSelected, showTrack, onSelect }) => {
+}> = ({ vessel, isSelected, showTrack, onSelect }) => {
   if (!vessel.trajectory?.coordinates) return null;
   const coords = vessel.trajectory.coordinates as number[][];
   if (coords.length < 2) return null;
 
   const palette = RANK_PALETTE[vessel.rank] || {
     stroke: '#64748b',
-    fill: '#64748b',
+    fill: '#475569',
     name: `Rank #${vessel.rank}`,
   };
 
   const polyCoords: [number, number][] = coords.map((c) => [c[1], c[0]]);
   const lastPos = polyCoords[polyCoords.length - 1];
+
+  // Calculate heading & forward heading vector arrow
+  const headingDeg = calculateHeading(polyCoords, vessel.heading, vessel.course);
+  const headingVector = getHeadingVector(lastPos, headingDeg, isSelected ? 4.0 : 2.5);
+
+  const vesselIcon = useMemo(
+    () => createVesselDirectionalIcon(headingDeg, palette, isSelected, vessel.rank),
+    [headingDeg, palette, isSelected, vessel.rank]
+  );
 
   return (
     <>
@@ -562,29 +722,47 @@ const VesselTrackLayer: React.FC<{
         </CircleMarker>
       )}
 
-      {/* Vessel Current/Last Position Marker */}
-      <CircleMarker
-        center={lastPos}
-        radius={isSelected ? 8 : 5}
-        pathOptions={{
-          color: isSelected ? '#ffffff' : palette.stroke,
-          fillColor: palette.fill,
-          fillOpacity: 0.95,
-          weight: isSelected ? 2.5 : 1.5,
-        }}
+      {/* Forward Heading Vector Projection Line */}
+      {(showTrack || isSelected) && (
+        <Polyline
+          positions={headingVector}
+          pathOptions={{
+            color: isSelected ? '#ffffff' : palette.stroke,
+            weight: isSelected ? 2.5 : 1.5,
+            dashArray: '3, 4',
+            opacity: isSelected ? 0.95 : 0.6,
+          }}
+        />
+      )}
+
+      {/* Vessel Directional Hull Arrow Marker */}
+      <Marker
+        position={lastPos}
+        icon={vesselIcon}
         eventHandlers={{
           click: onSelect,
         }}
       >
         <Popup>
-          <div className="text-xs font-mono p-1 space-y-1">
-            <strong className="text-slate-100">🚢 {vessel.vessel_name}</strong>
-            <div>MMSI: {vessel.mmsi}</div>
-            <div>Heading: {vessel.heading ? `${vessel.heading}°` : 'N/A'}</div>
-            <div>Attribution Score: <strong className="text-rose-400">{vessel.score.toFixed(1)}/100</strong></div>
+          <div className="text-xs font-mono p-1.5 space-y-1 min-w-[200px]">
+            <div className="font-bold text-slate-100 flex items-center justify-between border-b border-slate-700 pb-1">
+              <span>🚢 {vessel.vessel_name}</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded" style={{ backgroundColor: `${palette.fill}40`, color: palette.stroke }}>
+                Rank #{vessel.rank}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-[11px] text-slate-300 pt-1">
+              <div>MMSI: <strong className="text-slate-100">{vessel.mmsi}</strong></div>
+              <div>Heading: <strong className="text-cyan-400">{headingDeg}°</strong></div>
+              <div>Speed: <strong className="text-emerald-400">{vessel.speed_knots ?? vessel.cpa?.speed_during_kn ?? 'N/A'} kn</strong></div>
+              <div>Priority: <strong className="text-rose-400">{vessel.investigative_priority}</strong></div>
+            </div>
+            <div className="text-slate-300 text-[11px] border-t border-slate-800 pt-1">
+              Attribution Score: <strong className="text-rose-400 text-xs">{vessel.score.toFixed(1)}/100</strong>
+            </div>
           </div>
         </Popup>
-      </CircleMarker>
+      </Marker>
     </>
   );
 };

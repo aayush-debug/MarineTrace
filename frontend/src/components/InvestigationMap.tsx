@@ -1,19 +1,25 @@
 /* Investigation map — renders oil spill, drift trajectories, origin zone, and vessel tracks */
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   MapContainer,
   TileLayer,
   Polygon,
   Polyline,
   CircleMarker,
+  Marker,
   Popup,
   useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { InvestigationResponse, VesselAttribution } from '../types/investigation';
-
 import { BASEMAP_CONFIGS } from '../utils/mapTiles';
+import {
+  getPolygonPositions,
+  calculateHeading,
+  getHeadingVector,
+  createVesselDirectionalIcon,
+} from './map/MaritimeMap';
 
 interface MapProps {
   data: InvestigationResponse | null;
@@ -26,10 +32,10 @@ function FitBounds({ data }: { data: InvestigationResponse | null }) {
   const map = useMap();
   useEffect(() => {
     if (!data?.spill?.geometry) return;
-    const coords = (data.spill.geometry.coordinates as number[][][])[0];
-    if (!coords || coords.length === 0) return;
-    const lats = coords.map((c) => c[1]);
-    const lons = coords.map((c) => c[0]);
+    const positions = getPolygonPositions(data.spill.geometry);
+    if (!positions || positions.length === 0) return;
+    const lats = positions.map((c) => c[0]);
+    const lons = positions.map((c) => c[1]);
     map.fitBounds(
       [
         [Math.min(...lats) - 0.15, Math.min(...lons) - 0.15],
@@ -41,15 +47,25 @@ function FitBounds({ data }: { data: InvestigationResponse | null }) {
   return null;
 }
 
-const RANK_COLORS: Record<number, string> = {
-  1: '#ef4444',
-  2: '#f59e0b',
-  3: '#06b6d4',
+const RANK_COLORS: Record<number, { stroke: string; fill: string }> = {
+  1: { stroke: '#f43f5e', fill: '#be123c' },
+  2: { stroke: '#f59e0b', fill: '#b45309' },
+  3: { stroke: '#06b6d4', fill: '#0e7490' },
 };
 
 export default function InvestigationMap({ data, selectedVessel, onSelectVessel }: MapProps) {
   const defaultCenter: [number, number] = [18.95, 72.30];
   const activeBasemap = BASEMAP_CONFIGS['google-hybrid'];
+
+  const spillPolygonPositions = useMemo(
+    () => (data?.spill?.geometry ? getPolygonPositions(data.spill.geometry) : []),
+    [data?.spill?.geometry]
+  );
+
+  const corePolygonPositions = useMemo(
+    () => (data?.spill?.core_geometry ? getPolygonPositions(data.spill.core_geometry) : []),
+    [data?.spill?.core_geometry]
+  );
 
   return (
     <div className="map-container">
@@ -70,34 +86,34 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
         {data && (
           <>
             {/* Oil spill multi-layer detection */}
-            {data.spill.geometry && (
+            {spillPolygonPositions.length > 0 && (
               <>
                 {/* Sheen Filaments */}
-                {data.spill.sheen_geometry?.map((sheen, idx) => (
-                  <Polygon
-                    key={`inv-sheen-${idx}`}
-                    positions={(sheen.coordinates as number[][][])[0].map(
-                      (c) => [c[1], c[0]] as [number, number]
-                    )}
-                    pathOptions={{
-                      color: '#fb7185',
-                      fillColor: '#e11d48',
-                      fillOpacity: 0.22,
-                      weight: 1,
-                      dashArray: '2 3',
-                    }}
-                  />
-                ))}
+                {data.spill.sheen_geometry?.map((sheen, idx) => {
+                  const sheenPositions = getPolygonPositions(sheen);
+                  if (sheenPositions.length === 0) return null;
+                  return (
+                    <Polygon
+                      key={`inv-sheen-${idx}`}
+                      positions={sheenPositions}
+                      pathOptions={{
+                        color: '#fb7185',
+                        fillColor: '#e11d48',
+                        fillOpacity: 0.22,
+                        weight: 1,
+                        dashArray: '2 3',
+                      }}
+                    />
+                  );
+                })}
 
                 {/* Main Slick Sheen */}
                 <Polygon
-                  positions={(data.spill.geometry.coordinates as number[][][])[0].map(
-                    (c) => [c[1], c[0]] as [number, number]
-                  )}
+                  positions={spillPolygonPositions}
                   pathOptions={{
                     color: '#f43f5e',
                     fillColor: '#be123c',
-                    fillOpacity: 0.35,
+                    fillOpacity: 0.38,
                     weight: 2,
                     className: 'slick-sheen-polygon',
                   }}
@@ -112,11 +128,9 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
                 </Polygon>
 
                 {/* Dense Emulsion Core */}
-                {data.spill.core_geometry && (
+                {corePolygonPositions.length > 0 && (
                   <Polygon
-                    positions={(data.spill.core_geometry.coordinates as number[][][])[0].map(
-                      (c) => [c[1], c[0]] as [number, number]
-                    )}
+                    positions={corePolygonPositions}
                     pathOptions={{
                       color: '#fda4af',
                       fillColor: '#881337',
@@ -132,15 +146,15 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
             {/* Origin Multi-tier Confidence Zones */}
             {data.drift.origin.confidence_zones ? (
               data.drift.origin.confidence_zones.map((zone, idx) => {
+                const zonePositions = getPolygonPositions(zone.geometry);
+                if (zonePositions.length === 0) return null;
                 const opacities = [0.08, 0.18, 0.35];
                 const weights = [1, 1.5, 2];
                 const dashes = ['3 6', '4 4', undefined];
                 return (
                   <Polygon
                     key={`inv-conf-${idx}`}
-                    positions={(zone.geometry.coordinates as number[][][])[0].map(
-                      (c) => [c[1], c[0]] as [number, number]
-                    )}
+                    positions={zonePositions}
                     pathOptions={{
                       color: '#f59e0b',
                       fillColor: '#d97706',
@@ -161,9 +175,7 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
             ) : (
               data.drift.origin.geometry && (
                 <Polygon
-                  positions={(data.drift.origin.geometry.coordinates as number[][][])[0].map(
-                    (c) => [c[1], c[0]] as [number, number]
-                  )}
+                  positions={getPolygonPositions(data.drift.origin.geometry)}
                   pathOptions={{
                     color: '#f59e0b',
                     fillColor: '#f59e0b',
@@ -234,7 +246,7 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
               </Polyline>
             )}
 
-            {/* Vessel tracks */}
+            {/* Vessel tracks with Directional Arrows */}
             {data.vessels.map((vessel) => (
               <VesselLayer
                 key={vessel.mmsi}
@@ -263,15 +275,27 @@ function VesselLayer({
   const coords = vessel.trajectory.coordinates as number[][];
   if (!coords || coords.length < 2) return null;
 
-  const color = RANK_COLORS[vessel.rank] || '#8b97b0';
-  const weight = isSelected ? 4 : 2;
-  const opacity = isSelected ? 1 : 0.6;
+  const polyCoords: [number, number][] = coords.map((c) => [c[1], c[0]]);
+  const lastPos = polyCoords[polyCoords.length - 1];
+
+  const palette = RANK_COLORS[vessel.rank] || { stroke: '#8b97b0', fill: '#475569' };
+  const headingDeg = calculateHeading(polyCoords, vessel.heading, vessel.course);
+  const headingVector = getHeadingVector(lastPos, headingDeg, isSelected ? 3.5 : 2.0);
+
+  const vesselIcon = useMemo(
+    () => createVesselDirectionalIcon(headingDeg, palette, isSelected, vessel.rank),
+    [headingDeg, palette, isSelected, vessel.rank]
+  );
 
   return (
     <>
       <Polyline
-        positions={coords.map((c) => [c[1], c[0]] as [number, number])}
-        pathOptions={{ color, weight, opacity }}
+        positions={polyCoords}
+        pathOptions={{
+          color: palette.stroke,
+          weight: isSelected ? 4 : 2,
+          opacity: isSelected ? 1 : 0.6,
+        }}
         eventHandlers={{
           click: () => onSelect(vessel.mmsi),
         }}
@@ -280,6 +304,7 @@ function VesselLayer({
           <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 180 }}>
             <strong>🚢 {vessel.vessel_name}</strong><br />
             MMSI: {vessel.mmsi}<br />
+            Heading: <strong>{headingDeg}°</strong><br />
             Score: <strong>{vessel.score.toFixed(0)}/100</strong><br />
             Rank: #{vessel.rank} ({vessel.investigative_priority})<br />
             Type: {vessel.vessel_type}
@@ -287,25 +312,36 @@ function VesselLayer({
         </Popup>
       </Polyline>
 
-      {/* Vessel marker at last known position */}
-      <CircleMarker
-        center={[coords[coords.length - 1][1], coords[coords.length - 1][0]]}
-        radius={isSelected ? 7 : 5}
-        pathOptions={{
-          color,
-          fillColor: color,
-          fillOpacity: 0.9,
-          weight: isSelected ? 3 : 2,
-        }}
+      {/* Forward Heading Vector Projection Line */}
+      {isSelected && (
+        <Polyline
+          positions={headingVector}
+          pathOptions={{
+            color: '#ffffff',
+            weight: 2,
+            dashArray: '3, 4',
+            opacity: 0.9,
+          }}
+        />
+      )}
+
+      {/* Vessel Directional Hull Arrow Marker */}
+      <Marker
+        position={lastPos}
+        icon={vesselIcon}
         eventHandlers={{
           click: () => onSelect(vessel.mmsi),
         }}
       >
         <Popup>
-          <strong>{vessel.vessel_name}</strong><br />
-          Score: {vessel.score.toFixed(0)}/100
+          <div style={{ fontFamily: 'Inter, sans-serif' }}>
+            <strong>🚢 {vessel.vessel_name}</strong><br />
+            Heading: <strong>{headingDeg}°</strong><br />
+            Score: <strong>{vessel.score.toFixed(0)}/100</strong><br />
+            MMSI: {vessel.mmsi}
+          </div>
         </Popup>
-      </CircleMarker>
+      </Marker>
     </>
   );
 }

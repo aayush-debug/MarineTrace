@@ -134,6 +134,8 @@ export interface VesselAttribution {
   vessel_type: string;
   flag?: string | null;
   heading?: number;
+  course?: number | null;
+  speed_knots?: number | null;
   trajectory?: GeoJSONGeometry | null;
   cpa?: VesselCPA | null;
 }
