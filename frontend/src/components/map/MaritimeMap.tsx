@@ -343,11 +343,16 @@ export const MaritimeMap: React.FC<{
                 }}
               >
                 <Popup>
-                  <div className="text-xs p-1 font-mono space-y-1">
-                    <div className="font-bold text-sky-300">🛰️ SENTINEL-1 SAR PASS</div>
-                    <div>Mode: <strong>IW (Interferometric Wide)</strong></div>
-                    <div>Polarization: <strong>VV + VH</strong></div>
-                    <div>Orbit: <strong>Descending (Track 12)</strong></div>
+                  <div className="text-xs p-1.5 font-mono space-y-1">
+                    <div className="font-bold text-sky-300 border-b border-sky-900/60 pb-1">
+                      SENTINEL-1A SAR SWATH FOOTPRINT
+                    </div>
+                    <div className="text-[11px] text-slate-300">
+                      <div>Mode: <strong>Interferometric Wide (IW GRD)</strong></div>
+                      <div>Polarization: <strong>Dual-Pol (VV + VH)</strong></div>
+                      <div>Orbit: <strong>Descending Track #12</strong></div>
+                      <div>Processing: <strong>Level-1 Calibrated σ₀</strong></div>
+                    </div>
                   </div>
                 </Popup>
               </Polygon>
@@ -388,19 +393,21 @@ export const MaritimeMap: React.FC<{
                     }}
                   >
                     <Popup>
-                      <div className="text-xs p-1.5 space-y-1.5 font-mono">
-                        <div className="font-bold text-rose-400 flex items-center justify-between border-b border-rose-900/50 pb-1">
-                          <span>🛢️ DETECTED OIL SLICK</span>
-                          <span className="text-[10px] bg-rose-950 text-rose-300 px-1 py-0.5 rounded">SAR C-BAND</span>
+                      <div className="text-xs p-2 space-y-1.5 font-mono">
+                        <div className="font-bold text-rose-400 flex items-center justify-between border-b border-rose-900/60 pb-1">
+                          <span>HYDROCARBON ANOMALY DELINEATION</span>
+                          <span className="text-[10px] bg-rose-950 text-rose-300 px-1.5 py-0.2 rounded border border-rose-800">
+                            C-BAND SAR
+                          </span>
                         </div>
                         <div className="grid grid-cols-2 gap-1 text-[11px]">
                           <div>Confidence: <strong className="text-emerald-400">{(investigation.spill.confidence * 100).toFixed(1)}%</strong></div>
                           <div>Total Area: <strong className="text-rose-300">{investigation.spill.area_km2.toFixed(2)} km²</strong></div>
-                          <div>Slick Type: <strong>Heavy Hydrocarbon</strong></div>
+                          <div>Classification: <strong>Heavy Hydrocarbon</strong></div>
                           <div>Thickness: <strong>0.1 – 1.8 mm (Emulsion)</strong></div>
                         </div>
                         <div className="text-slate-400 text-[10px] border-t border-slate-800 pt-1">
-                          Observation: {new Date(investigation.observation_time).toUTCString()}
+                          Acquisition UTC: {new Date(investigation.observation_time).toUTCString()}
                         </div>
                       </div>
                     </Popup>
@@ -674,9 +681,11 @@ export const MaritimeMap: React.FC<{
                 }}
               >
                 <Popup>
-                  <div className="text-xs p-1 font-mono">
-                    <strong className="text-emerald-400">↗️ 24h Forward Spread Forecast</strong>
-                    <div>Simulates slick weathering & southward spread</div>
+                  <div className="text-xs p-1.5 font-mono">
+                    <strong className="text-emerald-400 block border-b border-emerald-950 pb-1">
+                      FORWARD DISPERSION TRAJECTORY (24H)
+                    </strong>
+                    <div className="text-[11px] text-slate-300 mt-1">OpenDrift Lagrangian weathering & advection vector</div>
                   </div>
                 </Popup>
               </Polyline>
@@ -750,14 +759,14 @@ const VesselTrackLayer: React.FC<{
           }}
         >
           <Popup>
-            <div className="text-xs font-mono p-1 space-y-1">
-              <div className="font-bold text-slate-100 flex items-center justify-between">
-                <span>🚢 {vessel.vessel_name}</span>
-                <span className="text-[10px] text-cyan-400 font-bold">#{vessel.rank}</span>
+            <div className="text-xs font-mono p-1.5 space-y-1">
+              <div className="font-bold text-slate-100 flex items-center justify-between border-b border-slate-700 pb-1">
+                <span>{vessel.vessel_name}</span>
+                <span className="text-[10px] text-cyan-400 font-bold">RANK #{vessel.rank}</span>
               </div>
               <div className="text-slate-300">Type: {vessel.vessel_type}</div>
               <div className="text-slate-300">Attribution Score: <strong className="text-rose-400">{vessel.score.toFixed(1)}/100</strong></div>
-              <div className="text-slate-400 text-[10px]">Priority: {vessel.investigative_priority}</div>
+              <div className="text-slate-400 text-[10px]">Investigative Priority: {vessel.investigative_priority}</div>
             </div>
           </Popup>
         </Polyline>
@@ -792,14 +801,14 @@ const VesselTrackLayer: React.FC<{
           }}
         >
           <Popup>
-            <div className="text-xs font-mono p-1.5 space-y-1 border border-rose-900 rounded bg-slate-950">
-              <div className="font-bold text-rose-400 flex items-center gap-1">
-                <span>⚠️ ANOMALOUS CPA EVENT</span>
+            <div className="text-xs font-mono p-2 space-y-1 border border-rose-900/80 rounded bg-[#0b0f17]">
+              <div className="font-bold text-rose-400 flex items-center gap-1 border-b border-rose-950 pb-1">
+                <span>ANOMALOUS CPA DISCHARGE EVENT</span>
               </div>
-              <div>Vessel: <strong>{vessel.vessel_name}</strong></div>
-              <div>CPA Distance: <strong className="text-amber-300">{vessel.cpa.distance_to_origin_km} km to origin</strong></div>
-              <div>Speed Deceleration: <strong className="text-rose-400">{vessel.cpa.speed_before_kn} kn → {vessel.cpa.speed_during_kn} kn</strong></div>
-              <div className="text-slate-400 text-[10px]">Event Time: {vessel.cpa.timestamp}</div>
+              <div className="text-slate-300 text-[11px]">Vessel: <strong>{vessel.vessel_name}</strong></div>
+              <div className="text-slate-300 text-[11px]">CPA Distance: <strong className="text-amber-300">{vessel.cpa.distance_to_origin_km} km to origin</strong></div>
+              <div className="text-slate-300 text-[11px]">Speed Anomaly: <strong className="text-rose-400">{vessel.cpa.speed_before_kn} kn → {vessel.cpa.speed_during_kn} kn</strong></div>
+              <div className="text-slate-500 text-[10px] pt-0.5">Event Timestamp: {vessel.cpa.timestamp}</div>
             </div>
           </Popup>
         </CircleMarker>
@@ -827,11 +836,11 @@ const VesselTrackLayer: React.FC<{
         }}
       >
         <Popup>
-          <div className="text-xs font-mono p-1.5 space-y-1 min-w-[200px]">
+          <div className="text-xs font-mono p-2 space-y-1 min-w-[200px] bg-[#0b0f17] border border-slate-800 rounded">
             <div className="font-bold text-slate-100 flex items-center justify-between border-b border-slate-700 pb-1">
-              <span>🚢 {vessel.vessel_name}</span>
+              <span>{vessel.vessel_name}</span>
               <span className="text-[10px] font-bold px-1.5 py-0.2 rounded" style={{ backgroundColor: `${palette.fill}40`, color: palette.stroke }}>
-                Rank #{vessel.rank}
+                RANK #{vessel.rank}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-1 text-[11px] text-slate-300 pt-1">

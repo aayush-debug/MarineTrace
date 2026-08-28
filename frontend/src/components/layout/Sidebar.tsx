@@ -20,19 +20,19 @@ interface NavItem {
 }
 
 const SURVEILLANCE_NAV: NavItem[] = [
-  { id: 'spcsft-realtime', label: 'SpaceShift Live Surveillance', icon: Radio, badge: 'Live', badgeType: 'alert' },
-  { id: 'dashboard', label: 'Situation Overview', icon: LayoutDashboard },
+  { id: 'spcsft-realtime', label: 'Real-Time Satellite Surveillance', icon: Radio, badge: 'Live', badgeType: 'alert' },
+  { id: 'dashboard', label: 'Maritime Situation Overview', icon: LayoutDashboard },
 ];
 
 const FORENSICS_NAV: NavItem[] = [
-  { id: 'investigation', label: 'Investigation Workspace', icon: Search, badge: 'Active', badgeType: 'alert' },
-  { id: 'drift', label: 'Hydrodynamic Drift', icon: Compass },
-  { id: 'attribution', label: 'AIS Vessel Attribution', icon: Ship, badge: '5D', badgeType: 'info' },
-  { id: 'reports', label: 'Incident Intelligence Dossier', icon: FileText },
+  { id: 'investigation', label: 'Incident Forensics Workspace', icon: Search, badge: 'Active', badgeType: 'alert' },
+  { id: 'drift', label: 'Lagrangian Drift Simulation', icon: Compass },
+  { id: 'attribution', label: '5D Vessel Attribution Engine', icon: Ship, badge: '5D', badgeType: 'info' },
+  { id: 'reports', label: 'Incident Evidence Dossier', icon: FileText },
 ];
 
 const SYSTEM_NAV: NavItem[] = [
-  { id: 'access-logs', label: 'Audit Logs & Telemetry', icon: Server },
+  { id: 'access-logs', label: 'Audit Trail & Telemetry', icon: Server },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -40,7 +40,7 @@ export const Sidebar: React.FC = () => {
 
   const renderNavGroup = (title: string, items: NavItem[]) => (
     <div className="space-y-1">
-      <div className="px-3 pb-1 text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
+      <div className="px-3 pb-1 text-[10px] font-semibold tracking-wider text-slate-500 uppercase font-mono">
         {title}
       </div>
       <div className="space-y-0.5">

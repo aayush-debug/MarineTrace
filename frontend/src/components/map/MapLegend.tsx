@@ -5,25 +5,25 @@ export const MapLegend: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const legendItems = [
-    { label: 'Oil Slick Radar Geometry', color: '#e11d48', shape: 'rect' },
-    { label: 'Origin Probability Envelope', color: '#f59e0b', shape: 'rect' },
-    { label: 'Lagrangian Reverse Track', color: '#0284c7', shape: 'line-dashed' },
-    { label: 'Forward Dispersion Vector', color: '#10b981', shape: 'line-dashed' },
-    { label: 'Primary Suspect Track', color: '#e11d48', shape: 'line' },
-    { label: 'Candidate AIS Vector', color: '#6366f1', shape: 'line' },
+    { label: 'Hydrocarbon Delineation Contour', color: '#e11d48', shape: 'rect' },
+    { label: 'Discharge Origin Envelope (95% CI)', color: '#f59e0b', shape: 'rect' },
+    { label: 'Lagrangian Reverse Hindcast Vector', color: '#0284c7', shape: 'line-dashed' },
+    { label: 'Forward Weathering Dispersion Vector', color: '#10b981', shape: 'line-dashed' },
+    { label: 'Primary Suspect Vessel AIS Track', color: '#e11d48', shape: 'line' },
+    { label: 'Candidate Vessel AIS Trajectories', color: '#6366f1', shape: 'line' },
   ];
 
   return (
-    <div className="absolute bottom-3 left-3 z-[1000] bg-[#111622] border border-[#1e293b] rounded p-2.5 shadow-xl text-xs select-none pointer-events-auto max-w-xs">
+    <div className="absolute bottom-3 left-3 z-[1000] bg-[#111622]/95 border border-[#1e293b] rounded-lg p-2.5 shadow-2xl text-xs select-none pointer-events-auto max-w-xs backdrop-blur-md font-sans">
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-2 text-slate-200 font-semibold cursor-pointer text-[11px] uppercase tracking-wide"
+        className="flex items-center justify-between gap-2 text-slate-200 font-semibold cursor-pointer text-[11px] uppercase tracking-wider font-mono"
       >
         <div className="flex items-center gap-1.5">
           <Layers className="w-3.5 h-3.5 text-blue-400" />
-          <span>Symbology Legend</span>
+          <span>Cartographic Symbology</span>
         </div>
-        <button className="text-slate-500 hover:text-slate-300">
+        <button className="text-slate-400 hover:text-slate-200 cursor-pointer">
           {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
         </button>
       </div>

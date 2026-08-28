@@ -169,23 +169,23 @@ export const SpaceShiftRealTime: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-bold text-slate-100 tracking-tight flex items-center gap-2">
-                <span>SpaceShift SateAIs™ Real-Time Oil Surveillance</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60 font-bold">
-                  ● LIVE SATELLITE TELEMETRY
+              <h1 className="text-sm font-bold text-slate-100 tracking-tight flex items-center gap-2 font-mono">
+                <span>SENTINEL-1 SAR REAL-TIME MARITIME SURVEILLANCE</span>
+                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60 font-bold">
+                  ● ACTIVE RECONNAISSANCE STREAM
                 </span>
               </h1>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5 font-mono">
+            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5 font-mono text-[11px]">
               <span className="text-blue-400 font-semibold">
-                Recent Satellite Radar Telemetry
+                Copernicus Constellation Telemetry
               </span>
               <span className="text-slate-600">·</span>
-              <span>Sentinel-1 SAR C-Band AI Detections</span>
+              <span>Level-1 GRD C-SAR U-Net Detections</span>
               {spcsftLastSync && (
                 <>
                   <span className="text-slate-600">·</span>
-                  <span className="text-slate-400">Last Synced: {new Date(spcsftLastSync).toLocaleTimeString()}</span>
+                  <span className="text-slate-400">Synchronized: {new Date(spcsftLastSync).toUTCString()}</span>
                 </>
               )}
             </p>
@@ -484,12 +484,12 @@ export const SpaceShiftRealTime: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                <h2 className="text-xs font-bold text-slate-100 uppercase tracking-wide">
-                  RECENT SATELLITE SAR DETECTIONS
+                <h2 className="text-xs font-bold text-slate-100 uppercase tracking-wide font-mono">
+                  ACTIVE RADAR TARGET REGISTRY
                 </h2>
               </div>
-              <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                Real-time SAR backscatter signatures received from SpaceShift SateAIs™
+              <p className="text-[10.5px] text-slate-400 font-mono mt-0.5">
+                Level-1 GRD SAR backscatter anomalies verified via U-Net segmentation
               </p>
             </div>
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60">
@@ -501,7 +501,7 @@ export const SpaceShiftRealTime: React.FC = () => {
           <div className="p-3 bg-blue-950/40 border-b border-blue-800/50 text-[11px] font-mono text-blue-200 flex items-start gap-2.5 shrink-0">
             <Satellite className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
             <span className="leading-relaxed">
-              <strong>Interactive Target Selection:</strong> Click any detected oil spill slick on the map or select from the list below to view physical radar metrics and launch forensic attribution.
+              <strong>Target Selection:</strong> Click any detected hydrocarbon signature on the map canvas or registry below to inspect physical wave damping parameters and initiate Lagrangian forensic attribution.
             </span>
           </div>
 
@@ -518,8 +518,8 @@ export const SpaceShiftRealTime: React.FC = () => {
                   className={`p-3 rounded border text-xs space-y-2.5 transition-colors cursor-pointer ${
                     isSelected
                       ? isCritical
-                        ? 'bg-[#161e2e] border-rose-500 shadow-md'
-                        : 'bg-[#161e2e] border-blue-500 shadow-md'
+                        ? 'bg-[#161e2e] border-rose-500 shadow-md ring-1 ring-rose-500/50'
+                        : 'bg-[#161e2e] border-blue-500 shadow-md ring-1 ring-blue-500/50'
                       : 'bg-[#161e2e] border-[#1e293b] hover:border-slate-700'
                   }`}
                 >
@@ -582,10 +582,10 @@ export const SpaceShiftRealTime: React.FC = () => {
                       launchInvestigationFromSpcsft(det.detection_id, currentZone?.zone_id);
                     }}
                     disabled={loading}
-                    className="w-full py-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold rounded text-xs flex items-center justify-center gap-1.5 shadow transition-colors cursor-pointer disabled:opacity-50"
+                    className="w-full py-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold rounded text-xs flex items-center justify-center gap-1.5 shadow transition-colors cursor-pointer disabled:opacity-50 font-mono uppercase tracking-wider"
                   >
                     <Zap className="w-3.5 h-3.5 fill-current" />
-                    <span>Launch MarineTrace Attribution (OpenDrift + AIS)</span>
+                    <span>Launch Forensic Attribution (OpenDrift + AIS)</span>
                   </button>
                 </div>
               );

@@ -137,16 +137,18 @@ export const TopNav: React.FC = () => {
         )}
       </div>
 
-      {/* CENTER: Compact Status (Only on massive screens to prevent overflow) */}
-      <div className="hidden 2xl:flex items-center gap-2.5 px-2.5 py-0.5 bg-[#0c1017] rounded border border-[#1e293b] text-xs font-mono text-slate-400 shrink-0 whitespace-nowrap">
-        <span className="flex items-center gap-1 text-emerald-400 text-[10px] font-medium shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-          <span>Operational</span>
+      {/* CENTER: Operational Classification & Constellation Link */}
+      <div className="hidden xl:flex items-center gap-2.5 px-3 py-1 bg-[#0c1017] rounded border border-slate-800/80 text-xs font-mono text-slate-400 shrink-0 whitespace-nowrap">
+        <span className="flex items-center gap-1.5 text-emerald-400 text-[10.5px] font-semibold shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span>MARITIME C2 LINK ONLINE</span>
         </span>
         <span className="text-slate-700">|</span>
-        <span className="text-[10px]">Sentinel-1A SAR</span>
+        <span className="text-[10px] text-slate-300">SENTINEL-1A SAR (IW)</span>
         <span className="text-slate-700">|</span>
-        <span className="text-[10px]">CMEMS Ocean</span>
+        <span className="text-[10px] text-slate-300">COPERNICUS CMEMS</span>
+        <span className="text-slate-700">|</span>
+        <span className="text-[9.5px] text-amber-400/90 font-bold uppercase tracking-wider">OFFICIAL USE ONLY</span>
       </div>
 
       {/* RIGHT: Actions, Chronometer & Operator Profile / Login */}
