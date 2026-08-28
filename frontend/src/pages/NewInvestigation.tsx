@@ -46,22 +46,48 @@ export const NewInvestigation: React.FC = () => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      setSelectedFile({
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-        type: file.type || 'Satellite SAR Imagery',
-      });
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setSelectedFile({
+          name: file.name,
+          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+          type: file.type || 'Satellite SAR GeoTIFF/Raster',
+          previewUrl: event.target?.result as string,
+        });
+      };
+      if (file.type.startsWith('image/')) {
+        reader.readAsDataURL(file);
+      } else {
+        setSelectedFile({
+          name: file.name,
+          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+          type: file.type || 'Satellite SAR GeoTIFF/Raster',
+        });
+      }
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedFile({
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-        type: file.type || 'Satellite SAR Imagery',
-      });
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setSelectedFile({
+          name: file.name,
+          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+          type: file.type || 'Satellite SAR GeoTIFF/Raster',
+          previewUrl: event.target?.result as string,
+        });
+      };
+      if (file.type.startsWith('image/')) {
+        reader.readAsDataURL(file);
+      } else {
+        setSelectedFile({
+          name: file.name,
+          size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+          type: file.type || 'Satellite SAR GeoTIFF/Raster',
+        });
+      }
     }
   };
 
@@ -71,6 +97,7 @@ export const NewInvestigation: React.FC = () => {
       observation_time: new Date(acquisitionTime).toISOString(),
       backward_hours: backwardHours,
       forward_hours: 24,
+      image: selectedFile?.previewUrl ? selectedFile.previewUrl.split(',')[1] : undefined,
     });
   };
 

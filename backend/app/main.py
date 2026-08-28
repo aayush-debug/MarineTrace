@@ -47,8 +47,14 @@ from app.api.routes.health import router as health_router               # noqa: 
 from app.api.routes.investigation import router as investigation_router  # noqa: E402
 from app.api.routes.drift import router as drift_router                  # noqa: E402
 from app.api.routes.vessels import router as vessels_router              # noqa: E402
+from app.api.routes.spcsft import router as spcsft_router                # noqa: E402
+from app.api.routes.auth import router as auth_router                    # noqa: E402
+from app.api.routes.sar import router as sar_router                      # noqa: E402
 
 app.include_router(health_router)
 app.include_router(investigation_router)
 app.include_router(drift_router)
 app.include_router(vessels_router)
+app.include_router(spcsft_router)
+app.include_router(auth_router)
+app.include_router(sar_router)
