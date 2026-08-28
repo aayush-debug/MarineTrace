@@ -1,16 +1,14 @@
-import React from 'react';
 import {
   LayoutDashboard,
   PlusCircle,
   Search,
   Compass,
   Ship,
-  Satellite,
   FileText,
-  ChevronRight,
   Radio,
   Server,
   AlertTriangle,
+  ChevronRight,
 } from 'lucide-react';
 import { useInvestigation, type PageId } from '../../context/InvestigationContext';
 
@@ -26,7 +24,6 @@ const SURVEILLANCE_NAV: NavItem[] = [
   { id: 'spcsft-realtime', label: 'SpaceShift Live Surveillance', icon: Radio, badge: 'Live', badgeType: 'alert' },
   { id: 'dashboard', label: 'Situation Overview', icon: LayoutDashboard },
   { id: 'new-investigation', label: 'New Investigation', icon: PlusCircle },
-  { id: 'satellite', label: 'Sentinel-1 SAR Viewer', icon: Satellite },
 ];
 
 const FORENSICS_NAV: NavItem[] = [

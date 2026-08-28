@@ -9,6 +9,7 @@ export const MapLayerControls: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
   const layerItems: { id: keyof typeof layers; label: string; dotColor: string }[] = [
+    { id: 'sar', label: 'Sentinel-1 SAR Radar Image', dotColor: 'bg-cyan-400' },
     { id: 'spill', label: 'Oil Slick Geometry', dotColor: 'bg-rose-500' },
     { id: 'spcsft', label: 'SpaceShift Radar Slicks', dotColor: 'bg-blue-400' },
     { id: 'origin', label: 'Origin Probability Area', dotColor: 'bg-amber-500' },

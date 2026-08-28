@@ -10,7 +10,6 @@ import { NewInvestigation } from './pages/NewInvestigation';
 import { Investigation } from './pages/Investigation';
 import { DriftAnalysis } from './pages/DriftAnalysis';
 import { VesselAttribution } from './pages/VesselAttribution';
-import { SatelliteImagery } from './pages/SatelliteImagery';
 import { SpaceShiftRealTime } from './pages/SpaceShiftRealTime';
 import { Reports } from './pages/Reports';
 import { AccessLogs } from './pages/AccessLogs';
@@ -40,13 +39,12 @@ const MainLayout: React.FC = () => {
       case 'new-investigation':
         return <NewInvestigation />;
       case 'investigation':
+      case 'satellite':
         return <Investigation />;
       case 'drift':
         return <DriftAnalysis />;
       case 'attribution':
         return <VesselAttribution />;
-      case 'satellite':
-        return <SatelliteImagery />;
       case 'reports':
         return <Reports />;
       case 'access-logs':

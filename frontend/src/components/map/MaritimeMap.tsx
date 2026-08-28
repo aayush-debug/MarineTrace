@@ -3,6 +3,7 @@ import L from 'leaflet';
 import {
   MapContainer,
   TileLayer,
+  ImageOverlay,
   Polygon,
   Polyline,
   CircleMarker,
@@ -15,6 +16,7 @@ import { useInvestigation } from '../../context/InvestigationContext';
 import type { VesselAttribution } from '../../types/investigation';
 import { BASEMAP_CONFIGS } from '../../utils/mapTiles';
 import { MapZoomControl } from './MapZoomControl';
+import { SarMapStudioWidget } from './SarMapStudioWidget';
 
 /**
  * Robustly unwrap GeoJSON polygon coordinate arrays to [lat, lon][] Leaflet positions
@@ -196,6 +198,7 @@ export const MaritimeMap: React.FC<{
     basemap,
     spcsftLiveDetections,
     launchInvestigationFromSpcsft,
+    sarConfig,
   } = useInvestigation();
 
   // Extract all points for bounds fitting
@@ -212,6 +215,40 @@ export const MaritimeMap: React.FC<{
 
   const defaultCenter: [number, number] = [18.95, 72.30];
   const activeBasemap = BASEMAP_CONFIGS[basemap] || BASEMAP_CONFIGS['google-hybrid'];
+
+  // Geodetic Bounding Box for SAR Radar Overlay matching the active spill
+  const sarBbox = useMemo(() => {
+    if (!investigation) return null;
+    const positions = getPolygonPositions(investigation.spill.geometry);
+    if (positions.length === 0) return null;
+    const lats = positions.map((p) => p[0]);
+    const lons = positions.map((p) => p[1]);
+    const minLat = Math.min(...lats) - 0.045;
+    const maxLat = Math.max(...lats) + 0.045;
+    const minLon = Math.min(...lons) - 0.045;
+    const maxLon = Math.max(...lons) + 0.045;
+    return [
+      [minLat, minLon],
+      [maxLat, maxLon],
+    ] as [[number, number], [number, number]];
+  }, [investigation]);
+
+  // Dynamic Sentinel-1 SAR Raster URL based on selected channel/band
+  const sarRasterUrl = useMemo(() => {
+    switch (sarConfig.channel) {
+      case 'VV':
+        return '/sar/sample_s1_vv.png';
+      case 'VH':
+        return '/sar/sample_s1_vh.png';
+      case 'prob':
+        return '/sar/sample_s1_prob.png';
+      case 'mask':
+        return '/sar/sample_s1_mask.png';
+      case 'composite':
+      default:
+        return '/sar/sample_s1_composite.png';
+    }
+  }, [sarConfig.channel]);
 
   const spillPolygonPositions = useMemo(
     () => (investigation?.spill?.geometry ? getPolygonPositions(investigation.spill.geometry) : []),
@@ -245,6 +282,16 @@ export const MaritimeMap: React.FC<{
           subdomains={activeBasemap.subdomains || ['a', 'b', 'c']}
           maxZoom={activeBasemap.maxZoom}
         />
+
+        {/* 0a. Sentinel-1 Calibrated SAR Radar Raster Overlay */}
+        {layers.sar && sarBbox && (
+          <ImageOverlay
+            url={sarRasterUrl}
+            bounds={sarBbox}
+            opacity={sarConfig.opacity}
+            zIndex={250}
+          />
+        )}
 
         {allCoords.length > 0 && <MapBoundsFitter coords={allCoords} />}
 
@@ -619,6 +666,9 @@ export const MaritimeMap: React.FC<{
         {/* Custom Google Maps Style Zoom In / Zoom Out Controls */}
         <MapZoomControl />
       </MapContainer>
+
+      {/* Floating Sentinel-1 SAR Radar Verification Studio Widget */}
+      <SarMapStudioWidget />
     </div>
   );
 };

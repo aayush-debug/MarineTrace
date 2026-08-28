@@ -49,6 +49,18 @@ export interface LayerVisibility {
   tracks: boolean;
   forecast: boolean;
   spcsft: boolean;
+  sar: boolean;
+}
+
+export type SARChannelType = 'VV' | 'VH' | 'composite' | 'mask' | 'prob';
+
+export interface SAROverlayConfig {
+  enabled: boolean;
+  channel: SARChannelType;
+  opacity: number;
+  showComparison: boolean;
+  brightness: number;
+  contrast: number;
 }
 
 interface InvestigationContextType {
@@ -68,6 +80,9 @@ interface InvestigationContextType {
   layers: LayerVisibility;
   setLayers: React.Dispatch<React.SetStateAction<LayerVisibility>>;
   toggleLayer: (layer: keyof LayerVisibility) => void;
+  sarConfig: SAROverlayConfig;
+  setSarConfig: React.Dispatch<React.SetStateAction<SAROverlayConfig>>;
+  updateSarConfig: (partial: Partial<SAROverlayConfig>) => void;
   basemap: BasemapType;
   setBasemap: (basemap: BasemapType) => void;
   executeDemo: () => Promise<void>;
@@ -110,6 +125,16 @@ const DEFAULT_LAYERS: LayerVisibility = {
   tracks: true,
   forecast: true,
   spcsft: true,
+  sar: true,
+};
+
+const DEFAULT_SAR_CONFIG: SAROverlayConfig = {
+  enabled: true,
+  channel: 'composite',
+  opacity: 0.75,
+  showComparison: true,
+  brightness: 100,
+  contrast: 100,
 };
 
 const DEFAULT_HEALTH: SystemHealth = {
@@ -140,6 +165,11 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [investigationList, setInvestigationList] = useState<InvestigationResponse[]>([DEMO_INVESTIGATION_DATA]);
   const [selectedVesselMmsi, setSelectedVesselMmsi] = useState<string | null>(null);
   const [isIncidentSelectorOpen, setIsIncidentSelectorOpen] = useState<boolean>(false);
+  const [sarConfig, setSarConfig] = useState<SAROverlayConfig>(DEFAULT_SAR_CONFIG);
+
+  const updateSarConfig = (partial: Partial<SAROverlayConfig>) => {
+    setSarConfig((prev) => ({ ...prev, ...partial }));
+  };
 
   const selectPresetScenario = (scenarioId: string) => {
     const preset = ALL_INCIDENT_PRESETS.find((p) => p.id === scenarioId) || ALL_INCIDENT_PRESETS[0];
@@ -455,6 +485,9 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
         layers,
         setLayers,
         toggleLayer,
+        sarConfig,
+        setSarConfig,
+        updateSarConfig,
         basemap,
         setBasemap,
         executeDemo,
