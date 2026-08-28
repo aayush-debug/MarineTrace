@@ -4,43 +4,43 @@
   :root,
   .dark,
   [data-theme="dark"] {
-    /* Refined Deep Maritime Dark Palette */
-    --bg-canvas: #060a12;
-    --bg-surface: #0c121e;
-    --bg-surface-elevated: #111a2c;
-    --bg-card: #090e1a;
-    --bg-card-hover: #131c2e;
-    --bg-card-active: #19243b;
-    --bg-overlay: rgba(6, 10, 18, 0.88);
+    /* NASA / Space-Agency Deep Void Dark Palette */
+    --bg-canvas: #040711;
+    --bg-surface: #070d1d;
+    --bg-surface-elevated: #0d162f;
+    --bg-card: #080f22;
+    --bg-card-hover: #0f1c3d;
+    --bg-card-active: #15264f;
+    --bg-overlay: rgba(4, 7, 17, 0.92);
 
-    /* Subtle Architectural Borders */
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-default: rgba(255, 255, 255, 0.12);
-    --border-strong: rgba(255, 255, 255, 0.18);
-    --border-accent: rgba(56, 189, 248, 0.30);
+    /* Tactical Aerospace Borders & Glows */
+    --border-subtle: rgba(56, 189, 248, 0.12);
+    --border-default: rgba(56, 189, 248, 0.22);
+    --border-strong: rgba(0, 240, 255, 0.45);
+    --border-accent: rgba(0, 240, 255, 0.65);
 
-    /* High-Legibility Typography */
-    --text-primary: #f8fafc;
+    /* High-Legibility Tactical Typography */
+    --text-primary: #f0f6fc;
     --text-secondary: #94a3b8;
     --text-tertiary: #64748b;
     --text-muted: #475569;
 
-    /* Functional Maritime Accents */
+    /* Mission Control Telemetry Accents */
     --color-ocean: #0284c7;
     --color-sky: #38bdf8;
-    --color-crimson: #e11d48;
-    --color-crimson-light: #fb7185;
-    --color-amber: #f59e0b;
-    --color-emerald: #10b981;
-    --color-indigo: #6366f1;
+    --hud-cyan: #00f0ff;
+    --hud-amber: #f59e0b;
+    --hud-emerald: #10b981;
+    --hud-crimson: #ff0055;
+    --hud-indigo: #818cf8;
 
     --scrollbar-thumb: #1e293b;
-    --scrollbar-hover: #334155;
+    --scrollbar-hover: #0284c7;
   }
 
   .light,
   [data-theme="light"] {
-    /* Refined Crisp Maritime Light Palette */
+    /* Crisp Flight Ops White Palette */
     --bg-canvas: #f1f5f9;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #f8fafc;
@@ -51,9 +51,9 @@
 
     /* Clean Architectural Borders */
     --border-subtle: rgba(0, 0, 0, 0.08);
-    --border-default: rgba(0, 0, 0, 0.13);
-    --border-strong: rgba(0, 0, 0, 0.22);
-    --border-accent: rgba(2, 132, 199, 0.35);
+    --border-default: rgba(0, 0, 0, 0.14);
+    --border-strong: rgba(0, 0, 0, 0.24);
+    --border-accent: rgba(2, 132, 199, 0.45);
 
     /* High-Legibility Light Typography */
     --text-primary: #0f172a;
@@ -64,11 +64,11 @@
     /* Functional Accents for Light Theme */
     --color-ocean: #0369a1;
     --color-sky: #0284c7;
-    --color-crimson: #dc2626;
-    --color-crimson-light: #ef4444;
-    --color-amber: #d97706;
-    --color-emerald: #059669;
-    --color-indigo: #4f46e5;
+    --hud-cyan: #0284c7;
+    --hud-amber: #d97706;
+    --hud-emerald: #059669;
+    --hud-crimson: #dc2626;
+    --hud-indigo: #4f46e5;
 
     --scrollbar-thumb: #cbd5e1;
     --scrollbar-hover: #94a3b8;
@@ -95,10 +95,115 @@
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
+
+  .font-orbitron {
+    font-family: 'Orbitron', 'Chakra Petch', sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  .font-tech {
+    font-family: 'Space Grotesk', 'Chakra Petch', sans-serif;
+  }
+
+  .font-telemetry {
+    font-family: 'Chakra Petch', 'JetBrains Mono', sans-serif;
+    letter-spacing: 0.04em;
+  }
 }
 
 /* ============================================================
-   ROBUST LIGHT THEME UNIVERSAL OVERRIDES (TURNS EVERYTHING CRISP WHITE)
+   TACTICAL NASA / MISSION CONTROL UTILITIES
+   ============================================================ */
+
+/* Aerospace HUD Glass Panel */
+.hud-panel {
+  background: rgba(7, 13, 29, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.hud-panel:hover {
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+}
+
+/* Tactical Corner Brackets */
+.hud-bracket {
+  position: relative;
+}
+
+.hud-bracket::before,
+.hud-bracket::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: var(--hud-cyan, #00f0ff);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.hud-bracket::before {
+  top: 0;
+  left: 0;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+
+.hud-bracket::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+
+/* Radar Sweep Animation */
+@keyframes radar-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.radar-sweep-beam {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(0, 240, 255, 0.25) 0deg, transparent 60deg, transparent 360deg);
+  animation: radar-spin 4s linear infinite;
+  pointer-events: none;
+}
+
+/* Tactical Crosshairs & Reticle */
+.tactical-grid {
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Mission Telemetry Glows */
+.glow-cyan {
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+}
+
+.glow-amber {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+}
+
+.glow-crimson {
+  box-shadow: 0 0 12px rgba(255, 0, 85, 0.35);
+}
+
+/* ============================================================
+   LIGHT THEME UNIVERSAL OVERRIDES (PRESERVES CLEAN READABILITY)
    ============================================================ */
 .light,
 [data-theme="light"],
@@ -107,7 +212,6 @@
   color: #0f172a !important;
 }
 
-/* Background resets for all dark containers */
 .light div,
 .light main,
 .light section,
@@ -118,9 +222,9 @@
   border-color: rgba(0, 0, 0, 0.08);
 }
 
-/* Main surface containers & background cards */
 .light header,
 .light aside,
+.light .hud-panel,
 .light [class*="bg-[#0"],
 .light [class*="bg-[#1"],
 .light [class*="bg-[#2"],
@@ -130,10 +234,9 @@
 .light [class*="bg-black"] {
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.09) !important;
 }
 
-/* Secondary surface cards (KPIs, badges, sub-cards, info panels) */
 .light .data-card,
 .light [class*="bg-[#111827]"],
 .light [class*="bg-[#111a2c]"],
@@ -154,13 +257,16 @@
 .light [class*="bg-[#0a0f1d]"],
 .light [class*="bg-[#070b12]"],
 .light [class*="bg-[#04070e]"],
-.light [class*="bg-[#050810]"] {
+.light [class*="bg-[#050810]"],
+.light [class*="bg-[#040711]"],
+.light [class*="bg-[#070d1d]"],
+.light [class*="bg-[#0d162f]"],
+.light [class*="bg-[#080f22]"] {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-/* KPI Stat Cards and Inner Panels */
 .light [class*="bg-[#111827]/70"],
 .light [class*="bg-[#111827]/80"],
 .light [class*="bg-[#111827]/60"],
@@ -178,7 +284,6 @@
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Gradients in Light Mode */
 .light [class*="from-rose-950"],
 .light [class*="from-cyan-950"],
 .light [class*="from-blue-950"],
@@ -189,7 +294,6 @@
   border-color: rgba(225, 29, 72, 0.2) !important;
 }
 
-/* Floating Map Overlays & Panels */
 .light .glass-panel,
 .light [class*="MapLayerControls"],
 .light [class*="MapLegend"] {
@@ -199,7 +303,6 @@
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Typography Overrides */
 .light [class*="text-slate-100"],
 .light [class*="text-slate-200"] {
   color: #0f172a !important;
@@ -218,7 +321,6 @@
   color: #94a3b8 !important;
 }
 
-/* Colored Accents High Visibility */
 .light .text-emerald-400 {
   color: #059669 !important;
 }
@@ -236,7 +338,6 @@
   color: #be123c !important;
 }
 
-/* Border overrides */
 .light [class*="border-slate-800"],
 .light [class*="border-slate-700"],
 .light [class*="border-slate-600"],
@@ -244,7 +345,6 @@
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Table styling in light mode */
 .light table thead tr {
   background-color: #f8fafc !important;
   color: #475569 !important;
@@ -259,7 +359,6 @@
   border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
-/* Inputs and Forms */
 .light input,
 .light select,
 .light textarea {
@@ -273,7 +372,6 @@
   color: #94a3b8 !important;
 }
 
-/* Buttons in Light Mode */
 .light button[class*="bg-slate-800"],
 .light button[class*="bg-slate-900"] {
   background-color: #f1f5f9 !important;
@@ -287,7 +385,6 @@
   color: #0f172a !important;
 }
 
-/* Preserve primary action buttons */
 .light button.bg-sky-600,
 .light button.bg-cyan-500,
 .light button.bg-emerald-600 {
@@ -313,12 +410,12 @@
 }
 
 /* ============================================================
-   LEAFLET MARITIME THEME
+   LEAFLET TACTICAL RADAR THEME
    ============================================================ */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #070b13 !important;
+  background: #040814 !important;
   font-family: 'Inter', system-ui, sans-serif !important;
 }
 
@@ -327,12 +424,12 @@
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.96) !important;
-  backdrop-filter: blur(12px) !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  background: rgba(7, 13, 29, 0.96) !important;
+  backdrop-filter: blur(16px) !important;
+  color: #f0f6fc !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.15) !important;
   padding: 0 !important;
 }
 
@@ -349,7 +446,7 @@
 }
 
 .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.96) !important;
+  background: rgba(7, 13, 29, 0.96) !important;
 }
 
 .light .leaflet-popup-tip {
@@ -361,10 +458,10 @@
 }
 
 .leaflet-control-zoom {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  border-radius: 6px !important;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
 .light .leaflet-control-zoom {
@@ -373,10 +470,11 @@
 }
 
 .leaflet-control-zoom a {
-  background-color: rgba(15, 23, 42, 0.92) !important;
-  color: #94a3b8 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  font-family: 'Inter', sans-serif !important;
+  background-color: rgba(7, 13, 29, 0.94) !important;
+  color: #00f0ff !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 700 !important;
   transition: all 0.15s ease;
 }
 
@@ -387,8 +485,8 @@
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #1e293b !important;
-  color: #38bdf8 !important;
+  background-color: rgba(0, 240, 255, 0.15) !important;
+  color: #ffffff !important;
 }
 
 .light .leaflet-control-zoom a:hover {
@@ -397,12 +495,13 @@
 }
 
 .leaflet-control-attribution {
-  background: rgba(9, 13, 22, 0.85) !important;
-  backdrop-filter: blur(4px) !important;
-  color: #475569 !important;
+  background: rgba(4, 7, 17, 0.88) !important;
+  backdrop-filter: blur(6px) !important;
+  color: #64748b !important;
   font-size: 10px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.15) !important;
+  border-left: 1px solid rgba(56, 189, 248, 0.15) !important;
   border-top-left-radius: 6px !important;
 }
 
@@ -413,7 +512,7 @@
 }
 
 .leaflet-control-attribution a {
-  color: #64748b !important;
+  color: #38bdf8 !important;
 }
 
 /* ============================================================
@@ -440,11 +539,11 @@
 }
 
 .slick-sheen-polygon {
-  filter: drop-shadow(0 2px 6px rgba(225, 29, 72, 0.35));
+  filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.5));
 }
 
 .slick-core-polygon {
-  filter: drop-shadow(0 2px 8px rgba(159, 18, 57, 0.6));
+  filter: drop-shadow(0 0 14px rgba(225, 29, 72, 0.8));
 }
 
 /* ============================================================
@@ -453,7 +552,7 @@
 .data-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 8px;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
@@ -463,10 +562,10 @@
 }
 
 .glass-panel {
-  background: rgba(15, 23, 42, 0.82);
+  background: rgba(7, 13, 29, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.15);
 }
 
 .kpi-value {
@@ -485,22 +584,22 @@
 
 .status-dot-emerald {
   background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
 }
 
 .status-dot-amber {
   background: #f59e0b;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
 }
 
 .status-dot-rose {
-  background: #f43f5e;
-  box-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+  background: #ff0055;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
 }
 
 .status-dot-sky {
-  background: #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  background: #00f0ff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
 }
 
 /* Subtle Progress animation */

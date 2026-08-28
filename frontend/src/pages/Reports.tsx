@@ -3,8 +3,6 @@ import {
   Download,
   FileText,
   Shield,
-  CheckCircle2,
-  AlertTriangle,
   Clock,
   Cpu,
   TrendingUp,
@@ -24,7 +22,7 @@ const ML_PERF_TABLE = [
 ];
 
 export const Reports: React.FC = () => {
-  const { investigation, environmental } = useInvestigation();
+  const { investigation } = useInvestigation();
 
   const handlePrint = () => window.print();
 
@@ -62,60 +60,72 @@ export const Reports: React.FC = () => {
 
   if (!investigation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#090d16] p-6 text-center">
-        <div className="space-y-3 max-w-sm">
-          <FileText className="w-10 h-10 text-slate-600 mx-auto" />
-          <h2 className="text-sm font-semibold text-slate-200">No Investigation Loaded</h2>
-          <p className="text-xs text-slate-400">Launch a scenario or ingest SAR imagery to compile an intelligence dossier.</p>
+      <div className="flex-1 flex items-center justify-center bg-[#040814] p-6 text-center select-none">
+        <div className="space-y-3 max-w-md p-8 rounded-lg bg-[#070d1d] border border-cyan-500/25 shadow-2xl relative">
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="absolute bottom-1 left-1 w-2 h-2 border-b border-l border-cyan-400" />
+          <FileText className="w-12 h-12 text-cyan-400 mx-auto animate-pulse" />
+          <h2 className="font-orbitron text-sm font-bold text-slate-100 uppercase tracking-wider">
+            NO MISSION TARGET LOADED
+          </h2>
+          <p className="text-xs font-mono text-slate-400">
+            Launch a mission scenario or ingest satellite SAR imagery to compile an official forensics dossier.
+          </p>
         </div>
       </div>
     );
   }
 
   const { spill, drift, vessels } = investigation;
-  const centroidLat = spill.geometry?.coordinates?.[0]?.[0]?.[1] ?? 18.721;
   const generatedAt = new Date().toUTCString();
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#090d16] overflow-y-auto">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#040814] overflow-y-auto select-none">
 
       {/* Action Bar — no-print */}
-      <div className="px-6 py-3.5 bg-[#0c121e] border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between gap-4 no-print shrink-0 sticky top-0 z-10">
+      <div className="px-6 py-3 bg-[#070d1d] border-b border-[rgba(0,240,255,0.18)] flex items-center justify-between gap-4 no-print shrink-0 sticky top-0 z-10 shadow-md">
         <div className="flex items-center gap-3">
-          <FileText className="w-5 h-5 text-sky-400" />
+          <div className="w-8 h-8 rounded-md bg-cyan-950/80 border border-cyan-400/40 flex items-center justify-center text-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.25)]">
+            <FileText className="w-4.5 h-4.5" />
+          </div>
           <div>
-            <h1 className="text-sm font-semibold text-slate-100">
-              Maritime Incident Intelligence Dossier
-            </h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Auditable decision-support report for maritime law enforcement and pollution response authorities.
+            <div className="flex items-center gap-2">
+              <h1 className="font-orbitron text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider">
+                Mission Incident Intelligence Dossier
+              </h1>
+              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+                AUDITABLE REPORT
+              </span>
+            </div>
+            <p className="text-[11px] font-mono text-cyan-400/80 mt-0.5">
+              Auditable forensic decision-support dossier for maritime law enforcement and pollution response authorities.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 font-mono">
           <button
             onClick={handleDownloadCSV}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#091124] hover:bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition-all cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Export CSV</span>
+            <Download className="w-3.5 h-3.5 text-cyan-400" />
+            <span>EXPORT CSV</span>
           </button>
 
           <button
             onClick={handleDownloadJSON}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#091124] hover:bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition-all cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-sky-400" />
-            <span>Export JSON</span>
+            <Download className="w-3.5 h-3.5 text-cyan-400" />
+            <span>EXPORT JSON</span>
           </button>
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs shadow-sm transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-bold text-xs shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>Print Dossier</span>
+            <span>PRINT DOSSIER</span>
           </button>
         </div>
       </div>
@@ -124,75 +134,78 @@ export const Reports: React.FC = () => {
       <div className="p-6 max-w-4xl mx-auto w-full space-y-6">
 
         {/* Document Header & Provenance */}
-        <div className="bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="bg-[#070d1d] border border-cyan-500/25 rounded-lg p-6 shadow-xl space-y-4 relative">
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="absolute bottom-1 left-1 w-2 h-2 border-b border-l border-cyan-400" />
+
+          <div className="flex items-start justify-between border-b border-cyan-900/40 pb-4">
             <div>
-              <div className="flex items-center gap-2 text-sky-400 font-bold text-base tracking-tight mb-1">
-                <Shield className="w-5 h-5" />
-                <span>MarineTrace Intelligence Dossier</span>
+              <div className="flex items-center gap-2 text-cyan-300 font-orbitron font-bold text-base tracking-wider mb-1 uppercase">
+                <Shield className="w-5 h-5 text-cyan-400" />
+                <span>MARINETRACE INTELLIGENCE DOSSIER</span>
               </div>
-              <div className="text-xs text-slate-400 font-medium">
-                Maritime Oil Pollution Detection & Source Attribution Report
+              <div className="text-xs font-mono text-slate-300 font-bold">
+                Sentinel-1 SAR Detection & Lagrangian Source Attribution Report
               </div>
-              <div className="text-[11px] text-slate-400 mt-1">
-                Security Classification: Official / Decision-Support
+              <div className="text-[10px] font-mono text-cyan-400/80 mt-1">
+                SECURITY CLASSIFICATION: OFFICIAL // DECISION-SUPPORT // UNCLASSIFIED
               </div>
             </div>
-            <div className="text-right text-xs">
-              <div className="font-bold text-slate-100 font-mono text-sm">Case #{investigation.investigation_id}</div>
-              <div className="text-slate-400 mt-1 flex items-center justify-end gap-1 font-mono text-[11px]">
-                <Clock className="w-3 h-3" />
+            <div className="text-right text-xs font-mono">
+              <div className="font-bold text-cyan-200 text-sm">TARGET #{investigation.investigation_id}</div>
+              <div className="text-slate-400 mt-1 flex items-center justify-end gap-1 text-[10px]">
+                <Clock className="w-3 h-3 text-cyan-400" />
                 <span>{generatedAt}</span>
               </div>
             </div>
           </div>
 
           {/* Section 0: System Architecture & Provenance */}
-          <div>
-            <div className="text-xs font-semibold text-slate-300 mb-2.5 flex items-center gap-1.5">
-              <Cpu className="w-4 h-4 text-indigo-400" />
+          <div className="font-mono">
+            <div className="text-xs font-bold text-cyan-300 mb-2.5 flex items-center gap-1.5 uppercase">
+              <Cpu className="w-4 h-4 text-cyan-400" />
               <span>Section 0 — System Provenance & Multi-Stage Pipeline</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               {[
-                { k: 'Software Version', v: 'MarineTrace v2.4' },
-                { k: 'SAR Model', v: 'U-Net ResNet-34' },
-                { k: 'Backtracking', v: 'OpenDrift 500-P' },
-                { k: 'Current Model', v: 'Copernicus CMEMS' },
-                { k: 'Wind Forcing', v: 'ECMWF ERA5' },
-                { k: 'AIS Ingestion', v: 'Spatio-Temporal' },
-                { k: 'Attribution', v: '5D Explainable AI' },
-                { k: 'Reference CRS', v: 'EPSG:4326 (WGS84)' },
+                { k: 'SOFTWARE REVISION', v: 'MarineTrace v2.4' },
+                { k: 'SAR ML BACKBONE', v: 'U-Net ResNet-34' },
+                { k: 'PHYSICS BACKTRACK', v: 'OpenDrift 500-P' },
+                { k: 'OCEAN CURRENTS', v: 'Copernicus CMEMS' },
+                { k: 'SURFACE WIND', v: 'ECMWF ERA5' },
+                { k: 'AIS INGESTION', v: 'Spatio-Temporal' },
+                { k: 'ATTRIBUTION SCORER', v: '5D Explainable AI' },
+                { k: 'REFERENCE CRS', v: 'EPSG:4326 (WGS84)' },
               ].map(({ k, v }) => (
-                <div key={k} className="p-2.5 bg-slate-900/80 rounded-lg border border-slate-800">
-                  <div className="text-slate-400 text-[10px]">{k}</div>
-                  <div className="text-slate-200 font-semibold font-mono text-[11px] mt-0.5">{v}</div>
+                <div key={k} className="p-2.5 bg-[#040814] rounded border border-cyan-900/40">
+                  <div className="text-slate-500 text-[9px]">{k}</div>
+                  <div className="text-cyan-200 font-bold text-[10px] mt-0.5">{v}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Model Validation Benchmarks */}
-          <div className="pt-2 border-t border-slate-800">
-            <div className="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+          <div className="pt-2 border-t border-cyan-900/40 font-mono">
+            <div className="text-xs font-bold text-cyan-300 mb-2 flex items-center gap-1.5 uppercase">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
               <span>ML Model Validation Performance (Zenodo 450-Scene Benchmark)</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 text-[11px] text-slate-400">
-                    <th className="py-1.5 px-3 font-medium">Metric</th>
-                    <th className="py-1.5 px-3 font-medium">Evaluation Score</th>
-                    <th className="py-1.5 px-3 font-medium">Verification Target</th>
+                  <tr className="border-b border-cyan-900/40 text-[10px] text-cyan-400 uppercase">
+                    <th className="py-1.5 px-3 font-bold">Metric</th>
+                    <th className="py-1.5 px-3 font-bold">Evaluation Score</th>
+                    <th className="py-1.5 px-3 font-bold">Verification Target</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-cyan-950/60">
                   {ML_PERF_TABLE.map((r) => (
-                    <tr key={r.metric} className="hover:bg-slate-800/30">
+                    <tr key={r.metric} className="hover:bg-cyan-950/20">
                       <td className="py-1.5 px-3 text-slate-300">{r.metric}</td>
-                      <td className="py-1.5 px-3 text-emerald-400 font-semibold font-mono">{r.value}</td>
-                      <td className="py-1.5 px-3 text-slate-400 text-[11px]">{r.benchmark}</td>
+                      <td className="py-1.5 px-3 text-emerald-400 font-bold font-mono">{r.value}</td>
+                      <td className="py-1.5 px-3 text-slate-400 text-[10px]">{r.benchmark}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -201,156 +214,126 @@ export const Reports: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 1: Satellite SAR Characterization */}
-        <div className="bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl p-5 shadow-sm space-y-3">
-          <div className="text-xs font-semibold text-sky-400 flex items-center gap-1.5 border-b border-slate-800 pb-2">
-            <Satellite className="w-4 h-4" />
-            <span>1. Satellite SAR Detection & Spill Characterization</span>
+        {/* Section 1: SAR Oil Detection Summary */}
+        <div className="bg-[#070d1d] border border-cyan-500/25 rounded-lg p-6 shadow-xl space-y-4 font-mono relative">
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+            <Satellite className="w-4 h-4 text-cyan-400" />
+            <span>SECTION 01 — SATELLITE SAR OIL-SPILL DETECTION</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: 'Detection Confidence', value: `${(spill.confidence * 100).toFixed(1)}%`, color: 'text-emerald-400' },
-              { label: 'Estimated Slick Area', value: `${spill.area_km2.toFixed(2)} km²`, color: 'text-amber-400' },
-              { label: 'Observed Centroid', value: `${centroidLat.toFixed(4)}°N`, color: 'text-slate-200' },
-              { label: 'Sensor Mode', value: 'Sentinel-1 C-Band', color: 'text-slate-200' },
-            ].map((item) => (
-              <div key={item.label} className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
-                <div className="text-[10px] text-slate-400 mb-1">{item.label}</div>
-                <div className={`text-base font-bold font-mono ${item.color}`}>{item.value}</div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">OBSERVATION TIME:</span>
+              <span className="font-bold text-cyan-200 text-[11px] mt-0.5 block">
+                {new Date(investigation.observation_time).toUTCString()}
+              </span>
+            </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">DETECTION STATUS:</span>
+              <span className="font-bold text-rose-400 text-[11px] mt-0.5 block">
+                {spill.detected ? 'CONFIRMED SLICK' : 'NEGATIVE'}
+              </span>
+            </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">MODEL CONFIDENCE:</span>
+              <span className="font-bold text-emerald-400 text-[11px] mt-0.5 block">
+                {(spill.confidence * 100).toFixed(1)}%
+              </span>
+            </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">SURFACE AREA:</span>
+              <span className="font-bold text-amber-400 text-[11px] mt-0.5 block">
+                {spill.area_km2.toFixed(1)} KM²
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Section 2: Hydrodynamic Drift & Origin Estimation */}
-        <div className="bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl p-5 shadow-sm space-y-3">
-          <div className="text-xs font-semibold text-sky-400 flex items-center gap-1.5 border-b border-slate-800 pb-2">
-            <Compass className="w-4 h-4" />
-            <span>2. Hydrodynamic Backtracking & Origin Zone Estimation</span>
+        {/* Section 2: Drift Physics & Origin Estimation */}
+        <div className="bg-[#070d1d] border border-cyan-500/25 rounded-lg p-6 shadow-xl space-y-4 font-mono relative">
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+            <Compass className="w-4 h-4 text-cyan-400" />
+            <span>SECTION 02 — HYDRODYNAMIC DRIFT RECONSTRUCTION & ESTIMATED RELEASE</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
-              <div className="text-[10px] text-slate-400 mb-1">Estimated Discharge Origin</div>
-              <div className="text-xs font-bold text-amber-300 font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">OBSERVATION TIME:</span>
+              <span className="font-bold text-cyan-200 text-[11px] mt-0.5 block">
+                {new Date(investigation.observation_time).toUTCString()}
+              </span>
+            </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">ORIGIN COORDINATES:</span>
+              <span className="font-bold text-cyan-200 text-[11px] mt-0.5 block">
                 {drift.origin.latitude.toFixed(4)}°N, {drift.origin.longitude.toFixed(4)}°E
-              </div>
+              </span>
             </div>
-
-            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
-              <div className="text-[10px] text-slate-400 mb-1">Origin Zone Confidence</div>
-              <div className="text-xs font-bold text-emerald-400 font-mono">
-                {(drift.origin.confidence * 100).toFixed(0)}% (68% Particle Envelope)
-              </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">ORIGIN PROBABILITY:</span>
+              <span className="font-bold text-emerald-400 text-[11px] mt-0.5 block">
+                {(drift.origin.confidence * 100).toFixed(0)}% CONFIDENCE
+              </span>
             </div>
-
-            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
-              <div className="text-[10px] text-slate-400 mb-1">Discharge Time Window</div>
-              <div className="text-xs font-bold text-slate-200 font-mono">
-                {new Date(drift.origin_time_window.start).toLocaleTimeString()} – {new Date(drift.origin_time_window.end).toLocaleTimeString()} UTC
-              </div>
+            <div className="p-3 bg-[#040814] rounded border border-cyan-900/40">
+              <span className="text-[9px] text-slate-500 block">SIMULATION ENSEMBLE:</span>
+              <span className="font-bold text-cyan-300 text-[11px] mt-0.5 block">
+                500 Particles (OpenDrift)
+              </span>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs bg-slate-900/40 p-3 rounded-lg border border-slate-800">
-            <div><span className="text-slate-400">Surface Current:</span> <span className="text-slate-200 font-mono ml-1">{environmental.currentSpeedKnots.toFixed(2)} kn ({environmental.currentDirectionCardinal})</span></div>
-            <div><span className="text-slate-400">Wind Velocity:</span> <span className="text-slate-200 font-mono ml-1">{environmental.windSpeedKnots.toFixed(1)} kn ({environmental.windDirectionCardinal})</span></div>
-            <div><span className="text-slate-400">SST:</span> <span className="text-slate-200 font-mono ml-1">{environmental.seaSurfaceTempC.toFixed(1)}°C</span></div>
-            <div><span className="text-slate-400">Significant Waves:</span> <span className="text-slate-200 font-mono ml-1">{environmental.waveHeightMeters.toFixed(1)} m</span></div>
           </div>
         </div>
 
-        {/* Section 3: Candidate Suspect Prioritization */}
-        <div className="bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl p-5 shadow-sm space-y-4">
-          <div className="text-xs font-semibold text-sky-400 flex items-center gap-1.5 border-b border-slate-800 pb-2">
-            <Ship className="w-4 h-4" />
-            <span>3. Correlated Candidate Vessels & Attribution Priority</span>
+        {/* Section 3: Vessel Attribution Ranking Table */}
+        <div className="bg-[#070d1d] border border-cyan-500/25 rounded-lg p-6 shadow-xl space-y-4 font-mono relative">
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+            <Ship className="w-4 h-4 text-cyan-400" />
+            <span>SECTION 03 — AIS TRAJECTORY CORRELATION & SUSPECT PRIORITIZATION</span>
           </div>
-
-          <div className="space-y-3">
-            {vessels.map((vessel) => (
-              <div
-                key={vessel.mmsi}
-                className={`p-4 border rounded-xl print-avoid-break space-y-3 ${
-                  vessel.rank === 1
-                    ? 'bg-rose-950/20 border-rose-500/30'
-                    : 'bg-slate-900/60 border-slate-800'
-                }`}
-              >
-                {/* Vessel Summary */}
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs font-mono ${
-                      vessel.rank === 1
-                        ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                        : vessel.rank === 2
-                        ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                        : 'bg-slate-800 text-slate-400 border border-slate-700'
-                    }`}>
-                      #{vessel.rank}
-                    </span>
-                    <div>
-                      <div className="font-bold text-slate-100 text-sm">{vessel.vessel_name}</div>
-                      <div className="text-xs text-slate-400 font-mono">
-                        MMSI: {vessel.mmsi} · {vessel.vessel_type} · Flag: {vessel.flag}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-[10px] text-slate-400">Attribution Score</div>
-                    <div className={`text-xl font-bold font-mono ${
-                      vessel.rank === 1 ? 'text-rose-400' : vessel.rank === 2 ? 'text-amber-400' : 'text-slate-400'
-                    }`}>
-                      {vessel.score.toFixed(1)}%
-                    </div>
-                  </div>
-                </div>
-
-                {/* 5-Factor Feature Weights */}
-                <div className="grid grid-cols-5 gap-2 text-center text-xs">
-                  {[
-                    { k: 'Spatial', v: vessel.feature_scores.spatial, w: '30%' },
-                    { k: 'Temporal', v: vessel.feature_scores.temporal, w: '25%' },
-                    { k: 'Trajectory', v: vessel.feature_scores.trajectory, w: '20%' },
-                    { k: 'Behaviour', v: vessel.feature_scores.behaviour, w: '15%' },
-                    { k: 'Relevance', v: vessel.feature_scores.vessel_relevance, w: '10%' },
-                  ].map(({ k, v, w }) => (
-                    <div key={k} className="p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
-                      <div className="text-[10px] text-slate-400">{k}</div>
-                      <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">{v.toFixed(0)}%</div>
-                      <div className="text-[9px] text-slate-400">Wt {w}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Evidence Observations */}
-                {vessel.reasons && vessel.reasons.length > 0 && (
-                  <div className="space-y-1.5 pt-1">
-                    {vessel.reasons.map((reason, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
-                        <span>{reason}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr className="border-b border-cyan-900/40 text-[10px] text-cyan-400 uppercase">
+                  <th className="py-2 px-3">Rank</th>
+                  <th className="py-2 px-3">Vessel Name</th>
+                  <th className="py-2 px-3">MMSI</th>
+                  <th className="py-2 px-3">Type</th>
+                  <th className="py-2 px-3">Flag</th>
+                  <th className="py-2 px-3">Score</th>
+                  <th className="py-2 px-3">Priority</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-cyan-950/60">
+                {vessels.map((v) => (
+                  <tr key={v.mmsi} className="hover:bg-cyan-950/20">
+                    <td className="py-2 px-3 font-bold text-cyan-400">#{v.rank}</td>
+                    <td className="py-2 px-3 font-bold text-slate-100">{v.vessel_name}</td>
+                    <td className="py-2 px-3 text-cyan-200">{v.mmsi}</td>
+                    <td className="py-2 px-3 text-slate-300">{v.vessel_type}</td>
+                    <td className="py-2 px-3 text-slate-400">{v.flag}</td>
+                    <td className="py-2 px-3 font-bold text-rose-400">{v.score.toFixed(1)}%</td>
+                    <td className="py-2 px-3">
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase border ${
+                        v.investigative_priority === 'HIGH'
+                          ? 'bg-rose-950 text-rose-300 border-rose-500/40'
+                          : 'bg-amber-950 text-amber-300 border-amber-500/40'
+                      }`}>
+                        {v.investigative_priority}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Legal Notice */}
-        <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl print-avoid-break space-y-1.5 text-xs text-amber-200/80">
-          <div className="font-semibold flex items-center gap-1.5 text-amber-400">
-            <AlertTriangle className="w-4 h-4" />
-            <span>Decision-Support Notice & Statutory Disclaimer</span>
-          </div>
-          <p className="text-[11px] leading-relaxed">
-            {investigation.disclaimer ||
-              'This analysis establishes statistical correlation only and does not constitute a legal determination of liability.'} This document is compiled to assist maritime law enforcement, port state control officers, and coast guard investigators under MARPOL 73/78 Annex I provisions.
-          </p>
+        {/* Legal & Regulatory Disclaimer */}
+        <div className="p-4 rounded-lg bg-[#040814] border border-cyan-900/40 text-[10px] font-mono text-slate-400 leading-relaxed">
+          <strong className="text-cyan-300 block mb-1">LEGAL & REGULATORY ADVISORY:</strong>
+          {investigation.disclaimer}
         </div>
-
       </div>
     </div>
   );

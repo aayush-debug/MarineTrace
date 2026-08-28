@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import {
   AlertTriangle,
   Satellite,
-  Compass,
   Ship,
   PlusCircle,
   Play,
   Activity,
   ChevronRight,
   Clock,
+  Radio,
+  Crosshair,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { MaritimeMap } from '../components/map/MaritimeMap';
@@ -17,7 +18,7 @@ import { MapLegend } from '../components/map/MapLegend';
 import { SpillInfoPanel } from '../components/spill/SpillInfoPanel';
 import { VesselRankList } from '../components/vessel/VesselRankList';
 
-// Animated KPI counter
+// Animated KPI counter with tabular numerals
 const AnimatedCounter: React.FC<{ value: number | string; duration?: number }> = ({
   value,
   duration = 800,
@@ -65,23 +66,23 @@ export const Dashboard: React.FC = () => {
   const [activeRightTab, setActiveRightTab] = useState<'spill' | 'vessels'>('spill');
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#090d16] overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#040814] overflow-hidden">
 
-      {/* Top Banner */}
-      <div className="px-5 py-3 bg-[#0c121e] border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between gap-4 shrink-0">
+      {/* Mission Control Top Header Bar */}
+      <div className="px-5 py-2.5 bg-[#070d1d] border-b border-[rgba(0,240,255,0.18)] flex items-center justify-between gap-4 shrink-0 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-semibold text-slate-100 tracking-tight">
-                Operational Situation Overview
+              <h1 className="font-orbitron text-xs sm:text-sm font-bold text-slate-100 tracking-wider uppercase">
+                Maritime Mission Overview // Sector West
               </h1>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                {activeCount} Active Case{activeCount !== 1 ? 's' : ''}
+              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-500/40">
+                {activeCount} TARGET{activeCount !== 1 ? 'S' : ''} ACTIVE
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Sector West (Arabian Sea / Mumbai High) · Sentinel-1 SAR & AIS Tracking
+            <p className="text-[11px] font-mono text-cyan-400/80 mt-0.5">
+              ORBITAL PASS: S1A-DESC-142 · COPERNICUS CMEMS PHYSICS · WSS AIS STREAM
             </p>
           </div>
         </div>
@@ -89,161 +90,168 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setActivePage('new-investigation')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs shadow-sm transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-mono font-bold text-xs shadow-[0_0_12px_rgba(0,240,255,0.3)] transition-all cursor-pointer"
           >
             <PlusCircle className="w-3.5 h-3.5" />
-            <span>New Investigation</span>
+            <span>LAUNCH TARGET</span>
           </button>
 
           <button
             onClick={executeDemo}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0a1226] hover:bg-cyan-950/60 border border-cyan-500/30 text-slate-200 text-xs font-mono font-medium transition-colors disabled:opacity-50"
           >
-            <Play className="w-3.5 h-3.5 text-sky-400 fill-sky-400" />
-            <span>{loading ? 'Simulating...' : 'Replay Scenario'}</span>
+            <Play className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
+            <span>{loading ? 'SIMULATING...' : 'REPLAY FLIGHT'}</span>
           </button>
         </div>
       </div>
 
-      {/* KPI Cards Row */}
-      <div className="px-5 py-2.5 grid grid-cols-2 lg:grid-cols-4 gap-3 bg-[#0c121e]/60 border-b border-[rgba(255,255,255,0.06)] shrink-0">
+      {/* Telemetry Metric Cards Row with Corner Brackets */}
+      <div className="px-5 py-2.5 grid grid-cols-2 lg:grid-cols-4 gap-3 bg-[#060b18]/80 border-b border-[rgba(0,240,255,0.12)] shrink-0">
         {[
           {
-            label: 'Active Cases',
+            label: 'ACTIVE TARGETS',
             value: activeCount,
             suffix: '',
             icon: Activity,
-            badge: 'High Priority',
-            badgeClass: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-            sub: 'Arabian Sea EEZ',
+            badge: 'PRIORITY_1',
+            badgeClass: 'bg-rose-950 text-rose-300 border-rose-500/40',
+            sub: 'Arabian Sea High Risk',
           },
           {
-            label: 'Spills Verified',
+            label: 'SAR SLICKS VERIFIED',
             value: totalSpills,
             suffix: '',
             icon: AlertTriangle,
-            badge: 'SAR C-Band',
-            badgeClass: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+            badge: 'C-BAND SAR',
+            badgeClass: 'bg-amber-950 text-amber-300 border-amber-500/40',
             sub: 'Zenodo Model Verified',
           },
           {
-            label: 'Monitored Coverage',
+            label: 'MONITORED RADAR GRID',
             value: monitoredArea,
-            suffix: ' km²',
+            suffix: ' KM²',
             icon: Satellite,
-            badge: 'Real-time',
-            badgeClass: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-            sub: 'Indian EEZ Western Sector',
+            badge: 'ORBITAL',
+            badgeClass: 'bg-cyan-950 text-cyan-300 border-cyan-500/40',
+            sub: '10m Resolution Swath',
           },
           {
-            label: 'AIS Targets Analyzed',
+            label: 'AIS TRACKS CORRELATED',
             value: vesselsAnalyzed,
             suffix: '',
             icon: Ship,
-            badge: 'Correlated',
-            badgeClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-            sub: 'Spatio-temporal matched',
+            badge: 'SPATIAL-TIME',
+            badgeClass: 'bg-emerald-950 text-emerald-300 border-emerald-500/40',
+            sub: 'OpenDrift Hydrodynamic',
           },
         ].map((kpi) => {
           const Icon = kpi.icon;
           return (
             <div
               key={kpi.label}
-              className="p-3 bg-[#111827]/70 border border-[rgba(255,255,255,0.06)] rounded-lg hover:border-slate-700 transition-colors"
+              className="p-3 bg-[#081024]/90 border border-cyan-500/20 rounded-md hover:border-cyan-400/50 transition-all shadow-inner relative group"
             >
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                <span>{kpi.label}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded border font-medium ${kpi.badgeClass}`}>
+              {/* Corner accents */}
+              <div className="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-cyan-400/60" />
+              <div className="absolute bottom-1 left-1 w-1.5 h-1.5 border-b border-l border-cyan-400/60" />
+
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1">
+                <span className="tracking-wider">{kpi.label}</span>
+                <span className={`text-[8px] font-bold px-1.5 py-0.2 rounded border uppercase ${kpi.badgeClass}`}>
                   {kpi.badge}
                 </span>
               </div>
               <div className="flex items-baseline justify-between mt-1">
-                <div className="text-xl font-bold text-slate-100 kpi-value">
+                <div className="text-xl font-bold font-mono text-cyan-100 tracking-tight">
                   <AnimatedCounter value={kpi.value} />{kpi.suffix}
                 </div>
-                <Icon className="w-4 h-4 text-slate-500" />
+                <Icon className="w-4 h-4 text-cyan-400/60 group-hover:text-cyan-300 transition-colors" />
               </div>
-              <div className="text-[11px] text-slate-400 mt-1">{kpi.sub}</div>
+              <div className="text-[10px] font-mono text-slate-500 mt-1">{kpi.sub}</div>
             </div>
           );
         })}
       </div>
 
-      {/* Space Shift Real-Time Surveillance Alert Bar */}
-      <div className="px-5 py-2 bg-gradient-to-r from-rose-950/40 via-slate-900/80 to-cyan-950/40 border-b border-rose-500/20 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shrink-0">
+      {/* Space Shift Real-Time Radar Ground Station Alert Bar */}
+      <div className="px-5 py-2 bg-gradient-to-r from-rose-950/60 via-[#071126] to-cyan-950/60 border-b border-rose-500/30 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shrink-0">
         <div className="flex items-center gap-2.5">
-          <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+          <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping shadow-[0_0_8px_#ff0055]" />
           <span className="font-bold text-rose-300 flex items-center gap-1.5">
-            <span>🛰️ Space Shift SateAIs™:</span>
-            <span className="text-slate-100 font-semibold">{spcsftLiveDetections.length} Active Oil Slicks Monitored</span>
+            <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+            <span>SPACE SHIFT SATE-AIS™ SURVEILLANCE:</span>
+            <span className="text-white font-mono bg-rose-900/60 px-1.5 py-0.2 rounded border border-rose-500/40">
+              {spcsftLiveDetections.length} ACTIVE RADAR SLICKS
+            </span>
           </span>
-          <span className="text-slate-600 hidden sm:inline">|</span>
-          <span className="text-slate-400 hidden sm:inline">
-            Sentinel-1 SAR C-Band AI Segmentation · Auto-Sync {spcsftSyncEnabled ? 'Active' : 'Paused'}
+          <span className="text-cyan-900 hidden sm:inline">|</span>
+          <span className="text-slate-400 hidden sm:inline text-[11px]">
+            SENTINEL-1 SAR AI SEGMENTATION · SYNC {spcsftSyncEnabled ? 'ONLINE' : 'PAUSED'}
           </span>
         </div>
 
         <button
           onClick={() => setActivePage('spcsft-realtime')}
-          className="px-2.5 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-200 text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+          className="px-3 py-1 rounded bg-rose-950/80 hover:bg-rose-900/90 border border-rose-500/50 text-rose-200 text-[11px] font-bold font-mono flex items-center gap-1.5 transition-all shadow-[0_0_10px_rgba(255,0,85,0.25)] cursor-pointer"
         >
-          <span>Open Space Shift Radar Monitor</span>
+          <span>OPEN RADAR GROUND STATION</span>
           <ChevronRight className="w-3.5 h-3.5 text-rose-400" />
         </button>
       </div>
 
-      {/* Main Workspace Split */}
+      {/* Main Mission Control Workspace Split */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
 
-        {/* LEFT: Dominant Situation Map */}
+        {/* LEFT: Situation Radar Map Viewport */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 relative">
-          {/* Integrated Map Status Header */}
-          <div className="h-8 bg-[#0e1422] border-b border-[rgba(255,255,255,0.06)] px-4 flex items-center justify-between text-xs text-slate-400 shrink-0">
-            <div className="flex items-center gap-2 font-medium text-slate-300">
-              <Compass className="w-3.5 h-3.5 text-sky-400" />
-              <span>Maritime Situation Map · Sector West</span>
+          {/* Tactical Coordinate Telemetry Header */}
+          <div className="h-8 bg-[#070d1d] border-b border-[rgba(0,240,255,0.15)] px-4 flex items-center justify-between text-xs font-mono text-slate-400 shrink-0">
+            <div className="flex items-center gap-2 text-cyan-300 font-semibold">
+              <Crosshair className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span>MARITIME TACTICAL RADAR // SECTOR WEST</span>
             </div>
-            <div className="flex items-center gap-3 text-[11px]">
-              <span>EPSG:4326</span>
-              <span className="text-slate-700">·</span>
-              <span>10m Spatial Resolution</span>
-              <span className="text-slate-700">·</span>
-              <span>ECMWF Hydrodynamic Currents</span>
+            <div className="flex items-center gap-3 text-[10px] text-cyan-400/80">
+              <span>WGS84 EPSG:4326</span>
+              <span className="text-cyan-900">·</span>
+              <span>10M SAR GRID</span>
+              <span className="text-cyan-900">·</span>
+              <span>HYDRODYNAMIC VECTORS</span>
             </div>
           </div>
 
-          {/* Interactive Map Viewport */}
-          <div className="flex-1 relative">
+          {/* Tactical Map Container */}
+          <div className="flex-1 relative bg-[#030610]">
             <MaritimeMap />
             <MapLayerControls />
             <MapLegend />
           </div>
         </div>
 
-        {/* RIGHT: Intelligence Panel */}
-        <div className="w-80 bg-[#0c121e] border-l border-[rgba(255,255,255,0.08)] flex flex-col overflow-hidden shrink-0">
+        {/* RIGHT: Tactical Intelligence Forensics Panel */}
+        <div className="w-84 bg-[#060b18] border-l border-[rgba(0,240,255,0.18)] flex flex-col overflow-hidden shrink-0 shadow-2xl">
           {/* Panel Tab Navigation */}
-          <div className="flex border-b border-slate-800 bg-[#0a0f19] shrink-0">
+          <div className="flex border-b border-cyan-900/40 bg-[#040814] shrink-0 font-mono text-xs">
             <button
               onClick={() => setActiveRightTab('spill')}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors border-b-2 ${
+              className={`flex-1 py-2.5 font-bold transition-all border-b-2 cursor-pointer ${
                 activeRightTab === 'spill'
-                  ? 'border-sky-500 text-sky-400 bg-sky-500/5 font-semibold'
+                  ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
-              Detection Profile
+              RADAR TARGET
             </button>
             <button
               onClick={() => setActiveRightTab('vessels')}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors border-b-2 ${
+              className={`flex-1 py-2.5 font-bold transition-all border-b-2 cursor-pointer ${
                 activeRightTab === 'vessels'
-                  ? 'border-sky-500 text-sky-400 bg-sky-500/5 font-semibold'
+                  ? 'border-cyan-400 text-cyan-300 bg-cyan-950/40'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
-              Suspect Vessels ({investigation?.vessels.length || 0})
+              SUSPECT AIS ({investigation?.vessels.length || 0})
             </button>
           </div>
 
@@ -258,33 +266,33 @@ export const Dashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Recent Incident Feed Drawer */}
-          <div className="border-t border-slate-800 p-3 bg-[#090e18] shrink-0">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-semibold mb-2">
-              <span>Incident History</span>
-              <span className="text-[10px] text-slate-500">Last 30 Days</span>
+          {/* Recent Mission Feed Drawer */}
+          <div className="border-t border-cyan-900/40 p-3 bg-[#040814] shrink-0">
+            <div className="flex items-center justify-between text-xs font-mono text-cyan-400 font-bold mb-2">
+              <span>MISSION HISTORY LOG</span>
+              <span className="text-[10px] text-slate-500">T-30 DAYS</span>
             </div>
             <div className="space-y-1.5">
               {investigationList.slice(0, 2).map((inv) => (
                 <button
                   key={inv.investigation_id}
                   onClick={() => setActivePage('investigation')}
-                  className="w-full flex items-center justify-between p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 text-xs transition-colors group"
+                  className="w-full flex items-center justify-between p-2 rounded-md bg-[#081024] hover:bg-cyan-950/50 border border-cyan-500/20 text-xs transition-colors group cursor-pointer"
                 >
-                  <div className="text-left min-w-0">
-                    <div className="font-mono text-[11px] font-semibold text-slate-200 group-hover:text-sky-400 transition-colors">
-                      {inv.investigation_id}
+                  <div className="text-left min-w-0 font-mono">
+                    <div className="text-[11px] font-bold text-slate-200 group-hover:text-cyan-300 transition-colors">
+                      #{inv.investigation_id}
                     </div>
-                    <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                      <Clock className="w-2.5 h-2.5" />
+                    <div className="text-[9px] text-slate-400 flex items-center gap-1">
+                      <Clock className="w-2.5 h-2.5 text-cyan-400" />
                       {new Date(inv.created_at).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    <span className="text-[9px] font-mono font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/40">
                       {inv.status}
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-300 transition-colors" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-cyan-400 transition-colors" />
                   </div>
                 </button>
               ))}
@@ -295,4 +303,3 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-

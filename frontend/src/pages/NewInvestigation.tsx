@@ -7,9 +7,8 @@ import {
   Layers,
   Calendar,
   Compass,
-  Cpu,
-  Sparkles,
-  Radio,
+  Radar,
+  Satellite,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 
@@ -20,8 +19,6 @@ export const NewInvestigation: React.FC = () => {
     loading,
     loadingStep,
     error,
-    spcsftLiveDetections,
-    setActivePage,
   } = useInvestigation();
 
   const [selectedFile, setSelectedFile] = useState<{
@@ -102,115 +99,128 @@ export const NewInvestigation: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#090d16] overflow-y-auto p-5 sm:p-6 space-y-6">
-      {/* Header */}
-      <div className="border-b border-[rgba(255,255,255,0.08)] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-base sm:text-lg font-semibold text-slate-100 flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-sky-400" />
-            <span>Initiate Oil Spill Investigation</span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Ingest Sentinel-1 SAR imagery to detect slicks, compute Lagrangian drift back trajectories, and prioritize AIS vessel candidates.
-          </p>
-        </div>
+    <div className="flex-1 flex flex-col min-h-0 bg-[#040814] overflow-y-auto p-4 sm:p-6 select-none">
+      {/* NASA Mission Target Initialization Header */}
+      <div className="max-w-6xl mx-auto w-full mb-6">
+        <div className="p-4 sm:p-5 rounded-lg bg-[#070d1d] border border-[rgba(0,240,255,0.22)] shadow-xl relative overflow-hidden">
+          {/* Tactical corner accents */}
+          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
+          <div className="absolute bottom-1 left-1 w-2 h-2 border-b border-l border-cyan-400" />
 
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => setActivePage('spcsft-realtime')}
-            className="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-lg text-xs text-rose-300 font-semibold flex items-center gap-2 transition-colors shadow-sm"
-          >
-            <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
-            <span>Import Space Shift Live Slick ({spcsftLiveDetections.length})</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-cyan-950/80 border border-cyan-400/40 flex items-center justify-center text-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.25)]">
+                <Satellite className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-orbitron text-sm sm:text-base font-bold text-slate-100 uppercase tracking-wider">
+                    Orbital Mission Initialization // Target Ingestion
+                  </h1>
+                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+                    STAGE-01
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-cyan-400/80 mt-0.5">
+                  Sentinel-1 C-Band SAR Ingestion · OpenDrift Reverse Hydrodynamics · Historical AIS Correlation
+                </p>
+              </div>
+            </div>
 
-          <button
-            type="button"
-            onClick={executeDemo}
-            disabled={loading}
-            className="px-3.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-lg text-xs text-sky-300 font-semibold flex items-center gap-2 transition-colors shadow-sm"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-            <span>Launch Arabian Sea Demo</span>
-          </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={executeDemo}
+                disabled={loading}
+                className="flex-1 sm:flex-initial px-4 py-2 bg-[#091124] hover:bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold rounded-md transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                <Play className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
+                <span>LOAD PRESET DEMO SCENARIO</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column: SAR Upload & Acquisition Parameters */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Drag & Drop Upload Container */}
-          <div
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleFileDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-slate-800 hover:border-sky-500/60 bg-[#0c121e] hover:bg-slate-900/60 p-6 rounded-xl text-center cursor-pointer transition-all space-y-3 shadow-sm"
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              accept=".tif,.tiff,.geotiff,.png,.jpg,.jpeg"
-              className="hidden"
-            />
-            <div className="w-12 h-12 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto">
-              <UploadCloud className="w-6 h-6" />
+      {/* Main Mission Setup Grid */}
+      <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: SAR Telemetry Ingestion Form */}
+        <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-5">
+          {/* File Drag & Drop Terminal */}
+          <div className="p-5 rounded-lg bg-[#070d1d] border border-cyan-500/20 shadow-md space-y-3 relative">
+            <div className="flex items-center justify-between border-b border-cyan-900/40 pb-2">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider">
+                <Radar className="w-4 h-4 text-cyan-400" />
+                <span>SAR RASTER GRANULE INGESTION</span>
+              </div>
+              <span className="text-[9px] font-mono text-slate-400">GEO-TIFF / GRD / SAFE</span>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-200">
-                Drop Sentinel-1 SAR Imagery (GeoTIFF / PNG / JPG)
-              </p>
-              <p className="text-[11px] text-slate-400 mt-1">
-                Supports Sentinel-1 GRD IW, RADARSAT Constellation, ALOS-2 PALSAR
-              </p>
-            </div>
-          </div>
 
-          {/* Selected File Inspection Card */}
-          {selectedFile && (
-            <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2.5">
-                <FileImage className="w-5 h-5 text-sky-400 shrink-0" />
-                <div>
-                  <div className="font-semibold text-slate-200 truncate max-w-[280px]">
-                    {selectedFile.name}
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    {selectedFile.size} · {selectedFile.type}
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleFileDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/60 bg-[#040814]/80 rounded-lg p-6 text-center cursor-pointer transition-all hover:bg-cyan-950/20 group relative overflow-hidden"
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept=".tif,.tiff,.png,.jpg,.jpeg,.zip,.SAFE"
+                className="hidden"
+              />
+              <div className="w-12 h-12 rounded-md bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center mx-auto text-cyan-400 group-hover:scale-105 transition-transform mb-3 shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                <UploadCloud className="w-6 h-6" />
+              </div>
+              <p className="text-xs font-mono font-bold text-slate-200 group-hover:text-cyan-300 transition-colors">
+                DROP SATELLITE SAR GRANULE HERE OR CLICK TO BROWSE
+              </p>
+              <p className="text-[10px] font-mono text-slate-500 mt-1">
+                Supports Sentinel-1 Ground Range Detected (GRD) Dual-Pol VV+VH (.tif, .png, .SAFE)
+              </p>
+            </div>
+
+            {selectedFile && (
+              <div className="p-3 bg-[#081024] border border-cyan-500/25 rounded-md flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <FileImage className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <div className="truncate">
+                    <span className="font-bold text-slate-100 block truncate">{selectedFile.name}</span>
+                    <span className="text-[10px] text-cyan-400/80">{selectedFile.size} · {selectedFile.type}</span>
                   </div>
                 </div>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 shrink-0">
+                  READY FOR INGEST
+                </span>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                Ready
-              </span>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Parameters Form */}
-          <div className="p-4 bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl space-y-3.5 shadow-sm">
-            <div className="text-xs font-semibold text-slate-200 border-b border-slate-800 pb-2">
-              Surveillance Parameters
+          {/* Temporal & Simulation Configuration */}
+          <div className="p-5 rounded-lg bg-[#070d1d] border border-cyan-500/20 shadow-md space-y-4 font-mono">
+            <div className="flex items-center gap-2 text-xs font-bold text-cyan-300 uppercase tracking-wider border-b border-cyan-900/40 pb-2">
+              <Compass className="w-4 h-4 text-cyan-400" />
+              <span>MISSION PARAMETERS & SIMULATION HORIZON</span>
             </div>
 
-            <div>
-              <label className="block text-xs text-slate-400 mb-1.5 flex items-center gap-1.5 font-medium">
-                <Calendar className="w-3.5 h-3.5 text-sky-400" />
-                Satellite Acquisition Timestamp (UTC)
+            <div className="space-y-1.5">
+              <label className="text-xs text-slate-300 flex items-center gap-1.5 font-bold">
+                <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                <span>SATELLITE ACQUISITION TIMESTAMP (UTC)</span>
               </label>
               <input
                 type="datetime-local"
                 value={acquisitionTime}
                 onChange={(e) => setAcquisitionTime(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 font-mono focus:outline-none focus:border-sky-500"
+                className="w-full bg-[#040814] border border-cyan-500/30 rounded-md px-3 py-2 text-xs text-cyan-200 font-mono focus:outline-none focus:border-cyan-400"
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-xs text-slate-400 mb-1.5 flex items-center gap-1.5 font-medium">
-                <Compass className="w-3.5 h-3.5 text-blue-400" />
-                Backward Drift Simulation Horizon
+            <div className="space-y-1.5">
+              <label className="text-xs text-slate-300 flex items-center gap-1.5 font-bold">
+                <Compass className="w-3.5 h-3.5 text-cyan-400" />
+                <span>REVERSE DRIFT SIMULATION HORIZON</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[12, 24, 48, 72].map((h) => (
@@ -218,115 +228,115 @@ export const NewInvestigation: React.FC = () => {
                     type="button"
                     key={h}
                     onClick={() => setBackwardHours(h)}
-                    className={`py-1.5 rounded-lg text-center text-xs font-medium border transition-colors ${
+                    className={`py-2 rounded-md text-center text-xs font-bold font-mono border transition-all cursor-pointer ${
                       backwardHours === h
-                        ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 font-semibold'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'
+                        ? 'bg-cyan-950 border-cyan-400 text-cyan-200 shadow-[0_0_8px_rgba(0,240,255,0.25)]'
+                        : 'bg-[#040814] border-cyan-900/40 text-slate-400 hover:bg-cyan-950/30'
                     }`}
                   >
-                    {h} Hours
+                    [{h} HOURS]
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Submit Action */}
+          {/* Launch Action Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-mono font-bold text-xs uppercase tracking-wider rounded-md shadow-[0_0_15px_rgba(0,240,255,0.35)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <>
                 <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                <span>{loadingStep || 'Processing Investigation Pipeline...'}</span>
+                <span>{loadingStep || 'PROCESSING INVESTIGATION PIPELINE...'}</span>
               </>
             ) : (
               <>
                 <Play className="w-4 h-4 fill-white" />
-                <span>Execute Multi-Stage Investigation</span>
+                <span>LAUNCH MULTI-STAGE FORENSIC PIPELINE</span>
               </>
             )}
           </button>
 
           {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/25 rounded-xl text-rose-300 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            <div className="p-3 bg-rose-950/80 border border-rose-500/40 rounded-md text-rose-200 text-xs font-mono flex items-center gap-2 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
               <span>{error}</span>
             </div>
           )}
         </form>
 
-        {/* Right Column: Pre-Execution Preview & SAR Visualizer */}
-        <div className="space-y-4">
-          <div className="bg-[#0c121e] border border-[rgba(255,255,255,0.08)] rounded-xl p-4 space-y-3 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        {/* Right Column: Pre-Execution SAR Radar Canvas & Telemetry */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-[#070d1d] border border-cyan-500/20 rounded-lg p-4 space-y-3 shadow-md">
+            <div className="flex items-center justify-between border-b border-cyan-900/40 pb-2">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-sky-400" />
-                <span className="font-semibold text-slate-200 text-xs">
-                  SAR Segmentation & Slick Extraction Preview
+                <Layers className="w-4 h-4 text-cyan-400" />
+                <span className="font-mono font-bold text-cyan-200 text-xs uppercase">
+                  SAR SEGMENTATION & SLICK RETICLE
                 </span>
               </div>
-              <div className="flex gap-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-xs">
-                {(['overlay', 'original', 'mask'] as const).map((mode) => (
+              <div className="flex gap-1 bg-[#040814] p-0.5 rounded border border-cyan-900/40 text-xs font-mono">
+                {(['overlay', 'original', 'mask'] as const).map((m) => (
                   <button
-                    key={mode}
-                    onClick={() => setDisplayMode(mode)}
-                    className={`px-2.5 py-0.5 rounded-md capitalize text-[11px] font-medium transition-colors ${
-                      displayMode === mode
-                        ? 'bg-sky-500/20 text-sky-300 font-semibold'
+                    key={m}
+                    onClick={() => setDisplayMode(m)}
+                    className={`px-2 py-0.5 rounded capitalize text-[10px] font-bold transition-colors cursor-pointer ${
+                      displayMode === m
+                        ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    {mode}
+                    {m}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Synthetic High-Resolution SAR Display Canvas */}
-            <div className="h-64 bg-[#050810] rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center p-4">
+            <div className="h-64 bg-[#030610] rounded-md border border-cyan-500/25 relative overflow-hidden flex items-center justify-center p-4">
               {displayMode === 'original' && (
-                <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-lg flex flex-col items-center justify-center text-slate-400 text-xs">
-                  <span className="font-medium text-slate-300">Sentinel-1 Raw Backscatter (VV Band)</span>
-                  <span className="text-[10px] text-slate-400 mt-1 font-mono">Noise Equivalent Sigma Zero: -22 dB</span>
+                <div className="w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded flex flex-col items-center justify-center text-slate-400 text-xs font-mono">
+                  <span className="font-bold text-slate-200">Sentinel-1 Raw Backscatter (VV Band)</span>
+                  <span className="text-[10px] text-cyan-400/80 mt-1">Sigma Zero: -16.4 dB · NESZ: -22 dB</span>
                 </div>
               )}
 
               {displayMode === 'mask' && (
-                <div className="w-full h-full bg-slate-950 rounded-lg flex items-center justify-center relative">
-                  <div className="w-32 h-20 bg-rose-500/70 rounded-[40%] blur-[2px] opacity-90 shadow-2xl flex items-center justify-center text-white font-bold text-[10px]">
-                    SLICK MASK
+                <div className="w-full h-full bg-slate-950 rounded flex items-center justify-center relative">
+                  <div className="w-32 h-20 bg-rose-500/80 rounded-[40%] blur-[2px] opacity-90 shadow-[0_0_20px_#ff0055] flex items-center justify-center text-white font-mono font-bold text-[10px]">
+                    SLICK TARGET MASK
                   </div>
                 </div>
               )}
 
               {displayMode === 'overlay' && (
-                <div className="w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-lg relative flex items-center justify-center">
-                  <div className="w-36 h-24 border-2 border-dashed border-rose-500 bg-rose-500/25 rounded-[45%] flex flex-col items-center justify-center text-rose-300 font-semibold text-xs shadow-xl">
-                    <span>Slick Feature Confirmed</span>
-                    <span className="text-[10px] text-slate-300 font-mono mt-0.5">18.40 km² · 92.4%</span>
+                <div className="w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded relative flex items-center justify-center">
+                  <div className="w-36 h-24 border-2 border-dashed border-rose-500 bg-rose-500/25 rounded-[45%] flex flex-col items-center justify-center text-rose-300 font-mono font-bold text-xs shadow-[0_0_15px_rgba(255,0,85,0.35)]">
+                    <span>SLICK VERIFIED</span>
+                    <span className="text-[10px] text-slate-200 mt-0.5">18.40 KM² · 94.2%</span>
                   </div>
-                  <div className="absolute bottom-2 left-2 text-[10px] text-slate-400 font-mono">
+                  <div className="absolute bottom-2 left-2 text-[9px] text-cyan-400/80 font-mono">
                     18.7210°N, 72.9140°E
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="p-3 bg-slate-900/60 rounded-lg border border-slate-800 text-xs space-y-1 text-slate-300">
+            <div className="p-3 bg-[#081024] rounded-md border border-cyan-500/20 text-xs font-mono space-y-1.5 text-slate-300">
               <div className="flex justify-between">
-                <span className="text-slate-400">Segmentation Model:</span>
-                <span className="text-sky-300 font-semibold">U-Net (ResNet-34 Backbone)</span>
+                <span className="text-slate-400">SEGMENTATION MODEL:</span>
+                <span className="text-cyan-300 font-bold">U-Net (ResNet-34)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Verification Engine:</span>
-                <span className="text-emerald-400 font-semibold">XGBoost Feature Classifier</span>
+                <span className="text-slate-400">VERIFICATION ENGINE:</span>
+                <span className="text-emerald-300 font-bold">XGBoost Radar Cross-Section</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Target EEZ Sector:</span>
-                <span className="text-slate-200">Arabian Sea (West Coast / Mumbai High)</span>
+                <span className="text-slate-400">EEZ MONITORING SECTOR:</span>
+                <span className="text-slate-200">Arabian Sea / Sector West</span>
               </div>
             </div>
           </div>
