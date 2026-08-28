@@ -27,6 +27,8 @@ export const TopNav: React.FC = () => {
     spcsftSyncEnabled,
   } = useInvestigation();
   const [utcString, setUtcString] = useState<string>('');
+  const [localString, setLocalString] = useState<string>('');
+  const [timeMode, setTimeMode] = useState<'both' | 'local' | 'utc'>('both');
 
   useEffect(() => {
     const updateTime = () => {
@@ -36,6 +38,23 @@ export const TopNav: React.FC = () => {
       const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
       const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
       setUtcString(`${utcHours}:${utcMinutes}:${utcSeconds} UTC`);
+
+      // Local System Time (e.g., 01:14:32 IST)
+      try {
+        const timeStr = now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        });
+        const tzAbbr =
+          new Intl.DateTimeFormat('en', { timeZoneName: 'short' })
+            .formatToParts(now)
+            .find((p) => p.type === 'timeZoneName')?.value || 'LOCAL';
+        setLocalString(`${timeStr} ${tzAbbr}`);
+      } catch {
+        setLocalString(now.toLocaleTimeString());
+      }
     };
 
     updateTime();
@@ -134,12 +153,24 @@ export const TopNav: React.FC = () => {
           </span>
         </div>
 
-        {/* Dual UTC Chronometer */}
-        <div className="hidden lg:flex items-center gap-1.5 font-mono text-xs px-2 py-1 bg-[#0c1017] border border-[#1e293b] rounded text-slate-300 select-none shrink-0 whitespace-nowrap">
-          <Clock className="w-3 h-3 text-slate-400 shrink-0" />
-          <span className="text-slate-200 text-[11px] font-medium tabular-nums shrink-0">
-            {utcString || '--:--:-- UTC'}
-          </span>
+        {/* Real-Time Live Chronometer (Dual Local & UTC Zulu Time) */}
+        <div
+          onClick={() => setTimeMode((prev) => (prev === 'both' ? 'local' : prev === 'local' ? 'utc' : 'both'))}
+          className="hidden lg:flex items-center gap-2 font-mono text-xs px-2.5 py-1 bg-[#0c1017] border border-[#1e293b] rounded text-slate-300 select-none shrink-0 whitespace-nowrap cursor-pointer hover:border-slate-700 transition-colors"
+          title="Live Mission Clock — Click to toggle Local / UTC / Both"
+        >
+          <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+          {timeMode !== 'utc' && (
+            <span className="text-slate-100 text-[11px] font-semibold tabular-nums tracking-tight">
+              {localString || '--:--:--'}
+            </span>
+          )}
+          {timeMode === 'both' && <span className="text-slate-600">·</span>}
+          {timeMode !== 'local' && (
+            <span className="text-slate-400 text-[10px] tabular-nums">
+              {utcString || '--:--:-- UTC'}
+            </span>
+          )}
         </div>
 
         {/* Theme Switcher Toggle */}

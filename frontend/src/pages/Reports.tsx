@@ -80,6 +80,11 @@ export const Reports: React.FC = () => {
   const { spill, drift, vessels } = investigation;
   const topSuspect = vessels[0];
   const observationDateStr = new Date(investigation.observation_time).toUTCString();
+  const currentDateFormatted = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date());
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-canvas)] overflow-y-auto print:bg-white print:overflow-visible select-text font-sans">
@@ -168,7 +173,7 @@ export const Reports: React.FC = () => {
               ══════════════════════════════════════════════════════════════════ */}
           <div className="text-right text-xs text-slate-900 space-y-0.5 pt-1 pb-2 font-serif">
             <div>Worli Sea Face, Mumbai</div>
-            <div>Dated 29th August, 2026</div>
+            <div>Dated {currentDateFormatted}</div>
           </div>
 
           {/* ══════════════════════════════════════════════════════════════════
