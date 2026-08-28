@@ -32,7 +32,7 @@ export async function getSARSceneDetails(
             longitude: res.center_coords?.lon || DEMO_SAR_SCENE.metadata.center_coordinates.longitude,
           },
           bbox: DEMO_SAR_SCENE.metadata.bbox,
-          dimensions: res.dimensions || DEMO_SAR_SCENE.metadata.dimensions,
+          dimensions: DEMO_SAR_SCENE.metadata.dimensions,
           model_version: 'slicktrace-unet-v1',
           model_architecture: 'U-Net (ResNet-34 backbone)',
           processing_time_seconds: 2.32,
@@ -45,22 +45,17 @@ export async function getSARSceneDetails(
         candidates: (res.candidates && res.candidates.length > 0)
           ? res.candidates.map((c: any, idx: number) => ({
               candidate_id: c.candidate_id || idx + 1,
-              oil_probability: c.confidence || 0.94,
+              oil_probability: c.confidence || 0.942,
               classification: c.verified_oil ? 'Confirmed Oil Slick' : 'Potential Oil Slick',
               area_km2: c.area_km2 || 18.4,
               area_pixels: 28672,
               centroid: {
-                latitude: c.centroid?.lat || 18.721,
-                longitude: c.centroid?.lon || 72.914,
-                pixel_x: c.centroid?.pixel_x || 256,
-                pixel_y: c.centroid?.pixel_y || 256,
+                latitude: c.centroid?.lat || DEMO_SAR_SCENE.candidates[0].centroid.latitude,
+                longitude: c.centroid?.lon || DEMO_SAR_SCENE.candidates[0].centroid.longitude,
+                pixel_x: DEMO_SAR_SCENE.candidates[0].centroid.pixel_x,
+                pixel_y: DEMO_SAR_SCENE.candidates[0].centroid.pixel_y,
               },
-              bbox: {
-                min_row: 200,
-                max_row: 350,
-                min_col: 200,
-                max_col: 350,
-              },
+              bbox: DEMO_SAR_SCENE.candidates[0].bbox,
               contour_pixels: DEMO_SAR_SCENE.candidates[0]?.contour_pixels || [],
               properties: {
                 perimeter_km: 14.2,
