@@ -113,3 +113,13 @@ export async function launchInvestigationFromSpcsft(
     }),
   });
 }
+
+/**
+ * Trigger immediate real-time Sentinel-1 satellite pass ingestion.
+ * POST /spcsft/ingest-pass
+ */
+export async function ingestSatellitePass(): Promise<{ status: string; message: string; new_detection: any }> {
+  return request<{ status: string; message: string; new_detection: any }>('/spcsft/ingest-pass', {
+    method: 'POST',
+  });
+}

@@ -6,7 +6,6 @@ import { InvestigationProvider, useInvestigation } from './context/Investigation
 import { TopNav } from './components/layout/TopNav';
 import { Sidebar } from './components/layout/Sidebar';
 import { Dashboard } from './pages/Dashboard';
-import { NewInvestigation } from './pages/NewInvestigation';
 import { Investigation } from './pages/Investigation';
 import { DriftAnalysis } from './pages/DriftAnalysis';
 import { VesselAttribution } from './pages/VesselAttribution';
@@ -35,9 +34,8 @@ const MainLayout: React.FC = () => {
       case 'dashboard':
         return <Dashboard />;
       case 'spcsft-realtime':
-        return <SpaceShiftRealTime />;
       case 'new-investigation':
-        return <NewInvestigation />;
+        return <SpaceShiftRealTime />;
       case 'investigation':
       case 'satellite':
         return <Investigation />;

@@ -3,7 +3,6 @@ import {
   Compass,
   Play,
   Clock,
-  Plus,
   Radio,
   Server,
   LogOut,
@@ -209,13 +208,13 @@ export const TopNav: React.FC = () => {
           <span className="text-[11px]">{loading ? 'Simulating...' : 'Demo Scenario'}</span>
         </button>
 
-        {/* Primary Action: New Investigation */}
+        {/* Primary Action: Real-Time Satellite Surveillance */}
         <button
-          onClick={() => setActivePage('new-investigation')}
-          className="flex items-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-medium shadow-sm transition-colors shrink-0 whitespace-nowrap cursor-pointer"
+          onClick={() => setActivePage('spcsft-realtime')}
+          className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-medium shadow-sm transition-colors shrink-0 whitespace-nowrap cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden sm:inline text-[11px]">New Target</span>
+          <Radio className="w-3.5 h-3.5 shrink-0 animate-pulse" />
+          <span className="hidden sm:inline text-[11px]">Live Surveillance</span>
         </button>
 
         {/* OPERATOR PROFILE & LOG-IN DROPDOWN (Always Fully Visible on Far Right) */}

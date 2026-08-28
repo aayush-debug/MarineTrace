@@ -18,6 +18,20 @@ import {
 import { useInvestigation } from '../context/InvestigationContext';
 import { BASEMAP_CONFIGS } from '../utils/mapTiles';
 import { getPolygonPositions } from '../components/map/MaritimeMap';
+import { ingestSatellitePass } from '../api/spcsft';
+
+// Helper to format dynamic time ago for live satellite passes
+function formatTimeAgo(isoString: string): string {
+  try {
+    const diffMs = Date.now() - new Date(isoString).getTime();
+    const diffMins = Math.max(1, Math.floor(diffMs / 60000));
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    return `${diffHours}h ${diffMins % 60}m ago`;
+  } catch {
+    return 'Recent';
+  }
+}
 
 // Custom Auto Bounds Fitter for Space Shift map
 const MapBoundsFitter: React.FC<{
@@ -71,6 +85,7 @@ export const SpaceShiftRealTime: React.FC = () => {
   } = useInvestigation();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isIngesting, setIsIngesting] = useState(false);
 
   const activeBasemap = BASEMAP_CONFIGS[basemap] || BASEMAP_CONFIGS['google-hybrid'];
 
@@ -79,6 +94,19 @@ export const SpaceShiftRealTime: React.FC = () => {
     setIsRefreshing(true);
     await refreshSpcsftFeed();
     setTimeout(() => setIsRefreshing(false), 500);
+  };
+
+  // Trigger Immediate Live Satellite Pass Ingestion
+  const handleIngestPass = async () => {
+    setIsIngesting(true);
+    try {
+      await ingestSatellitePass();
+      await refreshSpcsftFeed();
+    } catch (err) {
+      console.warn('Unable to trigger satellite pass ingest:', err);
+    } finally {
+      setIsIngesting(false);
+    }
   };
 
   // Active zone data
@@ -155,6 +183,17 @@ export const SpaceShiftRealTime: React.FC = () => {
 
         {/* Telemetry Actions & Controls */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Ingest Fresh Satellite Pass */}
+          <button
+            onClick={handleIngestPass}
+            disabled={isIngesting}
+            className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition-colors cursor-pointer disabled:opacity-50"
+            title="Ingest fresh Sentinel-1 satellite overpass detection"
+          >
+            <Satellite className={`w-3.5 h-3.5 ${isIngesting ? 'animate-spin' : ''}`} />
+            <span>{isIngesting ? 'Ingesting Pass...' : 'Ingest Satellite Pass'}</span>
+          </button>
+
           {/* Sync status button */}
           <button
             onClick={toggleSpcsftSync}
@@ -485,6 +524,9 @@ export const SpaceShiftRealTime: React.FC = () => {
                       >
                         {det.severity}
                       </span>
+                      <span className="text-[9px] font-mono text-emerald-400 bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-800/50">
+                        ● {formatTimeAgo(det.observation_time)}
+                      </span>
                     </div>
                     <span className="font-mono text-xs font-bold text-rose-400">
                       {(det.confidence * 100).toFixed(1)}%
@@ -519,7 +561,7 @@ export const SpaceShiftRealTime: React.FC = () => {
                     <span>
                       {det.centroid.latitude.toFixed(3)}°N, {det.centroid.longitude.toFixed(3)}°E
                     </span>
-                    <span>Sentinel-1A C-Band SAR</span>
+                    <span className="text-cyan-400 font-semibold">{det.satellite || 'Sentinel-1A C-Band SAR'}</span>
                   </div>
 
                   {/* Launch Attribution Pipeline CTA */}

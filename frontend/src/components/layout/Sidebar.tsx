@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  PlusCircle,
   Search,
   Compass,
   Ship,
@@ -23,7 +22,6 @@ interface NavItem {
 const SURVEILLANCE_NAV: NavItem[] = [
   { id: 'spcsft-realtime', label: 'SpaceShift Live Surveillance', icon: Radio, badge: 'Live', badgeType: 'alert' },
   { id: 'dashboard', label: 'Situation Overview', icon: LayoutDashboard },
-  { id: 'new-investigation', label: 'New Investigation', icon: PlusCircle },
 ];
 
 const FORENSICS_NAV: NavItem[] = [
