@@ -15,6 +15,44 @@ import numpy as np
 from app.core.logging import logger
 from app.models.spill import GeoJSONGeometry
 from app.models.vessel import VesselPosition, VesselTrack
+_landmask_instance = None
+
+
+def get_landmask():
+    """Lazy-load the global RoaringLandmask instance."""
+    global _landmask_instance
+    if _landmask_instance is None:
+        try:
+            from roaring_landmask import RoaringLandmask
+            _landmask_instance = RoaringLandmask.new()
+        except Exception as e:
+            logger.warning("Could not initialize RoaringLandmask: %s", e)
+            _landmask_instance = False
+    return _landmask_instance
+
+
+def is_point_on_land(lon: float, lat: float) -> bool:
+    """Check if (lon, lat) falls on land using ultra-fast roaring landmask."""
+    mask = get_landmask()
+    if mask is False or mask is None:
+        return False
+    try:
+        return bool(mask.contains(float(lon), float(lat)))
+    except Exception:
+        return False
+
+
+def nudge_to_nearest_water(lon: float, lat: float) -> tuple[float, float]:
+    """If (lon, lat) is on land, search outwards for the nearest navigable open water coordinate."""
+    if not is_point_on_land(lon, lat):
+        return lon, lat
+    for r in np.linspace(0.01, 0.35, 35):
+        for angle in np.linspace(0, 360, 16, endpoint=False):
+            t_lon = lon + r * np.sin(np.radians(angle))
+            t_lat = lat + r * np.cos(np.radians(angle))
+            if not is_point_on_land(t_lon, t_lat):
+                return t_lon, t_lat
+    return lon, lat
 
 
 class AISClientInterface(ABC):
@@ -36,15 +74,8 @@ class AISClientInterface(ABC):
 
 class MockAISClient(AISClientInterface):
     """
-    Returns 17 synthetic vessels around the Arabian Sea demo region.
-
-    Vessel set includes:
-    - 3 vessels very close to origin (strong candidates)
-    - 4 vessels moderately close (weak candidates)
-    - 10 vessels far away (should be filtered out)
-
-    Trajectories are realistic multi-point tracks with varying speeds,
-    headings, and types.
+    Returns synthetic vessels around any requested maritime area.
+    Ensures all vessel positions strictly remain in open water and never cross onto land.
     """
 
     # Pre-defined vessels for the demo scenario in Arabian Sea shipping corridors
@@ -69,174 +100,174 @@ class MockAISClient(AISClientInterface):
             "base_lon": 72.28,
             "base_lat": 19.18,
             "speed_kn": 11.0,
+            "heading": 140,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "356009876",
+            "name": "MV Sea Pioneer",
+            "vessel_type": "Crude Oil Tanker",
+            "flag": "LR",
+            "base_lon": 72.22,
+            "base_lat": 19.05,
+            "speed_kn": 14.0,
+            "heading": 160,
+            "anomaly": False,
+        },
+        # ── Moderate candidates (within 20–35 km) ──
+        {
+            "mmsi": "636012345",
+            "name": "MT Arabian Dawn",
+            "vessel_type": "Oil Tanker",
+            "flag": "PA",
+            "base_lon": 72.48,
+            "base_lat": 19.30,
+            "speed_kn": 13.5,
+            "heading": 150,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "477023456",
+            "name": "MV Coastal Express",
+            "vessel_type": "Container Ship",
+            "flag": "HK",
+            "base_lon": 72.05,
+            "base_lat": 18.85,
+            "speed_kn": 16.0,
             "heading": 170,
             "anomaly": False,
         },
         {
-            "mmsi": "356001111",
-            "name": "MV Pacific Trader",
-            "vessel_type": "Cargo Ship",
-            "flag": "LR",
-            "base_lon": 72.05,
+            "mmsi": "566034567",
+            "name": "MT Singapore Trader",
+            "vessel_type": "Product Tanker",
+            "flag": "SG",
+            "base_lon": 72.52,
             "base_lat": 19.22,
-            "speed_kn": 13.5,
-            "heading": 205,
-            "anomaly": False,
-        },
-        # ── Moderate candidates ──
-        {
-            "mmsi": "477002222",
-            "name": "MT Arabian Sun",
-            "vessel_type": "Oil Tanker",
-            "flag": "HK",
-            "base_lon": 72.35,
-            "base_lat": 19.05,
-            "speed_kn": 11.5,
-            "heading": 180,
+            "speed_kn": 10.5,
+            "heading": 145,
             "anomaly": False,
         },
         {
-            "mmsi": "636003333",
-            "name": "MV Coastal Express",
-            "vessel_type": "Container Ship",
-            "flag": "LR",
-            "base_lon": 72.48,
-            "base_lat": 18.90,
-            "speed_kn": 14.5,
-            "heading": 245,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "412004444",
-            "name": "MV Gujarat Pearl",
+            "mmsi": "311045678",
+            "name": "MV Mumbai Star",
             "vessel_type": "Bulk Carrier",
-            "flag": "IN",
-            "base_lon": 71.90,
-            "base_lat": 19.35,
-            "speed_kn": 10.0,
-            "heading": 195,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "249005555",
-            "name": "FV Silver Catch",
-            "vessel_type": "Fishing Vessel",
-            "flag": "MT",
-            "base_lon": 72.42,
-            "base_lat": 18.82,
-            "speed_kn": 5.0,
-            "heading": 215,
-            "anomaly": False,
-        },
-        # ── Far away vessels (should be filtered out) ──
-        {
-            "mmsi": "311006666",
-            "name": "MV Atlantic Voyager",
-            "vessel_type": "Container Ship",
             "flag": "BS",
-            "base_lon": 71.50,
-            "base_lat": 19.10,
-            "speed_kn": 17.0,
-            "heading": 255,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "353007777",
-            "name": "MT Global Spirit",
-            "vessel_type": "Oil Tanker",
-            "flag": "PA",
             "base_lon": 72.10,
-            "base_lat": 18.35,
-            "speed_kn": 12.5,
-            "heading": 220,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "710008888",
-            "name": "MV Southern Cross",
-            "vessel_type": "Bulk Carrier",
-            "flag": "BR",
-            "base_lon": 71.70,
-            "base_lat": 19.30,
-            "speed_kn": 11.5,
-            "heading": 180,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "440009999",
-            "name": "MV Korea Star",
-            "vessel_type": "Container Ship",
-            "flag": "KR",
-            "base_lon": 71.30,
-            "base_lat": 18.80,
-            "speed_kn": 16.0,
-            "heading": 245,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "304010101",
-            "name": "FV Deep Fisher",
-            "vessel_type": "Fishing Vessel",
-            "flag": "AG",
-            "base_lon": 72.20,
-            "base_lat": 18.55,
-            "speed_kn": 4.5,
-            "heading": 230,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "258011011",
-            "name": "MV Nordic Wind",
-            "vessel_type": "Cargo Ship",
-            "flag": "NO",
-            "base_lon": 71.80,
             "base_lat": 19.25,
             "speed_kn": 12.0,
-            "heading": 185,
+            "heading": 155,
             "anomaly": False,
         },
+        # ── Distant / Irrelevant vessels (>40 km, wrong heading, low risk) ──
         {
-            "mmsi": "215012012",
-            "name": "MT Mediterranean",
-            "vessel_type": "Chemical Tanker",
-            "flag": "MT",
-            "base_lon": 71.95,
-            "base_lat": 18.45,
-            "speed_kn": 10.5,
-            "heading": 250,
-            "anomaly": False,
-        },
-        {
-            "mmsi": "566013013",
-            "name": "MV Singapore Star",
+            "mmsi": "235056789",
+            "name": "MV Nordic Spirit",
             "vessel_type": "Container Ship",
-            "flag": "SG",
-            "base_lon": 72.30,
-            "base_lat": 18.95,
-            "speed_kn": 16.0,
-            "heading": 165,
+            "flag": "GB",
+            "base_lon": 71.60,
+            "base_lat": 19.60,
+            "speed_kn": 18.0,
+            "heading": 340,
             "anomaly": False,
         },
         {
-            "mmsi": "372014014",
-            "name": "MV Panama Express",
-            "vessel_type": "Bulk Carrier",
+            "mmsi": "412067890",
+            "name": "MT Yangtze Glory",
+            "vessel_type": "Crude Oil Tanker",
+            "flag": "CN",
+            "base_lon": 71.50,
+            "base_lat": 18.40,
+            "speed_kn": 13.0,
+            "heading": 160,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "257078901",
+            "name": "MV Fjord Carrier",
+            "vessel_type": "Cargo Ship",
+            "flag": "NO",
+            "base_lon": 72.60,
+            "base_lat": 18.30,
+            "speed_kn": 11.5,
+            "heading": 175,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "370089012",
+            "name": "MT Pacific Breeze",
+            "vessel_type": "Chemical Tanker",
             "flag": "PA",
-            "base_lon": 72.15,
-            "base_lat": 18.75,
-            "speed_kn": 11.0,
-            "heading": 235,
+            "base_lon": 71.75,
+            "base_lat": 19.80,
+            "speed_kn": 10.0,
+            "heading": 350,
             "anomaly": False,
         },
         {
-            "mmsi": "416015015",
-            "name": "FV Mumbai Fisher",
+            "mmsi": "538090123",
+            "name": "MV Island Princess",
+            "vessel_type": "Passenger Ship",
+            "flag": "MH",
+            "base_lon": 72.65,
+            "base_lat": 18.60,
+            "speed_kn": 20.0,
+            "heading": 180,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "419091234",
+            "name": "FV Sagar Deep",
             "vessel_type": "Fishing Vessel",
             "flag": "IN",
-            "base_lon": 72.52,
-            "base_lat": 18.85,
-            "speed_kn": 4.0,
+            "base_lon": 72.55,
+            "base_lat": 18.75,
+            "speed_kn": 4.5,
             "heading": 210,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "419092345",
+            "name": "FV Matsya Kanya",
+            "vessel_type": "Fishing Vessel",
+            "flag": "IN",
+            "base_lon": 72.62,
+            "base_lat": 19.00,
+            "speed_kn": 3.8,
+            "heading": 270,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "636093456",
+            "name": "MT Global Leader",
+            "vessel_type": "Oil Tanker",
+            "flag": "LR",
+            "base_lon": 71.40,
+            "base_lat": 19.00,
+            "speed_kn": 14.5,
+            "heading": 155,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "477094567",
+            "name": "MV Pearl River",
+            "vessel_type": "Container Ship",
+            "flag": "HK",
+            "base_lon": 71.30,
+            "base_lat": 18.70,
+            "speed_kn": 17.0,
+            "heading": 335,
+            "anomaly": False,
+        },
+        {
+            "mmsi": "356095678",
+            "name": "MV Gulf Trader",
+            "vessel_type": "Bulk Carrier",
+            "flag": "PA",
+            "base_lon": 71.80,
+            "base_lat": 18.20,
+            "speed_kn": 12.5,
+            "heading": 165,
             "anomaly": False,
         },
     ]
@@ -257,30 +288,33 @@ class MockAISClient(AISClientInterface):
             return self.MOCK_VESSELS
 
         # Case 2: Strait of Hormuz / Persian Gulf (~26.4°N, 56.4°E)
+        # Navigational TSS: Eastbound into Gulf of Oman (125°-145°), Westbound into Persian Gulf (235°-255°)
         if 24.0 <= center_lat <= 28.0 and 54.0 <= center_lon <= 58.0:
             return [
-                {"mmsi": "636091101", "name": "MT Hormuz Pride", "vessel_type": "Crude Oil Tanker", "flag": "PA", "base_lon": center_lon - 0.03, "base_lat": center_lat + 0.04, "speed_kn": 13.0, "heading": 135, "anomaly": True},
-                {"mmsi": "538092202", "name": "MV Persian Pioneer", "vessel_type": "Chemical Tanker", "flag": "MH", "base_lon": center_lon + 0.02, "base_lat": center_lat + 0.05, "speed_kn": 11.5, "heading": 140, "anomaly": False},
-                {"mmsi": "356093303", "name": "MV Dubai Express", "vessel_type": "Container Ship", "flag": "LR", "base_lon": center_lon - 0.06, "base_lat": center_lat - 0.03, "speed_kn": 15.5, "heading": 315, "anomaly": False},
-                {"mmsi": "477094404", "name": "MT Gulf Navigator", "vessel_type": "Oil Tanker", "flag": "HK", "base_lon": center_lon + 0.05, "base_lat": center_lat + 0.02, "speed_kn": 12.0, "heading": 125, "anomaly": False},
-                {"mmsi": "403095505", "name": "MV Ras Tanura", "vessel_type": "Crude Oil Tanker", "flag": "SA", "base_lon": center_lon - 0.02, "base_lat": center_lat + 0.06, "speed_kn": 14.0, "heading": 145, "anomaly": False},
-                {"mmsi": "461096606", "name": "FV Oman Bounty", "vessel_type": "Fishing Vessel", "flag": "OM", "base_lon": center_lon + 0.07, "base_lat": center_lat - 0.05, "speed_kn": 5.0, "heading": 220, "anomaly": False},
-                {"mmsi": "372097707", "name": "MV Sharjah Star", "vessel_type": "Bulk Carrier", "flag": "PA", "base_lon": center_lon - 0.08, "base_lat": center_lat - 0.02, "speed_kn": 10.5, "heading": 305, "anomaly": False},
-                {"mmsi": "311098808", "name": "MT Abu Dhabi Spirit", "vessel_type": "Oil Tanker", "flag": "BS", "base_lon": center_lon + 0.04, "base_lat": center_lat + 0.07, "speed_kn": 13.5, "heading": 130, "anomaly": False},
+                {"mmsi": "636091101", "name": "MT Hormuz Pride", "vessel_type": "Crude Oil Tanker", "flag": "PA", "base_lon": center_lon - 0.03, "base_lat": center_lat + 0.02, "speed_kn": 13.0, "heading": 135, "anomaly": True},
+                {"mmsi": "538092202", "name": "MV Persian Pioneer", "vessel_type": "Chemical Tanker", "flag": "MH", "base_lon": center_lon + 0.02, "base_lat": center_lat + 0.03, "speed_kn": 11.5, "heading": 140, "anomaly": False},
+                {"mmsi": "356093303", "name": "MV Dubai Express", "vessel_type": "Container Ship", "flag": "LR", "base_lon": center_lon - 0.06, "base_lat": center_lat - 0.02, "speed_kn": 15.5, "heading": 245, "anomaly": False},
+                {"mmsi": "477094404", "name": "MT Gulf Navigator", "vessel_type": "Oil Tanker", "flag": "HK", "base_lon": center_lon + 0.05, "base_lat": center_lat + 0.01, "speed_kn": 12.0, "heading": 125, "anomaly": False},
+                {"mmsi": "403095505", "name": "MV Ras Tanura", "vessel_type": "Crude Oil Tanker", "flag": "SA", "base_lon": center_lon - 0.02, "base_lat": center_lat + 0.04, "speed_kn": 14.0, "heading": 145, "anomaly": False},
+                {"mmsi": "461096606", "name": "FV Oman Bounty", "vessel_type": "Fishing Vessel", "flag": "OM", "base_lon": center_lon + 0.06, "base_lat": center_lat - 0.03, "speed_kn": 5.0, "heading": 130, "anomaly": False},
+                {"mmsi": "372097707", "name": "MV Sharjah Star", "vessel_type": "Bulk Carrier", "flag": "PA", "base_lon": center_lon - 0.05, "base_lat": center_lat - 0.01, "speed_kn": 10.5, "heading": 250, "anomaly": False},
+                {"mmsi": "311098808", "name": "MT Abu Dhabi Spirit", "vessel_type": "Oil Tanker", "flag": "BS", "base_lon": center_lon + 0.03, "base_lat": center_lat + 0.04, "speed_kn": 13.5, "heading": 130, "anomaly": False},
             ]
 
         # Case 3: Bab-el-Mandeb / Southern Red Sea (~12.7°N, 43.4°E)
+        # Navigational TSS: Northbound into Red Sea (330°-345°), Southbound into Gulf of Aden (145°-160°)
         if 11.0 <= center_lat <= 15.0 and 41.0 <= center_lon <= 46.0:
             return [
                 {"mmsi": "636081101", "name": "MT Red Sea Voyager", "vessel_type": "Crude Oil Tanker", "flag": "LR", "base_lon": center_lon + 0.03, "base_lat": center_lat - 0.04, "speed_kn": 13.5, "heading": 335, "anomaly": True},
                 {"mmsi": "538082202", "name": "MV Bab-el-Mandeb Carrier", "vessel_type": "Bulk Carrier", "flag": "PA", "base_lon": center_lon - 0.04, "base_lat": center_lat + 0.05, "speed_kn": 11.0, "heading": 155, "anomaly": False},
-                {"mmsi": "356083303", "name": "MT Aden Trader", "vessel_type": "Chemical Tanker", "flag": "MH", "base_lon": center_lon + 0.05, "base_lat": center_lat - 0.06, "speed_kn": 12.0, "heading": 320, "anomaly": False},
+                {"mmsi": "356083303", "name": "MT Aden Trader", "vessel_type": "Chemical Tanker", "flag": "MH", "base_lon": center_lon + 0.05, "base_lat": center_lat - 0.06, "speed_kn": 12.0, "heading": 330, "anomaly": False},
                 {"mmsi": "566084404", "name": "MV Suez Star", "vessel_type": "Container Ship", "flag": "SG", "base_lon": center_lon - 0.02, "base_lat": center_lat - 0.05, "speed_kn": 16.5, "heading": 340, "anomaly": False},
                 {"mmsi": "477085505", "name": "MT Djibouti Express", "vessel_type": "Oil Tanker", "flag": "HK", "base_lon": center_lon - 0.05, "base_lat": center_lat + 0.03, "speed_kn": 12.5, "heading": 150, "anomaly": False},
-                {"mmsi": "473086606", "name": "FV Red Sea Pearl", "vessel_type": "Fishing Vessel", "flag": "YE", "base_lon": center_lon + 0.06, "base_lat": center_lat + 0.02, "speed_kn": 4.5, "heading": 210, "anomaly": False},
+                {"mmsi": "473086606", "name": "FV Red Sea Pearl", "vessel_type": "Fishing Vessel", "flag": "YE", "base_lon": center_lon + 0.06, "base_lat": center_lat + 0.02, "speed_kn": 4.5, "heading": 140, "anomaly": False},
             ]
 
         # Case 4: Strait of Malacca / Singapore (~2.5°N, 101.8°E or ~1.3°N, 104.0°E)
+        # Navigational TSS: Northbound (305°-315°), Southbound (125°-135°)
         if 0.5 <= center_lat <= 4.5 and 99.0 <= center_lon <= 105.0:
             return [
                 {"mmsi": "566071101", "name": "MT Malacca Pioneer", "vessel_type": "Crude Oil Tanker", "flag": "SG", "base_lon": center_lon + 0.03, "base_lat": center_lat - 0.04, "speed_kn": 13.0, "heading": 310, "anomaly": True},
@@ -288,7 +322,7 @@ class MockAISClient(AISClientInterface):
                 {"mmsi": "533073303", "name": "MT Johore Carrier", "vessel_type": "Chemical Tanker", "flag": "MY", "base_lon": center_lon + 0.05, "base_lat": center_lat - 0.06, "speed_kn": 11.5, "heading": 315, "anomaly": False},
                 {"mmsi": "636074404", "name": "MV Sunda Express", "vessel_type": "Bulk Carrier", "flag": "LR", "base_lon": center_lon - 0.03, "base_lat": center_lat + 0.02, "speed_kn": 12.0, "heading": 125, "anomaly": False},
                 {"mmsi": "477075505", "name": "MT Port Klang Pride", "vessel_type": "Oil Tanker", "flag": "HK", "base_lon": center_lon + 0.02, "base_lat": center_lat - 0.03, "speed_kn": 12.5, "heading": 305, "anomaly": False},
-                {"mmsi": "525076606", "name": "FV Malacca Fisher", "vessel_type": "Fishing Vessel", "flag": "ID", "base_lon": center_lon - 0.06, "base_lat": center_lat - 0.02, "speed_kn": 4.5, "heading": 200, "anomaly": False},
+                {"mmsi": "525076606", "name": "FV Malacca Fisher", "vessel_type": "Fishing Vessel", "flag": "ID", "base_lon": center_lon - 0.06, "base_lat": center_lat - 0.02, "speed_kn": 4.5, "heading": 130, "anomaly": False},
             ]
 
         # Case 5: Gulf of Kutch (~22.4°N, 69.4°E)
@@ -367,10 +401,13 @@ class MockAISClient(AISClientInterface):
         speed = float(vessel["speed_kn"])
         heading = float(vessel["heading"])
 
+        # 1. Ensure initial vessel base position is in open water (never on land)
+        lon, lat = nudge_to_nearest_water(lon, lat)
+
         for i in range(n_points):
             t = start_time + timedelta(minutes=interval_minutes * i)
 
-            # ── Maritime Land Avoidance Safety Constraints for Arabian Sea / West India ──
+            # Regional safety constraints for Arabian Sea / West India
             if 16.0 <= float(vessel["base_lat"]) <= 21.0 and 70.0 <= float(vessel["base_lon"]) <= 74.0:
                 if lon > 72.68:
                     heading = 240.0 + float(rng.normal(0, 3))
@@ -383,8 +420,29 @@ class MockAISClient(AISClientInterface):
             speed_deg_per_min = (speed * 1.852 / 111.0) / 60  # rough conversion
             heading_rad = np.radians(heading)
 
-            lon += speed_deg_per_min * np.sin(heading_rad) * interval_minutes
-            lat += speed_deg_per_min * np.cos(heading_rad) * interval_minutes
+            step_lon = speed_deg_per_min * np.sin(heading_rad) * interval_minutes
+            step_lat = speed_deg_per_min * np.cos(heading_rad) * interval_minutes
+
+            cand_lon = lon + step_lon
+            cand_lat = lat + step_lat
+
+            # 2. Universal Global Land Avoidance using RoaringLandmask
+            if is_point_on_land(cand_lon, cand_lat):
+                deflected = False
+                for delta in [30, -30, 60, -60, 90, -90, 120, -120, 150, -150, 180]:
+                    test_hdg = (heading + delta) % 360
+                    t_rad = np.radians(test_hdg)
+                    t_lon = lon + speed_deg_per_min * np.sin(t_rad) * interval_minutes
+                    t_lat = lat + speed_deg_per_min * np.cos(t_rad) * interval_minutes
+                    if not is_point_on_land(t_lon, t_lat):
+                        cand_lon, cand_lat = t_lon, t_lat
+                        heading = test_hdg
+                        deflected = True
+                        break
+                if not deflected:
+                    cand_lon, cand_lat = lon, lat
+
+            lon, lat = cand_lon, cand_lat
 
             # Post-step safety enforcement for Arabian Sea sector
             if 16.0 <= float(vessel["base_lat"]) <= 21.0 and 70.0 <= float(vessel["base_lon"]) <= 74.0:
@@ -393,9 +451,11 @@ class MockAISClient(AISClientInterface):
                 if lat > 19.85:
                     lat = 19.85 - abs(float(rng.normal(0, 0.005)))
 
-            # Add minor GPS jitter
-            lon += float(rng.normal(0, 0.0005))
-            lat += float(rng.normal(0, 0.0005))
+            # 3. Safe GPS jitter (only apply if jittered point is in water)
+            j_lon = lon + float(rng.normal(0, 0.0005))
+            j_lat = lat + float(rng.normal(0, 0.0005))
+            if not is_point_on_land(j_lon, j_lat):
+                lon, lat = j_lon, j_lat
 
             current_speed = speed
 
