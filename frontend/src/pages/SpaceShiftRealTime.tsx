@@ -100,8 +100,19 @@ export const SpaceShiftRealTime: React.FC = () => {
   const handleIngestPass = async () => {
     setIsIngesting(true);
     try {
-      await ingestSatellitePass();
+      const res = await ingestSatellitePass();
       await refreshSpcsftFeed();
+      if (res && res.new_detection) {
+        setSelectedSpcsftDetection(res.new_detection);
+        const matchingZone = spcsftMonitoringZones.find((z) =>
+          res.new_detection.zone_name.toLowerCase().includes(z.name.toLowerCase().split('(')[0].trim())
+        );
+        if (matchingZone) {
+          setSpcsftSelectedZone(matchingZone.zone_id);
+        } else {
+          setSpcsftSelectedZone('all');
+        }
+      }
     } catch (err) {
       console.warn('Unable to trigger satellite pass ingest:', err);
     } finally {
