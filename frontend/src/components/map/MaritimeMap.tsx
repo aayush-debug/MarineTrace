@@ -303,6 +303,11 @@ export const MaritimeMap: React.FC<{
       <MapContainer
         center={defaultCenter}
         zoom={9}
+        minZoom={3}
+        maxZoom={18}
+        maxBounds={[[-85, -180], [85, 180]]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
         scrollWheelZoom={true}
         style={{ width: '100%', height: '100%' }}
         zoomControl={false}
@@ -314,6 +319,8 @@ export const MaritimeMap: React.FC<{
           url={activeBasemap.url}
           subdomains={activeBasemap.subdomains || ['a', 'b', 'c']}
           maxZoom={activeBasemap.maxZoom}
+          noWrap={true}
+          bounds={[[-85, -180], [85, 180]]}
         />
 
         {/* 0a. Sentinel-1 Calibrated SAR Radar Raster Overlay */}

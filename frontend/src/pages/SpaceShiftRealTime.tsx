@@ -294,10 +294,15 @@ export const SpaceShiftRealTime: React.FC = () => {
       {/* ── Main Workspace: Map & Side Feed Split ── */}
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden relative">
         {/* ── MAP CONTAINER ── */}
-        <div className="flex-1 relative min-h-[300px] lg:min-h-0 bg-[#0c1017]">
+        <div className="flex-1 relative min-h-[300px] lg:min-h-0 bg-[#070b12]">
           <MapContainer
             center={defaultCenter}
             zoom={8}
+            minZoom={3}
+            maxZoom={18}
+            maxBounds={[[-85, -180], [85, 180]]}
+            maxBoundsViscosity={1.0}
+            worldCopyJump={false}
             scrollWheelZoom={true}
             className="w-full h-full z-0"
             zoomControl={false}
@@ -308,6 +313,8 @@ export const SpaceShiftRealTime: React.FC = () => {
               attribution={activeBasemap.attribution}
               subdomains={activeBasemap.subdomains || ['mt0', 'mt1', 'mt2', 'mt3']}
               maxZoom={activeBasemap.maxZoom}
+              noWrap={true}
+              bounds={[[-85, -180], [85, 180]]}
             />
 
             {/* Monitoring Zone Bound Rectangles */}
