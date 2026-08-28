@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Sun,
   Moon,
+  LogIn,
 } from 'lucide-react';
 import { useInvestigation } from '../../context/InvestigationContext';
 import { useAuth } from '../../context/AuthContext';
@@ -26,7 +27,6 @@ export const TopNav: React.FC = () => {
     spcsftSyncEnabled,
   } = useInvestigation();
   const [utcString, setUtcString] = useState<string>('');
-  const [localString, setLocalString] = useState<string>('');
 
   useEffect(() => {
     const updateTime = () => {
@@ -36,14 +36,6 @@ export const TopNav: React.FC = () => {
       const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
       const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
       setUtcString(`${utcHours}:${utcMinutes}:${utcSeconds} UTC`);
-
-      // Local 12h Time
-      let hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      setLocalString(`${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`);
     };
 
     updateTime();
@@ -52,7 +44,7 @@ export const TopNav: React.FC = () => {
   }, []);
 
   const activeCount = investigationList.length;
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,18 +60,18 @@ export const TopNav: React.FC = () => {
   }, []);
 
   return (
-    <header className="h-12 bg-[#111622] border-b border-[#1e293b] px-4 flex items-center justify-between gap-4 select-none z-30 sticky top-0 shrink-0 shadow-sm no-print">
-      {/* LEFT: Product Brand & Active Target Quick-Focus */}
-      <div className="flex items-center gap-4 min-w-0 shrink-0">
+    <header className="h-12 bg-[#111622] border-b border-[#1e293b] px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-3 select-none z-30 sticky top-0 shrink-0 shadow-sm no-print">
+      {/* LEFT: Product Brand & Active Case Indicator */}
+      <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 shrink-0">
         <div
           onClick={() => setActivePage('dashboard')}
-          className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+          className="flex items-center gap-2 cursor-pointer group shrink-0"
         >
           <div className="w-7 h-7 rounded bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 group-hover:border-blue-400 transition-colors shrink-0">
             <Compass className="w-4 h-4 text-blue-400" />
           </div>
 
-          <div className="flex items-baseline gap-2 shrink-0">
+          <div className="flex items-baseline gap-1.5 shrink-0">
             <span className="font-semibold text-slate-100 text-sm tracking-tight whitespace-nowrap">
               MarineTrace
             </span>
@@ -96,65 +88,57 @@ export const TopNav: React.FC = () => {
         {investigation ? (
           <div
             onClick={() => setActivePage('investigation')}
-            className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded bg-[#161e2e] border border-rose-900/60 text-slate-200 text-xs cursor-pointer hover:border-rose-700/80 transition-colors shrink-0 whitespace-nowrap"
+            className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161e2e] border border-rose-900/60 text-slate-200 text-xs cursor-pointer hover:border-rose-700/80 transition-colors shrink-0 whitespace-nowrap"
             title={`Active Case #${investigation.investigation_id}`}
           >
             <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
             <span className="font-mono font-medium text-[11px] text-slate-200">
               Case #{investigation.investigation_id}
             </span>
-            <span className="text-[10px] font-mono text-rose-400 font-semibold bg-rose-950/80 px-1.5 py-0.2 rounded border border-rose-900/60 shrink-0">
+            <span className="text-[9px] font-mono text-rose-400 font-semibold bg-rose-950 px-1 py-0.2 rounded border border-rose-900/60 shrink-0">
               {(investigation.spill.confidence * 100).toFixed(0)}% Conf
             </span>
           </div>
         ) : activeCount > 0 ? (
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#161e2e] border border-slate-800 text-slate-300 text-xs shrink-0 whitespace-nowrap">
+          <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161e2e] border border-slate-800 text-slate-300 text-xs shrink-0 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
             <span className="font-mono text-[11px]">{activeCount} Cases Active</span>
           </div>
         ) : null}
       </div>
 
-      {/* CENTER: System Operational Feeds (Desktop) */}
-      <div className="hidden xl:flex items-center gap-3 px-3 py-1 bg-[#0c1017] rounded border border-[#1e293b] text-xs font-mono text-slate-300 shrink-0 whitespace-nowrap">
-        <span className="flex items-center gap-1.5 text-emerald-400 text-[11px] font-medium shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+      {/* CENTER: Compact Status (Only on massive screens to prevent overflow) */}
+      <div className="hidden 2xl:flex items-center gap-2.5 px-2.5 py-0.5 bg-[#0c1017] rounded border border-[#1e293b] text-xs font-mono text-slate-400 shrink-0 whitespace-nowrap">
+        <span className="flex items-center gap-1 text-emerald-400 text-[10px] font-medium shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           <span>Operational</span>
         </span>
         <span className="text-slate-700">|</span>
-        <span className="text-slate-400 text-[11px] shrink-0">Sentinel-1A SAR (C-Band)</span>
+        <span className="text-[10px]">Sentinel-1A SAR</span>
         <span className="text-slate-700">|</span>
-        <span className="text-slate-400 text-[11px] shrink-0">CMEMS Hydrodynamics</span>
-        <span className="text-slate-700">|</span>
-        <span className="text-slate-400 text-[11px] shrink-0">AIS Stream</span>
+        <span className="text-[10px]">CMEMS Ocean</span>
       </div>
 
-      {/* RIGHT: Status, Chronometer & Actions */}
-      <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap">
+      {/* RIGHT: Actions, Chronometer & Operator Profile / Login */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto whitespace-nowrap">
         {/* SpaceShift Real-Time Radar Feed Status */}
         <div
           onClick={() => setActivePage('spcsft-realtime')}
-          className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded bg-[#161e2e] border border-[#1e293b] text-slate-300 text-xs cursor-pointer hover:border-slate-700 hover:text-slate-100 transition-colors shrink-0 whitespace-nowrap"
+          className="hidden xl:flex items-center gap-1.5 px-2 py-1 rounded bg-[#161e2e] border border-[#1e293b] text-slate-300 text-xs cursor-pointer hover:border-slate-700 hover:text-slate-100 transition-colors shrink-0 whitespace-nowrap"
           title="SpaceShift Satellite Radar Feed"
         >
-          <Radio className={`w-3.5 h-3.5 shrink-0 ${spcsftSyncEnabled ? 'text-blue-400' : 'text-slate-500'}`} />
-          <span className="text-[11px] font-medium shrink-0">
-            Radar Feed:
-          </span>
-          <span className="font-mono text-[10px] text-blue-300 font-semibold bg-blue-950/60 px-1.5 py-0.2 rounded border border-blue-900/60 shrink-0">
+          <Radio className={`w-3 h-3 shrink-0 ${spcsftSyncEnabled ? 'text-blue-400' : 'text-slate-500'}`} />
+          <span className="text-[10px] font-medium shrink-0">Radar:</span>
+          <span className="font-mono text-[9px] text-blue-300 font-semibold bg-blue-950/60 px-1 py-0.2 rounded border border-blue-900/60 shrink-0">
             {spcsftLiveDetections.length} Targets
           </span>
         </div>
 
         {/* Dual UTC Chronometer */}
-        <div className="hidden sm:flex items-center gap-2 font-mono text-xs px-2.5 py-1 bg-[#0c1017] border border-[#1e293b] rounded text-slate-300 select-none shrink-0 whitespace-nowrap">
-          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span className="text-slate-200 font-medium tabular-nums shrink-0">
+        <div className="hidden lg:flex items-center gap-1.5 font-mono text-xs px-2 py-1 bg-[#0c1017] border border-[#1e293b] rounded text-slate-300 select-none shrink-0 whitespace-nowrap">
+          <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+          <span className="text-slate-200 text-[11px] font-medium tabular-nums shrink-0">
             {utcString || '--:--:-- UTC'}
-          </span>
-          <span className="text-slate-700 hidden 2xl:inline">|</span>
-          <span className="text-slate-400 text-[10px] hidden 2xl:inline tabular-nums">
-            {localString}
           </span>
         </div>
 
@@ -176,68 +160,79 @@ export const TopNav: React.FC = () => {
         <button
           onClick={executeDemo}
           disabled={loading}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] text-slate-200 hover:text-white rounded text-xs font-medium transition-colors disabled:opacity-50 shrink-0 whitespace-nowrap cursor-pointer"
+          className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] text-slate-200 hover:text-white rounded text-xs font-medium transition-colors disabled:opacity-50 shrink-0 whitespace-nowrap cursor-pointer"
         >
           <Play className="w-3 h-3 text-blue-400 fill-blue-400 shrink-0" />
-          <span>{loading ? 'Simulating...' : 'Demo Scenario'}</span>
+          <span className="text-[11px]">{loading ? 'Simulating...' : 'Demo Scenario'}</span>
         </button>
 
         {/* Primary Action: New Investigation */}
         <button
           onClick={() => setActivePage('new-investigation')}
-          className="flex items-center gap-1.5 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-semibold shadow-sm transition-colors shrink-0 whitespace-nowrap cursor-pointer"
+          className="flex items-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-medium shadow-sm transition-colors shrink-0 whitespace-nowrap cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5 shrink-0" />
-          <span>New Investigation</span>
+          <span className="hidden sm:inline text-[11px]">New Target</span>
         </button>
 
-        {/* Operator Profile Dropdown */}
+        {/* OPERATOR PROFILE & LOG-IN DROPDOWN (Always Fully Visible on Far Right) */}
         <div className="relative pl-1 border-l border-slate-800 shrink-0" ref={menuRef}>
-          <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-2 px-2 py-1 rounded bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] transition-colors cursor-pointer text-left shrink-0"
-          >
-            <div className="w-6 h-6 rounded bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-blue-300 font-mono font-bold text-xs shrink-0">
-              {user?.full_name ? user.full_name.charAt(0) : 'O'}
-            </div>
-            <div className="hidden md:block">
-              <div className="text-xs font-medium text-slate-200 leading-tight max-w-[120px] truncate">
-                {user?.full_name || 'Operator'}
+          {isAuthenticated && user ? (
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex items-center gap-1.5 sm:gap-2 px-2 py-1 rounded bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] transition-colors cursor-pointer text-left shrink-0"
+              title={`${user.full_name} (${user.role})`}
+            >
+              <div className="w-6 h-6 rounded bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-blue-300 font-mono font-bold text-xs shrink-0">
+                {user.full_name ? user.full_name.charAt(0) : 'U'}
               </div>
-              <div className="text-[9px] text-slate-400 font-mono truncate max-w-[120px]">
-                {user?.role || 'Investigator'}
+              <div className="hidden sm:block">
+                <div className="text-[11px] font-medium text-slate-200 leading-tight max-w-[100px] md:max-w-[130px] truncate">
+                  {user.full_name || 'Operator'}
+                </div>
+                <div className="text-[9px] text-slate-400 font-mono truncate max-w-[100px] md:max-w-[130px]">
+                  {user.role || 'Investigator'}
+                </div>
               </div>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block shrink-0" />
-          </button>
+              <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+            </button>
+          ) : (
+            <button
+              onClick={() => logout()}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#161e2e] hover:bg-blue-950 border border-slate-800 hover:border-blue-700 text-blue-400 text-xs font-medium transition-colors cursor-pointer shrink-0"
+            >
+              <LogIn className="w-3.5 h-3.5 shrink-0" />
+              <span>Log In</span>
+            </button>
+          )}
 
           {/* User Profile Context Menu */}
-          {userMenuOpen && (
-            <div className="absolute right-0 mt-1.5 w-72 rounded-md bg-[#111622] border border-[#1e293b] shadow-xl p-2.5 z-50 text-xs animate-in fade-in">
-              <div className="p-3 bg-[#161e2e] rounded border border-slate-800 mb-2">
+          {userMenuOpen && user && (
+            <div className="absolute right-0 mt-1.5 w-68 rounded bg-[#111622] border border-[#1e293b] shadow-2xl p-2.5 z-50 text-xs animate-in fade-in">
+              <div className="p-2.5 bg-[#161e2e] rounded border border-slate-800 mb-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-100">{user?.full_name}</span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-blue-950 text-blue-300 border border-blue-800/60">
-                    Level 3
+                  <span className="font-semibold text-slate-100 truncate">{user.full_name}</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-blue-950 text-blue-300 border border-blue-800/60 shrink-0">
+                    Active
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 font-mono mt-0.5">{user?.email}</div>
-                <div className="text-[10px] text-slate-500 mt-1">{user?.agency}</div>
-                <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono">
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">{user.email}</div>
+                <div className="text-[10px] text-slate-500 mt-0.5 truncate">{user.agency}</div>
+                <div className="mt-2 pt-1.5 border-t border-slate-800 flex items-center justify-between text-[9px] font-mono">
                   <span className="text-slate-400">Node Status:</span>
                   <span className="text-emerald-400 font-medium">● Connected</span>
                 </div>
               </div>
 
-              <div className="space-y-1 font-sans text-xs">
+              <div className="space-y-0.5 font-sans text-xs">
                 <button
                   onClick={() => {
                     setUserMenuOpen(false);
                     setActivePage('access-logs');
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 rounded hover:bg-[#161e2e] text-slate-300 hover:text-white transition-colors text-left cursor-pointer"
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-[#161e2e] text-slate-300 hover:text-white transition-colors text-left cursor-pointer"
                 >
-                  <Server className="w-3.5 h-3.5 text-slate-400" />
+                  <Server className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span>Audit Logs & Node Telemetry</span>
                 </button>
 
@@ -246,10 +241,10 @@ export const TopNav: React.FC = () => {
                     setUserMenuOpen(false);
                     logout();
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 rounded hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 transition-colors text-left cursor-pointer"
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 transition-colors text-left cursor-pointer"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-rose-400" />
-                  <span>Sign Out</span>
+                  <LogOut className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <span>Sign Out / Switch Operator</span>
                 </button>
               </div>
             </div>
