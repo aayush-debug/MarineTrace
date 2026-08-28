@@ -18,7 +18,7 @@ export const SarMapStudioWidget: React.FC = () => {
     updateSarConfig,
   } = useInvestigation();
 
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   if (!investigation) return null;
 

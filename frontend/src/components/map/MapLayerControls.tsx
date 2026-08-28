@@ -31,7 +31,7 @@ export const MapLayerControls: React.FC = () => {
   } = useInvestigation();
 
   const [activeTab, setActiveTab] = useState<HUDTab>('presets');
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   // Preset Mission Configurations
   const applyPreset = (presetType: 'all' | 'sar' | 'drift' | 'ais') => {
