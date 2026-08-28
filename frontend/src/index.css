@@ -255,6 +255,38 @@
   border-color: #bae6fd !important;
 }
 
+/* Sidebar Active Item & Badges in Light Mode */
+[data-theme="light"] aside button.bg-\[\#161e2e\],
+[data-theme="light"] aside button[class*="border-blue-500"],
+.light aside button.bg-\[\#161e2e\],
+.light aside button[class*="border-blue-500"] {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] aside button.bg-\[\#161e2e\] span,
+[data-theme="light"] aside button[class*="border-blue-500"] span,
+.light aside button.bg-\[\#161e2e\] span,
+.light aside button[class*="border-blue-500"] span {
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] aside button.bg-\[\#161e2e\] svg,
+[data-theme="light"] aside button[class*="border-blue-500"] svg,
+.light aside button.bg-\[\#161e2e\] svg,
+.light aside button[class*="border-blue-500"] svg {
+  color: #0284c7 !important;
+}
+
+[data-theme="light"] aside span[class*="bg-blue-950"],
+.light aside span[class*="bg-blue-950"],
+[data-theme="light"] aside span.bg-blue-950,
+.light aside span.bg-blue-950 {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #bae6fd !important;
+}
+
 [data-theme="light"] .bg-emerald-950,
 [data-theme="light"] [class*="bg-emerald-950"],
 .light .bg-emerald-950,

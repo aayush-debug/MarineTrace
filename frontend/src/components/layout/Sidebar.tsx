@@ -11,7 +11,6 @@ import {
   Radio,
   Server,
   AlertTriangle,
-  Cpu,
 } from 'lucide-react';
 import { useInvestigation, type PageId } from '../../context/InvestigationContext';
 
@@ -60,7 +59,7 @@ export const Sidebar: React.FC = () => {
               onClick={() => setActivePage(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition-colors group cursor-pointer ${
                 isActive
-                  ? 'bg-[#161e2e] text-white font-semibold border-l-2 border-blue-500 pl-2.5'
+                  ? 'bg-[#161e2e] text-slate-100 font-semibold border-l-2 border-blue-500 pl-2.5'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-[#161e2e]/50'
               }`}
             >
@@ -78,12 +77,10 @@ export const Sidebar: React.FC = () => {
                 <span
                   className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 ${
                     item.badgeType === 'alert'
-                      ? isActive
-                        ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
-                        : 'bg-rose-950/60 text-rose-400 border border-rose-900/40'
-                      : isActive
+                      ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
+                      : item.badgeType === 'info'
                       ? 'bg-blue-950 text-blue-300 border border-blue-800/60'
-                      : 'bg-slate-800 text-slate-400'
+                      : 'bg-[#161e2e] text-slate-400 border border-[#1e293b]'
                   }`}
                 >
                   {item.badge}
@@ -110,7 +107,7 @@ export const Sidebar: React.FC = () => {
         {investigation ? (
           <div
             onClick={() => setActivePage('investigation')}
-            className="p-3 rounded bg-[#161e2e] border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors space-y-2 group shadow-sm"
+            className="p-3 rounded bg-[#161e2e] border border-[#1e293b] hover:border-slate-700 cursor-pointer transition-colors space-y-2 group shadow-sm"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
@@ -126,7 +123,7 @@ export const Sidebar: React.FC = () => {
               Case #{investigation.investigation_id}
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1.5 border-t border-slate-800">
+            <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1.5 border-t border-[#1e293b]">
               <div>
                 <span className="text-slate-500 text-[10px] block">Slick Area</span>
                 <span className="text-slate-200 font-mono font-medium">{investigation.spill.area_km2.toFixed(1)} km²</span>
@@ -145,22 +142,11 @@ export const Sidebar: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="p-2.5 rounded bg-[#161e2e]/50 border border-slate-800/80 text-center">
+          <div className="p-2.5 rounded bg-[#161e2e]/50 border border-[#1e293b] text-center">
             <p className="text-[11px] text-slate-400 font-medium">No Active Case</p>
             <p className="text-[10px] text-slate-500 mt-0.5">Select or upload a SAR scene</p>
           </div>
         )}
-
-        <div className="mt-2.5 flex items-center justify-between text-[10px] font-mono text-slate-500 px-1">
-          <span className="flex items-center gap-1">
-            <Cpu className="w-3 h-3 text-slate-400" />
-            <span>ResNet-34 U-Net</span>
-          </span>
-          <span className="flex items-center gap-1 text-emerald-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            Ready
-          </span>
-        </div>
       </div>
     </aside>
   );

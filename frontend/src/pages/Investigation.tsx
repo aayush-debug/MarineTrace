@@ -160,7 +160,7 @@ export const Investigation: React.FC = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 flex flex-col items-center py-2 gap-1 text-[11px] font-medium transition-colors border-b-2 cursor-pointer ${
                     activeTab === tab.id
-                      ? 'text-white border-blue-500 bg-[#111622]'
+                      ? 'text-slate-100 font-semibold border-blue-500 bg-[#111622]'
                       : 'text-slate-400 hover:text-slate-200 border-transparent'
                   }`}
                 >

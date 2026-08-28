@@ -230,7 +230,7 @@ export const Dashboard: React.FC = () => {
               onClick={() => setActiveRightTab('spill')}
               className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${
                 activeRightTab === 'spill'
-                  ? 'border-blue-500 text-white bg-[#111622]'
+                  ? 'border-blue-500 text-slate-100 font-semibold bg-[#111622]'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -240,7 +240,7 @@ export const Dashboard: React.FC = () => {
               onClick={() => setActiveRightTab('vessels')}
               className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${
                 activeRightTab === 'vessels'
-                  ? 'border-blue-500 text-white bg-[#111622]'
+                  ? 'border-blue-500 text-slate-100 font-semibold bg-[#111622]'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
