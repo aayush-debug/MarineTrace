@@ -28,8 +28,8 @@ export const IncidentSelectorModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in select-none font-sans">
-      <div className="bg-[#111622] border border-[#1e293b] rounded-xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none font-sans">
+      <div className="bg-[#111622] border border-[#1e293b] rounded-xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh] relative z-[100000]">
         {/* Modal Header */}
         <div className="px-6 py-4 bg-[#161e2e] border-b border-[#1e293b] flex items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3">
