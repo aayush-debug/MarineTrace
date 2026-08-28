@@ -294,7 +294,7 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
       if (job.results && job.results.length > 0) {
         setSpcsftLiveDetections((prev) => {
           const ids = new Set(job.results.map((r) => r.detection_id));
-          return [...job.results, ...prev.filter((d) => !ids.has(d.detection_id))];
+          return [...job.results, ...prev.filter((d) => !ids.has(d.detection_id))].slice(0, 10);
         });
       }
       return job;
