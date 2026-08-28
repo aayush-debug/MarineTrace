@@ -81,7 +81,7 @@ export const PipelineProgressModal: React.FC<PipelineProgressModalProps> = ({
   const activeIndex = getActiveStepIndex();
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#050811]/90 backdrop-blur-md flex items-center justify-center p-4 font-mono select-none">
+    <div className="fixed inset-0 z-[9999] bg-[#050811]/90 backdrop-blur-md flex items-center justify-center p-4 font-mono select-none animate-in fade-in duration-200">
       <div className="w-full max-w-xl bg-[#0a101d] border border-cyan-500/40 rounded-xl p-6 shadow-2xl shadow-cyan-950/50 space-y-6 relative overflow-hidden">
         {/* Ambient Top Glow */}
         <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
