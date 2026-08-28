@@ -31,7 +31,7 @@ export const SarMapStudioWidget: React.FC = () => {
   ];
 
   return (
-    <div className="absolute bottom-4 left-4 z-[1000] font-sans select-none max-w-xs w-80">
+    <div className="absolute top-3 left-3 z-[1000] font-sans select-none max-w-xs w-80">
       {/* ── Collapsed Pill Trigger ── */}
       {!isExpanded ? (
         <button
