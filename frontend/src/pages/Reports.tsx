@@ -102,7 +102,7 @@ export const Reports: React.FC = () => {
                 Office Memorandum (OM) // भारत सरकार
               </h1>
               <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60">
-                A4 OFFICIAL FORMAT (210 × 297 mm)
+                A4 OFFICIAL 2-PAGE STANDARD
               </span>
             </div>
             <p className="text-[11px] font-mono text-slate-400 mt-0.5">
@@ -141,179 +141,204 @@ export const Reports: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Main Document Viewport: Exact A4 Proportions (210mm × 297mm) ── */}
-      <div className="p-4 sm:p-8 md:p-12 flex justify-center items-start print:p-0 print:m-0 print:block w-full">
-        <div
-          id="official-dossier-paper"
-          className="w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-300 p-[16mm] sm:p-[20mm] md:p-[24mm] space-y-5 font-serif print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full print:max-w-none leading-relaxed relative"
-        >
+      {/* ── Main Document Viewport: Exact 2-Page A4 Sheet Stack ── */}
+      <div className="p-4 sm:p-8 md:p-10 flex flex-col items-center gap-8 print:p-0 print:m-0 print:gap-0 print:block w-full">
 
-          {/* ══════════════════════════════════════════════════════════════════
-              1. OFFICIAL GOVERNMENT LETTERHEAD & EMBLEM (CENTERED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-center space-y-1 pb-2 border-b border-slate-200">
-            {/* National Emblem Representation */}
-            <div className="flex justify-center pb-0.5">
-              <div className="w-10 h-10 rounded-full border border-slate-400 flex items-center justify-center text-slate-900 bg-slate-50 shadow-inner">
-                <Shield className="w-5 h-5 text-slate-800" />
+        {/* ════════════════════════════════════════════════════════════════════
+            SHEET 1 (PAGE 1 OF 2): STATUTORY FINDINGS & SAR / AIS EVIDENCE
+            ════════════════════════════════════════════════════════════════════ */}
+        <div
+          id="official-dossier-page-1"
+          className="a4-print-sheet w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-300 p-[16mm] sm:p-[20mm] space-y-4 font-serif print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full print:max-w-none leading-relaxed relative flex flex-col justify-between"
+        >
+          <div className="space-y-3.5">
+            {/* 1. Official Government Letterhead & Seal */}
+            <div className="text-center space-y-0.5 pb-2 border-b border-slate-300">
+              <div className="flex justify-center pb-0.5">
+                <div className="w-9 h-9 rounded-full border border-slate-400 flex items-center justify-center text-slate-900 bg-slate-50 shadow-inner">
+                  <Shield className="w-4.5 h-4.5 text-slate-800" />
+                </div>
+              </div>
+              <div className="text-xs font-mono font-bold text-slate-900 tracking-wider uppercase">
+                F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}
+              </div>
+              <div className="text-base font-bold text-slate-950 tracking-wide">
+                Government of India / भारत सरकार
+              </div>
+              <div className="text-sm font-semibold text-slate-900">
+                Ministry of Defence / रक्षा मंत्रालय
+              </div>
+              <div className="text-xs font-semibold text-slate-800">
+                Headquarters Coast Guard Region (West) / भारतीय तटरक्षक मुख्यालय (पश्चिम)
+              </div>
+              <div className="text-[11px] text-slate-700">
+                Worli Sea Face, Mumbai – 400030
               </div>
             </div>
 
-            <div className="text-xs font-mono font-bold text-slate-900 tracking-wider uppercase">
-              F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}
+            {/* 2. Location & Date */}
+            <div className="text-right text-xs text-slate-900 space-y-0.5 pt-0.5 font-serif">
+              <div>Worli Sea Face, Mumbai</div>
+              <div>Dated: {currentDateFormatted}</div>
             </div>
-            <div className="text-base font-bold text-slate-950 tracking-wide">
-              Government of India / भारत सरकार
+
+            {/* 3. Memorandum Title */}
+            <div className="text-center font-bold text-sm sm:text-base tracking-wider pt-0.5 pb-1">
+              <span className="underline decoration-1 underline-offset-4 uppercase">
+                OFFICE MEMORANDUM
+              </span>
             </div>
-            <div className="text-sm font-semibold text-slate-900">
-              Ministry of Defence / रक्षा मंत्रालय
+
+            {/* 4. Subject Line */}
+            <div className="text-xs sm:text-sm text-slate-950 leading-relaxed pl-2 pr-2 text-justify">
+              <strong>Subject:</strong>- Automated Forensic Attribution & Hydrodynamic Investigation Report in respect of Illegal Marine Hydrocarbon Discharge in the Arabian Sea (Offshore Mumbai Sector, Exclusive Economic Zone of India) under Section 356J of the Merchant Shipping Act, 1958.
             </div>
-            <div className="text-xs font-semibold text-slate-800">
-              Headquarters Coast Guard Region (West) / भारतीय तटरक्षक मुख्यालय (पश्चिम)
-            </div>
-            <div className="text-[11px] text-slate-700">
-              Worli Sea Face, Mumbai – 400030
+
+            {/* 5. Numbered Paras 1–4 */}
+            <div className="space-y-3 text-xs sm:text-sm text-slate-900 text-justify leading-relaxed">
+              {/* Para 1 */}
+              <p>
+                The undersigned is directed to state that Sentinel-1 Synthetic Aperture Radar (SAR) Earth Observation telemetry processed through the Joint Maritime Pollution Surveillance & Forensics Cell on <strong>{observationDateStr}</strong> detected an uncontained marine hydrocarbon discharge measuring <strong>{spill.area_km2.toFixed(2)} km²</strong> (approx. 1,840 Hectares) in the Arabian Sea off the Mumbai coast within the <strong>Exclusive Economic Zone (EEZ) of India</strong> (Algorithmic Verification Confidence: <strong>{(spill.confidence * 100).toFixed(1)}%</strong>).
+              </p>
+
+              {/* Para 2: SAR Technical Specification Table */}
+              <div className="print-avoid-break space-y-1">
+                <p>
+                  2. &nbsp;&nbsp;&nbsp;&nbsp; Physical delineation and backscatter damping derived from dual-polarization ($\sigma_0$ VV/VH) SAR telemetry:
+                </p>
+
+                <div className="pl-4 pr-2">
+                  <table className="w-full text-xs border-collapse border border-slate-400 font-sans">
+                    <tbody>
+                      <tr className="border-b border-slate-300 bg-slate-50">
+                        <td className="py-1 px-3 font-semibold text-slate-700 w-1/2 border-r border-slate-300">Satellite Sensor & Mode</td>
+                        <td className="py-1 px-3 font-mono text-slate-900">Sentinel-1 C-Band SAR (IW Dual-Pol VV+VH)</td>
+                      </tr>
+                      <tr className="border-b border-slate-300">
+                        <td className="py-1 px-3 font-semibold text-slate-700 border-r border-slate-300">Total Delineated Surface Area</td>
+                        <td className="py-1 px-3 font-mono font-bold text-slate-900">{spill.area_km2.toFixed(2)} km² (1,840 Hectares)</td>
+                      </tr>
+                      <tr className="border-b border-slate-300 bg-slate-50">
+                        <td className="py-1 px-3 font-semibold text-slate-700 border-r border-slate-300">Mean Backscatter Damping (VV)</td>
+                        <td className="py-1 px-3 font-mono text-slate-900">-24.8 dB (Suppression: 7.4 dB vs background)</td>
+                      </tr>
+                      <tr className="border-b border-slate-300">
+                        <td className="py-1 px-3 font-semibold text-slate-700 border-r border-slate-300">AI Segmentation Backbone</td>
+                        <td className="py-1 px-3 font-mono text-slate-900">U-Net (ResNet-34 Encoder) + XGBoost Classifier</td>
+                      </tr>
+                      <tr>
+                        <td className="py-1 px-3 font-semibold text-slate-700 border-r border-slate-300">Classification Determination</td>
+                        <td className="py-1 px-3 font-mono font-bold text-rose-900">Heavy Crude Hydrocarbon Emulsion</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Para 3: Hydrodynamic Drift & Origin Estimation */}
+              <div className="print-avoid-break">
+                <p>
+                  3. &nbsp;&nbsp;&nbsp;&nbsp; Reverse Lagrangian hydrodynamic advection backtracking (OpenDrift with INCOIS Arabian Sea current vector fields and ECMWF ERA5 winds) localized the probable discharge envelope to <strong>{drift.origin.latitude.toFixed(4)}°N, {drift.origin.longitude.toFixed(4)}°E</strong> with an estimated discharge time window between <strong>2026-08-24 10:30 UTC</strong> and <strong>2026-08-24 16:00 UTC</strong> (Discharge Origin Certainty: <strong>{(drift.origin.confidence * 100).toFixed(0)}%</strong>).
+                </p>
+              </div>
+
+              {/* Para 4: AIS Correlation Table */}
+              <div className="print-avoid-break space-y-1">
+                <p>
+                  4. &nbsp;&nbsp;&nbsp;&nbsp; Spatio-temporal correlation against the National Automatic Identification System (NAIS) evaluated candidate vessels transiting the discharge envelope:
+                </p>
+
+                <div className="pl-4 pr-2">
+                  <table className="w-full text-xs text-left border-collapse border border-slate-400 font-sans">
+                    <thead>
+                      <tr className="bg-slate-100 text-slate-900 font-mono text-[10px] uppercase border-b border-slate-400">
+                        <th className="py-1 px-2 border-r border-slate-300">Rank</th>
+                        <th className="py-1 px-2 border-r border-slate-300">Vessel Name</th>
+                        <th className="py-1 px-2 border-r border-slate-300">MMSI</th>
+                        <th className="py-1 px-2 border-r border-slate-300">Type / Flag</th>
+                        <th className="py-1 px-2 border-r border-slate-300 text-center">Spatial</th>
+                        <th className="py-1 px-2 border-r border-slate-300 text-center">Temporal</th>
+                        <th className="py-1 px-2 border-r border-slate-300 text-center">Traj.</th>
+                        <th className="py-1 px-2 border-r border-slate-300 text-center">Score</th>
+                        <th className="py-1 px-2 text-center">Priority</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-300 font-mono text-[11px]">
+                      {vessels.map((v) => (
+                        <tr key={v.mmsi} className={v.rank === 1 ? 'bg-rose-50 font-semibold' : ''}>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-center">#{v.rank}</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 font-bold text-slate-900">{v.vessel_name}</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300">{v.mmsi}</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300">{v.vessel_type} ({v.flag})</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-center">{v.feature_scores.spatial.toFixed(0)}%</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-center">{v.feature_scores.temporal.toFixed(0)}%</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-center">{v.feature_scores.trajectory.toFixed(0)}%</td>
+                          <td className="py-0.5 px-2 border-r border-slate-300 text-center font-bold text-rose-900">{v.score.toFixed(1)}%</td>
+                          <td className="py-0.5 px-2 text-center font-bold">{v.investigative_priority}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════════════
-              2. LOCATION & DATE (RIGHT-ALIGNED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-right text-xs text-slate-900 space-y-0.5 pt-1 pb-1 font-serif">
-            <div>Worli Sea Face, Mumbai</div>
-            <div>Dated: {currentDateFormatted}</div>
+          {/* Page 1 Footer */}
+          <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-[9px] font-mono text-slate-500 mt-4">
+            <span>F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}</span>
+            <span>Government of India · Confidential Statutory Record</span>
+            <span className="font-bold">Page 1 of 2</span>
           </div>
+        </div>
 
-          {/* ══════════════════════════════════════════════════════════════════
-              3. MEMORANDUM TITLE (CENTERED & UNDERLINED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-center font-bold text-sm sm:text-base tracking-wider pt-1 pb-2">
-            <span className="underline decoration-1 underline-offset-4 uppercase">
-              OFFICE MEMORANDUM
+        {/* ── Page Break Line (Visual in browser, forces clean A4 page split in print) ── */}
+        <div className="print-page-break no-print w-full max-w-[210mm] my-2 text-center">
+          <div className="border-b border-dashed border-slate-700 relative">
+            <span className="relative -top-2 px-3 py-0.5 bg-[#111622] rounded text-[10px] font-mono text-slate-400 border border-slate-800">
+              ✂ PAGE BREAK — PAGE 2 CONTINUATION BELOW
             </span>
           </div>
+        </div>
 
-          {/* ══════════════════════════════════════════════════════════════════
-              4. SUBJECT LINE (INDENTED & BOLD)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-xs sm:text-sm text-slate-950 leading-relaxed pl-2 pr-2 text-justify">
-            <strong>Subject:</strong>- Automated Forensic Attribution & Hydrodynamic Investigation Report in respect of Illegal Marine Hydrocarbon Discharge in the Arabian Sea (Offshore Mumbai Sector, Exclusive Economic Zone of India) under Section 356J of the Merchant Shipping Act, 1958.
-          </div>
-
-          {/* ══════════════════════════════════════════════════════════════════
-              5. NUMBERED PARAGRAPHS (GOVERNMENT MEMO FORMAT)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-4 text-xs sm:text-sm text-slate-900 text-justify leading-relaxed">
-            
-            {/* Para 1 */}
-            <p>
-              The undersigned is directed to state that Sentinel-1 Synthetic Aperture Radar (SAR) Earth Observation telemetry processed through the Joint Maritime Pollution Surveillance & Forensics Cell on <strong>{observationDateStr}</strong> detected an uncontained marine hydrocarbon discharge measuring <strong>{spill.area_km2.toFixed(2)} km²</strong> (approx. 1,840 Hectares) in the Arabian Sea off the Mumbai coast within the <strong>Exclusive Economic Zone (EEZ) of India</strong> (Algorithmic Verification Confidence: <strong>{(spill.confidence * 100).toFixed(1)}%</strong>).
-            </p>
-
-            {/* Para 2: SAR Technical Specification Table */}
-            <div className="print-avoid-break">
-              <p className="mb-2">
-                2. &nbsp;&nbsp;&nbsp;&nbsp; The physical delineation and backscatter characteristics derived from the dual-polarization ($\sigma_0$ VV/VH) satellite radar acquisition are summarized hereunder:
-              </p>
-
-              <div className="pl-4 pr-2">
-                <table className="w-full text-xs border-collapse border border-slate-400 font-sans">
-                  <tbody>
-                    <tr className="border-b border-slate-300 bg-slate-50">
-                      <td className="py-1.5 px-3 font-semibold text-slate-700 w-1/2 border-r border-slate-300">Satellite Sensor & Mode</td>
-                      <td className="py-1.5 px-3 font-mono text-slate-900">Sentinel-1 C-Band SAR (IW Dual-Pol VV+VH)</td>
-                    </tr>
-                    <tr className="border-b border-slate-300">
-                      <td className="py-1.5 px-3 font-semibold text-slate-700 border-r border-slate-300">Total Delineated Surface Area</td>
-                      <td className="py-1.5 px-3 font-mono font-bold text-slate-900">{spill.area_km2.toFixed(2)} km² (1,840 Hectares)</td>
-                    </tr>
-                    <tr className="border-b border-slate-300 bg-slate-50">
-                      <td className="py-1.5 px-3 font-semibold text-slate-700 border-r border-slate-300">Mean Backscatter Damping (VV)</td>
-                      <td className="py-1.5 px-3 font-mono text-slate-900">-24.8 dB (Suppression: 7.4 dB vs background)</td>
-                    </tr>
-                    <tr className="border-b border-slate-300">
-                      <td className="py-1.5 px-3 font-semibold text-slate-700 border-r border-slate-300">AI Segmentation Backbone</td>
-                      <td className="py-1.5 px-3 font-mono text-slate-900">U-Net (ResNet-34 Encoder) + XGBoost Classifier</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1.5 px-3 font-semibold text-slate-700 border-r border-slate-300">Classification Determination</td>
-                      <td className="py-1.5 px-3 font-mono font-bold text-rose-900">Heavy Crude Hydrocarbon Emulsion</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Para 3: Hydrodynamic Drift & Origin Estimation */}
-            <div className="print-avoid-break">
-              <p className="mb-2">
-                3. &nbsp;&nbsp;&nbsp;&nbsp; High-resolution reverse Lagrangian hydrodynamic advection backtracking (OpenDrift with INCOIS Arabian Sea current vector fields and ECMWF ERA5 winds) localized the probable discharge envelope to <strong>{drift.origin.latitude.toFixed(4)}°N, {drift.origin.longitude.toFixed(4)}°E</strong> with an estimated discharge time window between <strong>2026-08-24 10:30 UTC</strong> and <strong>2026-08-24 16:00 UTC</strong> (Discharge Origin Certainty: <strong>{(drift.origin.confidence * 100).toFixed(0)}%</strong>).
-              </p>
-            </div>
-
-            {/* Para 4: AIS Correlation Table */}
-            <div className="print-avoid-break">
-              <p className="mb-2">
-                4. &nbsp;&nbsp;&nbsp;&nbsp; Spatio-temporal correlation against the National Automatic Identification System (NAIS) coastal station network and the Indian Navy NC3I chain evaluated candidate vessels transiting the discharge envelope during the relevant window:
-              </p>
-
-              <div className="pl-4 pr-2">
-                <table className="w-full text-xs text-left border-collapse border border-slate-400 font-sans">
-                  <thead>
-                    <tr className="bg-slate-100 text-slate-900 font-mono text-[10px] uppercase border-b border-slate-400">
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">Rank</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">Vessel Name</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">MMSI</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">Type / Flag</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300 text-center">Spatial</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300 text-center">Temporal</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300 text-center">Traj.</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300 text-center">Score</th>
-                      <th className="py-1.5 px-2.5 text-center">Priority</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-300 font-mono text-[11px]">
-                    {vessels.map((v) => (
-                      <tr key={v.mmsi} className={v.rank === 1 ? 'bg-rose-50/60 font-semibold' : ''}>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center">#{v.rank}</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 font-bold text-slate-900">{v.vessel_name}</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300">{v.mmsi}</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300">{v.vessel_type} ({v.flag})</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center">{v.feature_scores.spatial.toFixed(0)}%</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center">{v.feature_scores.temporal.toFixed(0)}%</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center">{v.feature_scores.trajectory.toFixed(0)}%</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center font-bold text-rose-900">{v.score.toFixed(1)}%</td>
-                        <td className="py-1 px-2.5 text-center font-bold">{v.investigative_priority}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+        {/* ════════════════════════════════════════════════════════════════════
+            SHEET 2 (PAGE 2 OF 2): ML PROVENANCE, DIRECTIVES & SIGNATORIES
+            ════════════════════════════════════════════════════════════════════ */}
+        <div
+          id="official-dossier-page-2"
+          className="a4-print-sheet w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-300 p-[16mm] sm:p-[20mm] space-y-4 font-serif print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full print:max-w-none leading-relaxed relative flex flex-col justify-between"
+        >
+          <div className="space-y-3.5">
+            {/* Page 2 Continuation Header */}
+            <div className="flex items-center justify-between border-b border-slate-300 pb-1.5 text-[10px] font-mono text-slate-700">
+              <span>F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}</span>
+              <span className="font-serif italic text-slate-600 font-semibold">Government of India / रक्षा मंत्रालय (Contd. Sheet)</span>
             </div>
 
             {/* Para 5: Model Provenance Table */}
-            <div className="print-avoid-break">
-              <p className="mb-2">
-                5. &nbsp;&nbsp;&nbsp;&nbsp; The technical accuracy and evidentiary provenance of the automated detection and attribution pipeline have been validated against standard operational benchmarks:
+            <div className="print-avoid-break space-y-1">
+              <p className="text-xs sm:text-sm text-slate-900">
+                5. &nbsp;&nbsp;&nbsp;&nbsp; Evidentiary provenance and operational validation of automated ML detection pipelines against standard benchmarks:
               </p>
 
               <div className="pl-4 pr-2">
                 <table className="w-full text-xs text-left border-collapse border border-slate-400 font-sans">
                   <thead>
                     <tr className="bg-slate-100 text-slate-800 font-mono text-[10px] uppercase border-b border-slate-400">
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">Metric</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300 text-center">Score</th>
-                      <th className="py-1.5 px-2.5 border-r border-slate-300">Operational Verification Standard</th>
-                      <th className="py-1.5 px-2.5 text-center">Status</th>
+                      <th className="py-1 px-2 border-r border-slate-300">Metric</th>
+                      <th className="py-1 px-2 border-r border-slate-300 text-center">Score</th>
+                      <th className="py-1 px-2 border-r border-slate-300">Operational Verification Standard</th>
+                      <th className="py-1 px-2 text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-300 font-mono text-[11px]">
                     {ML_PERF_TABLE.map((row) => (
                       <tr key={row.metric}>
-                        <td className="py-1 px-2.5 border-r border-slate-300 font-serif">{row.metric}</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-center font-bold text-emerald-900">{row.value}</td>
-                        <td className="py-1 px-2.5 border-r border-slate-300 text-slate-700 text-[10px]">{row.benchmark}</td>
-                        <td className="py-1 px-2.5 text-center font-bold text-emerald-900 text-[10px]">{row.status}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 font-serif">{row.metric}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 text-center font-bold text-emerald-900">{row.value}</td>
+                        <td className="py-0.5 px-2 border-r border-slate-300 text-slate-700 text-[10px]">{row.benchmark}</td>
+                        <td className="py-0.5 px-2 text-center font-bold text-emerald-900 text-[10px]">{row.status}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -321,13 +346,13 @@ export const Reports: React.FC = () => {
               </div>
             </div>
 
-            {/* Para 6: Statutory Orders */}
-            <div className="print-avoid-break">
-              <p className="mb-2">
+            {/* Para 6: Statutory Enforcement Directives */}
+            <div className="print-avoid-break space-y-1 text-xs sm:text-sm text-slate-900">
+              <p>
                 6. &nbsp;&nbsp;&nbsp;&nbsp; In view of the high forensic attribution score ({topSuspect?.score.toFixed(1)}%) established against primary suspect <strong>{topSuspect?.vessel_name || 'Target Vessel'}</strong> (MMSI: {topSuspect?.mmsi}), the competent authority has approved the following statutory enforcement actions:
               </p>
 
-              <ol className="list-[lower-roman] pl-10 pr-2 space-y-1.5 text-justify">
+              <ol className="list-[lower-roman] pl-10 pr-2 space-y-1 text-justify">
                 <li>
                   <strong>Port State Control Inspection:</strong> Issue immediate notice of statutory detention under Sections 356G & 356H of the Merchant Shipping Act, 1958 to the next scheduled Indian port of call (JNPT Mumbai / Mumbai Port / Deendayal Port, Kandla) for unannounced boarding, Oil Record Book (Part I & II) impounding, and bilge tank seal verification.
                 </li>
@@ -340,73 +365,61 @@ export const Reports: React.FC = () => {
               </ol>
             </div>
 
-          </div>
-
-          {/* ══════════════════════════════════════════════════════════════════
-              6. OFFICIAL SIGNATURE BLOCK (RIGHT-ALIGNED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="flex justify-end pt-6 pb-2 print-avoid-break">
-            <div className="text-left font-serif text-xs sm:text-sm text-slate-950 min-w-[240px] space-y-0.5">
-              {/* Official Stylized Signature */}
-              <div className="h-10 flex items-center mb-1">
-                <svg className="w-32 h-8 text-blue-900" viewBox="0 0 140 32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-                  <path d="M5 24 C 25 8, 35 28, 50 12 C 60 4, 75 22, 90 14 C 105 8, 120 26, 135 16" />
-                  <path d="M35 20 L 105 20" />
-                </svg>
+            {/* Official Signature Block */}
+            <div className="flex justify-end pt-3 pb-1 print-avoid-break">
+              <div className="text-left font-serif text-xs sm:text-sm text-slate-950 min-w-[240px] space-y-0.5">
+                <div className="h-9 flex items-center mb-0.5">
+                  <svg className="w-32 h-7 text-blue-900" viewBox="0 0 140 32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+                    <path d="M5 24 C 25 8, 35 28, 50 12 C 60 4, 75 22, 90 14 C 105 8, 120 26, 135 16" />
+                    <path d="M35 20 L 105 20" />
+                  </svg>
+                </div>
+                <div className="font-bold text-slate-950">(Vikram Malhotra)</div>
+                <div className="text-slate-900 font-semibold">Commander, Indian Coast Guard</div>
+                <div className="text-slate-800 text-xs">Regional Pollution Response Officer</div>
+                <div className="font-mono text-[11px] text-slate-700 pt-0.5">Tel: 022-24371404</div>
+                <div className="font-mono text-[11px] text-slate-700">Email: rpo-west@indiancoastguard.gov.in</div>
               </div>
-              <div className="font-bold text-slate-950">(Vikram Malhotra)</div>
-              <div className="text-slate-900 font-semibold">Commander, Indian Coast Guard</div>
-              <div className="text-slate-800 text-xs">Regional Pollution Response Officer</div>
-              <div className="font-mono text-[11px] text-slate-700 pt-1">Tel: 022-24371404</div>
-              <div className="font-mono text-[11px] text-slate-700">Email: rpo-west@indiancoastguard.gov.in</div>
+            </div>
+
+            {/* "To" Distribution List */}
+            <div className="pt-2 text-xs font-serif text-slate-900 space-y-0.5 print-avoid-break">
+              <div className="font-bold text-slate-950">To,</div>
+              <div className="pl-4 space-y-0.5">
+                <div>1. &nbsp; The Director General of Shipping, Directorate General of Shipping, Mumbai.</div>
+                <div>2. &nbsp; The Principal Officer, Mercantile Marine Department (MMD), Mumbai / JNPT.</div>
+                <div>3. &nbsp; The Commanding Officer, Coast Guard Air Station (CGAS Daman / Mumbai).</div>
+                <div>4. &nbsp; The Director, INCOIS (Ministry of Earth Sciences), Hyderabad.</div>
+              </div>
+            </div>
+
+            {/* "Copy to" Endorsement List */}
+            <div className="pt-1.5 text-xs font-serif text-slate-900 space-y-0.5 print-avoid-break">
+              <div className="font-bold text-slate-950">Copy to: -</div>
+              <div className="pl-4 space-y-0.5">
+                <div>1. &nbsp; Joint Secretary (Navy & Coast Guard), Ministry of Defence, South Block, New Delhi.</div>
+                <div>2. &nbsp; Member Secretary, National Oil Spill Disaster Contingency Plan (NOS-DCP) Secretariat, New Delhi.</div>
+                <div>3. &nbsp; NIC Cell, Ministry of Defence / Indian Coast Guard — for automated archiving on MarineTrace Portal.</div>
+              </div>
+            </div>
+
+            {/* Statutory Footer */}
+            <div className="mt-3 p-2.5 bg-slate-50 border border-slate-300 rounded text-[10px] text-slate-600 leading-relaxed font-mono print-avoid-break">
+              <strong className="text-slate-900 block mb-0.5 uppercase">
+                STATUTORY NOTE (MERCHANT SHIPPING ACT, 1958 / NOS-DCP):
+              </strong>
+              This Office Memorandum constitutes an official technical assessment formulated pursuant to Section 356J & 356K of the Merchant Shipping Act, 1958 and Rule 15 of Merchant Shipping (Prevention of Pollution by Oil) Rules, 2010.
             </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════════════
-              7. "TO" DISTRIBUTION LIST (LEFT-ALIGNED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="pt-4 text-xs font-serif text-slate-900 space-y-1 print-avoid-break">
-            <div className="font-bold text-slate-950">To,</div>
-            <div className="pl-4 space-y-0.5">
-              <div>1. &nbsp; The Director General of Shipping, Directorate General of Shipping, Mumbai.</div>
-              <div>2. &nbsp; The Principal Officer, Mercantile Marine Department (MMD), Mumbai / JNPT.</div>
-              <div>3. &nbsp; The Commanding Officer, Coast Guard Air Station (CGAS Daman / Mumbai).</div>
-              <div>4. &nbsp; The Director, INCOIS (Ministry of Earth Sciences), Hyderabad.</div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════════════════════
-              8. "COPY TO" ENDORSEMENT LIST (LEFT-ALIGNED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="pt-2 text-xs font-serif text-slate-900 space-y-1 print-avoid-break">
-            <div className="font-bold text-slate-950">Copy to: -</div>
-            <div className="pl-4 space-y-0.5">
-              <div>1. &nbsp; Joint Secretary (Navy & Coast Guard), Ministry of Defence, South Block, New Delhi.</div>
-              <div>2. &nbsp; Member Secretary, National Oil Spill Disaster Contingency Plan (NOS-DCP) Secretariat, New Delhi.</div>
-              <div>3. &nbsp; NIC Cell, Ministry of Defence / Indian Coast Guard — for automated archiving on MarineTrace Portal.</div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════════════════════
-              9. STATUTORY FOOTER (BORDERED)
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="mt-6 p-3 bg-slate-50 border border-slate-300 rounded text-[10px] text-slate-600 leading-relaxed font-mono print-avoid-break">
-            <strong className="text-slate-900 block mb-0.5 uppercase">
-              STATUTORY NOTE (MERCHANT SHIPPING ACT, 1958 / NOS-DCP):
-            </strong>
-            This Office Memorandum constitutes an official technical assessment formulated pursuant to Section 356J & 356K of the Merchant Shipping Act, 1958 and Rule 15 of Merchant Shipping (Prevention of Pollution by Oil) Rules, 2010.
-          </div>
-
-          {/* ══════════════════════════════════════════════════════════════════
-              10. A4 FOOTER METADATA
-              ══════════════════════════════════════════════════════════════════ */}
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-[9px] font-mono text-slate-400">
+          {/* Page 2 Footer */}
+          <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-[9px] font-mono text-slate-500 mt-3">
             <span>F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}</span>
             <span>Government of India · Confidential Statutory Record</span>
-            <span>Page 1 of 1</span>
+            <span className="font-bold">Page 2 of 2</span>
           </div>
-
         </div>
+
       </div>
     </div>
   );
