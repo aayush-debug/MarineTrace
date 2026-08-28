@@ -164,9 +164,18 @@ def detect_oil(
 
     if checkpoint_path is None:
         env_ckpt = os.environ.get("ML_MODEL_PATH")
-        if env_ckpt and os.path.exists(env_ckpt):
-            checkpoint_path = env_ckpt
-        else:
+        if env_ckpt:
+            candidates = [
+                Path(env_ckpt),
+                PROJECT_ROOT / env_ckpt,
+                PROJECT_ROOT.parent / env_ckpt,
+            ]
+            for c in candidates:
+                if c.exists():
+                    checkpoint_path = str(c.resolve())
+                    break
+
+        if not checkpoint_path or not os.path.exists(checkpoint_path):
             checkpoint_path = str(
                 PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model.pth"
             )

@@ -1,10 +1,12 @@
 /**
  * Centralized HTTP client for backend communication.
- * Reads base URL from VITE_API_BASE_URL or falls back to http://localhost:8000.
+ * Reads base URL from VITE_API_URL, VITE_API_BASE_URL, or falls back to http://localhost:8000.
  */
 
 export const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8000';
+  (import.meta.env.VITE_API_URL as string) ||
+  (import.meta.env.VITE_API_BASE_URL as string) ||
+  'http://localhost:8000';
 
 export class ApiError extends Error {
   status: number;

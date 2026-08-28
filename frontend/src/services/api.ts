@@ -1,11 +1,10 @@
-/* API client for the SlickTrace backend */
+/* API client for the MarineTrace backend */
 
 import type { InvestigationResponse } from '../types/investigation';
-
-const API_BASE = 'http://localhost:8000';
+import { API_BASE_URL } from '../api/client';
 
 export async function runDemoInvestigation(): Promise<InvestigationResponse> {
-  const res = await fetch(`${API_BASE}/demo/investigation`, {
+  const res = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/demo/investigation`, {
     method: 'POST',
   });
   if (!res.ok) throw new Error(`Backend error: ${res.status}`);
@@ -16,7 +15,7 @@ export async function runInvestigation(
   observationTime: string,
   image?: string
 ): Promise<InvestigationResponse> {
-  const res = await fetch(`${API_BASE}/investigate`, {
+  const res = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/investigate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -30,7 +29,7 @@ export async function runInvestigation(
 
 export async function pingBackend(): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE}/ping`);
+    const res = await fetch(`${API_BASE_URL.replace(/\/$/, '')}/ping`);
     return res.ok;
   } catch {
     return false;
