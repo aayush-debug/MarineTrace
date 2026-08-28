@@ -30,25 +30,22 @@ export const Investigation: React.FC = () => {
 
   if (!investigation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#040814] p-8 text-center">
-        <div className="max-w-md space-y-4 p-8 rounded-lg bg-[#070d1d] border border-cyan-500/25 shadow-2xl relative">
-          <div className="absolute top-1 right-1 w-2 h-2 border-t border-r border-cyan-400" />
-          <div className="absolute bottom-1 left-1 w-2 h-2 border-b border-l border-cyan-400" />
-
-          <div className="w-14 h-14 rounded-md border border-cyan-500/30 bg-cyan-950/40 flex items-center justify-center mx-auto text-cyan-400">
-            <Crosshair className="w-7 h-7 animate-pulse" />
+      <div className="flex-1 flex items-center justify-center bg-[#0c1017] p-8 text-center">
+        <div className="max-w-md space-y-4 p-8 rounded bg-[#111622] border border-[#1e293b] shadow-xl">
+          <div className="w-12 h-12 rounded bg-[#161e2e] border border-slate-800 flex items-center justify-center mx-auto text-blue-400">
+            <Crosshair className="w-6 h-6" />
           </div>
-          <h2 className="font-orbitron text-base font-bold text-slate-100 uppercase tracking-wider">
-            NO ACTIVE TARGET RETICLE ENGAGED
+          <h2 className="text-base font-semibold text-slate-100">
+            No Active Investigation Loaded
           </h2>
-          <p className="text-xs font-mono text-slate-400 leading-relaxed">
-            Awaiting Sentinel-1 SAR acquisition swath or manual target initialization. Run the scenario replay or ingest radar telemetry.
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Please initialize a target by running the demo scenario or ingesting a new Sentinel-1 SAR acquisition.
           </p>
           <button
             onClick={() => setActivePage('new-investigation')}
-            className="px-5 py-2.5 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-mono font-bold text-xs rounded-md transition-all shadow-[0_0_12px_rgba(0,240,255,0.3)] cursor-pointer"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded transition-colors shadow-sm cursor-pointer"
           >
-            INITIALIZE TARGET ACQUISITION
+            Launch Investigation
           </button>
         </div>
       </div>
@@ -57,29 +54,29 @@ export const Investigation: React.FC = () => {
 
   const { spill, drift, vessels } = investigation;
 
-  const tabs: { id: WorkspaceTab; label: string; code: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { id: 'vessels', label: 'Suspect AIS', code: 'AIS-01', icon: Ship },
-    { id: 'drift', label: 'Drift Matrix', code: 'PHYS-02', icon: Compass },
-    { id: 'spill', label: 'Slick Radar', code: 'SAR-03', icon: Layers },
-    { id: 'evidence', label: 'Pipeline Audit', code: 'ML-04', icon: FileCheck2 },
+  const tabs: { id: WorkspaceTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: 'vessels', label: 'Suspect AIS', icon: Ship },
+    { id: 'drift', label: 'Drift Matrix', icon: Compass },
+    { id: 'spill', label: 'Slick Radar', icon: Layers },
+    { id: 'evidence', label: 'Audit Log', icon: FileCheck2 },
   ];
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[#040814] overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#0c1017] overflow-hidden">
 
-      {/* Top Workspace Mission Header */}
-      <div className="h-12 bg-[#070d1d] border-b border-[rgba(0,240,255,0.18)] px-4 sm:px-5 flex items-center justify-between gap-4 shrink-0 shadow-md">
+      {/* Top Workspace Header */}
+      <div className="h-12 bg-[#111622] border-b border-[#1e293b] px-4 flex items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shadow-[0_0_8px_#ff0055]" />
-          <h1 className="text-xs font-mono font-bold text-slate-100 flex items-center gap-2">
-            <span className="font-orbitron uppercase text-cyan-300">TARGET #{investigation.investigation_id}</span>
-            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/90 text-rose-300 border border-rose-500/40">
+          <div className="w-2 h-2 rounded-full bg-rose-500" />
+          <h1 className="text-xs font-semibold text-slate-100 flex items-center gap-2">
+            <span>Case #{investigation.investigation_id}</span>
+            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60">
               {investigation.status}
             </span>
           </h1>
           {investigation.is_demo && (
-            <span className="hidden sm:inline-block text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">
-              SIMULATION FLIGHT
+            <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60">
+              Simulation Preset
             </span>
           )}
         </div>
@@ -87,87 +84,87 @@ export const Investigation: React.FC = () => {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setShowTimeline(!showTimeline)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-bold border transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border transition-colors cursor-pointer ${
               showTimeline
-                ? 'bg-cyan-950 border-cyan-400 text-cyan-300 shadow-[0_0_8px_rgba(0,240,255,0.2)]'
-                : 'bg-[#081024] border-cyan-500/25 text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-950 border-blue-800 text-blue-300'
+                : 'bg-[#161e2e] border-[#1e293b] text-slate-400 hover:text-slate-200'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>AUDIT TIMELINE</span>
+            <span>Audit Timeline</span>
           </button>
 
           <button
             onClick={() => setActivePage('reports')}
-            className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white text-xs font-mono font-bold rounded-md transition-all shadow-[0_0_10px_rgba(0,240,255,0.25)] cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded transition-colors shadow-sm cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>EXPORT DOSSIER</span>
+            <span>Incident Dossier</span>
           </button>
         </div>
       </div>
 
       {/* Telemetry Summary Strip */}
-      <div className="h-8 bg-[#060b18] border-b border-[rgba(0,240,255,0.12)] px-4 flex items-center gap-4 text-xs font-mono text-slate-400 overflow-x-auto shrink-0 select-none">
+      <div className="h-8 bg-[#0e131d] border-b border-[#1e293b] px-4 flex items-center gap-4 text-xs font-mono text-slate-400 overflow-x-auto shrink-0 select-none">
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-400 text-[11px]">CONFIDENCE:</span>
-          <span className="text-emerald-400 font-bold">{(spill.confidence * 100).toFixed(1)}%</span>
+          <span className="text-slate-500 text-[11px]">CONFIDENCE:</span>
+          <span className="text-emerald-400 font-semibold tabular-nums">{(spill.confidence * 100).toFixed(1)}%</span>
         </div>
-        <span className="text-cyan-900">|</span>
+        <span className="text-slate-700">|</span>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-400 text-[11px]">SLICK AREA:</span>
-          <span className="text-amber-400 font-bold">{spill.area_km2.toFixed(1)} KM²</span>
+          <span className="text-slate-500 text-[11px]">SLICK AREA:</span>
+          <span className="text-slate-200 font-semibold tabular-nums">{spill.area_km2.toFixed(1)} km²</span>
         </div>
-        <span className="text-cyan-900">|</span>
+        <span className="text-slate-700">|</span>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-400 text-[11px]">SENSOR:</span>
-          <span className="text-cyan-300">SENTINEL-1A C-BAND</span>
+          <span className="text-slate-500 text-[11px]">SENSOR:</span>
+          <span className="text-slate-300">Sentinel-1A C-Band</span>
         </div>
-        <span className="text-cyan-900">|</span>
+        <span className="text-slate-700">|</span>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-400 text-[11px]">EST. ORIGIN:</span>
-          <span className="text-cyan-200 font-bold text-[11px]">
+          <span className="text-slate-500 text-[11px]">EST. ORIGIN:</span>
+          <span className="text-slate-200 font-semibold tabular-nums">
             {drift.origin.latitude.toFixed(3)}°N, {drift.origin.longitude.toFixed(3)}°E
           </span>
         </div>
-        <span className="text-cyan-900">|</span>
+        <span className="text-slate-700">|</span>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-400 text-[11px]">PRIMARY SUSPECT:</span>
-          <span className="text-rose-400 font-bold">{vessels[0]?.vessel_name || 'FLAGGED'}</span>
-          <span className="text-cyan-400 font-bold">({vessels[0]?.score.toFixed(0)}% MATCH)</span>
+          <span className="text-slate-500 text-[11px]">PRIMARY SUSPECT:</span>
+          <span className="text-rose-400 font-semibold">{vessels[0]?.vessel_name || 'Flagged'}</span>
+          <span className="text-slate-400 font-medium">({vessels[0]?.score.toFixed(0)}% Score)</span>
         </div>
       </div>
 
       {/* Main Mission Workspace: Split View */}
       <div className="flex-1 flex min-h-0 overflow-hidden">
 
-        {/* LEFT: Full-Bleed Tactical Reticle Map */}
+        {/* LEFT: GIS Map */}
         <div className="flex-1 flex flex-col min-h-0 relative">
-          <div className="flex-1 relative bg-[#030610]">
+          <div className="flex-1 relative bg-[#0b0f17]">
             <MaritimeMap />
             <MapLayerControls />
             <MapLegend />
           </div>
         </div>
 
-        {/* RIGHT: Tabbed Intelligence Drawer */}
-        <div className="w-84 bg-[#060b18] border-l border-[rgba(0,240,255,0.18)] flex flex-col overflow-hidden shrink-0 shadow-2xl">
+        {/* RIGHT: Analytical Forensics Drawer */}
+        <div className="w-80 bg-[#111622] border-l border-[#1e293b] flex flex-col overflow-hidden shrink-0 shadow-lg">
 
           {/* Drawer Tab Bar */}
-          <div className="shrink-0 border-b border-cyan-900/40 flex bg-[#040814]">
+          <div className="shrink-0 border-b border-[#1e293b] flex bg-[#0c1017]">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex flex-col items-center py-2 gap-0.5 text-[10px] font-mono font-bold transition-all border-b-2 cursor-pointer ${
+                  className={`flex-1 flex flex-col items-center py-2 gap-1 text-[11px] font-medium transition-colors border-b-2 cursor-pointer ${
                     activeTab === tab.id
-                      ? 'text-cyan-300 border-cyan-400 bg-cyan-950/40 shadow-inner'
+                      ? 'text-white border-blue-500 bg-[#111622]'
                       : 'text-slate-400 hover:text-slate-200 border-transparent'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5" />
                   <span className="truncate">{tab.label}</span>
                 </button>
               );
@@ -195,57 +192,55 @@ export const Investigation: React.FC = () => {
             )}
 
             {activeTab === 'evidence' && (
-              <div className="space-y-3 font-mono">
-                <div className="p-3.5 bg-[#081024] border border-cyan-500/25 rounded-md relative">
-                  <div className="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-cyan-400" />
-                  <div className="text-xs font-bold text-cyan-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>PIPELINE EXECUTION TELEMETRY</span>
+              <div className="space-y-3 font-sans">
+                <div className="p-3.5 bg-[#161e2e] border border-slate-800 rounded">
+                  <div className="text-xs font-semibold text-slate-200 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                    <Cpu className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Pipeline Execution Telemetry</span>
                   </div>
                   <div className="space-y-2 text-xs">
                     {[
-                      { step: 'STAGE 01', label: 'Sentinel-1 SAR Segmentation (U-Net)', status: 'PASS', color: 'text-emerald-400' },
-                      { step: 'STAGE 02', label: 'OpenDrift Hydrodynamic Backtracking', status: 'PASS', color: 'text-emerald-400' },
-                      { step: 'STAGE 03', label: 'AIS 3-Stage Spatio-Temporal Filtering', status: 'PASS', color: 'text-emerald-400' },
-                      { step: 'STAGE 04', label: '5D Explainable Attribution Scoring', status: 'PASS', color: 'text-emerald-400' },
+                      { step: 'Stage 1', label: 'Sentinel-1 SAR U-Net Segmentation', status: 'Passed', color: 'text-emerald-400' },
+                      { step: 'Stage 2', label: 'OpenDrift Hydrodynamic Hindcast', status: 'Passed', color: 'text-emerald-400' },
+                      { step: 'Stage 3', label: 'AIS Spatio-Temporal Filtering', status: 'Passed', color: 'text-emerald-400' },
+                      { step: 'Stage 4', label: '5D Explainable Attribution', status: 'Passed', color: 'text-emerald-400' },
                     ].map((s) => (
                       <div key={s.step} className="flex items-center justify-between text-slate-400">
-                        <span className="text-cyan-500/90 text-[10px] font-bold">{s.step}</span>
+                        <span className="text-slate-500 font-mono text-[10px]">{s.step}</span>
                         <span className="flex-1 mx-2 truncate text-slate-300 text-[11px]">{s.label}</span>
-                        <span className={`font-bold text-[10px] ${s.color}`}>{s.status}</span>
+                        <span className={`font-medium text-[11px] ${s.color}`}>{s.status}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-3 pt-2 border-t border-cyan-900/40 flex justify-between text-[11px]">
-                    <span className="text-slate-400">PIPELINE LATENCY:</span>
-                    <span className="text-cyan-300 font-bold">
+                  <div className="mt-3 pt-2 border-t border-slate-800 flex justify-between text-[11px] font-mono">
+                    <span className="text-slate-500">Pipeline Latency:</span>
+                    <span className="text-slate-200 font-medium">
                       {investigation.pipeline_duration_seconds?.toFixed(2)}s
                     </span>
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-[#081024] border border-cyan-500/25 rounded-md relative">
-                  <div className="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-cyan-400" />
-                  <div className="text-xs font-bold text-slate-200 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                    <Radar className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>AIS SPATIAL CORRELATION AUDIT</span>
+                <div className="p-3.5 bg-[#161e2e] border border-slate-800 rounded">
+                  <div className="text-xs font-semibold text-slate-200 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                    <Radar className="w-3.5 h-3.5 text-blue-400" />
+                    <span>AIS Correlation Summary</span>
                   </div>
-                  <div className="space-y-1.5 text-xs text-slate-400">
+                  <div className="space-y-1.5 text-xs text-slate-400 font-mono">
                     <div className="flex justify-between">
-                      <span>Vessels in Sector:</span>
-                      <span className="text-slate-200 font-bold">17 TARGETS</span>
+                      <span className="text-slate-500">Total Tracked:</span>
+                      <span className="text-slate-200 font-medium">17 Vessels</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Spatial Geodesic Filter:</span>
-                      <span className="text-slate-200 font-bold">12 CANDIDATES</span>
+                      <span className="text-slate-500">Spatial Filter:</span>
+                      <span className="text-slate-200 font-medium">12 Candidates</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Temporal Overlap Window:</span>
-                      <span className="text-slate-200 font-bold">8 CANDIDATES</span>
+                      <span className="text-slate-500">Temporal Window:</span>
+                      <span className="text-slate-200 font-medium">8 Candidates</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Trajectory Approach CPA:</span>
-                      <span className="text-cyan-300 font-bold">{vessels.length} PRIORITIZED</span>
+                      <span className="text-slate-500">CPA Prioritized:</span>
+                      <span className="text-blue-400 font-semibold">{vessels.length} Ranked</span>
                     </div>
                   </div>
                 </div>
@@ -257,7 +252,7 @@ export const Investigation: React.FC = () => {
 
       {/* Bottom: Collapsible Audit Timeline */}
       {showTimeline && (
-        <div className="h-36 border-t border-cyan-900/40 bg-[#070d1d] shrink-0">
+        <div className="h-36 border-t border-[#1e293b] bg-[#111622] shrink-0">
           <InvestigationTimeline />
         </div>
       )}
