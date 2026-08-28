@@ -15,6 +15,9 @@ export interface SpaceShiftDetectionProperties {
   mean_vh_db: number;
   contrast_ratio: number;
   thickness_estimate?: string;
+  estimated_volume_m3?: number;
+  wind_speed_knots?: number;
+  wave_height_m?: number;
 }
 
 export interface SpaceShiftDetection {

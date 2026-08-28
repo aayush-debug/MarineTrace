@@ -150,18 +150,37 @@ export const SpaceShiftRealTime: React.FC = () => {
   // Active zone data
   const currentZone = spcsftMonitoringZones.find((z) => z.zone_id === spcsftSelectedZone);
 
-  // Collect map coordinates for auto-fit
-  const mapCoords: [number, number][] = [];
-  spcsftLiveDetections.forEach((det) => {
-    mapCoords.push([det.centroid.latitude, det.centroid.longitude]);
-    if (det.geometry?.coordinates?.[0]) {
-      det.geometry.coordinates[0].forEach((c: number[]) => {
-        mapCoords.push([c[1], c[0]]);
-      });
-    }
-  });
+  // Filter detections based on selected zone tab
+  const displayedDetections =
+    spcsftSelectedZone === 'all'
+      ? spcsftLiveDetections
+      : spcsftLiveDetections.filter((d) => {
+          if (!currentZone) return true;
+          const zoneKey = currentZone.name.toLowerCase().split('(')[0].trim();
+          const detZone = d.zone_name.toLowerCase();
+          return (
+            detZone.includes(zoneKey) ||
+            (currentZone.bbox &&
+              d.centroid.longitude >= currentZone.bbox[0] - 0.5 &&
+              d.centroid.latitude >= currentZone.bbox[1] - 0.5 &&
+              d.centroid.longitude <= currentZone.bbox[2] + 0.5 &&
+              d.centroid.latitude <= currentZone.bbox[3] + 0.5)
+          );
+        });
 
-  if (mapCoords.length === 0 && currentZone) {
+  // Collect map coordinates for auto-fit based on selection
+  const mapCoords: [number, number][] = [];
+  if (selectedSpcsftDetection) {
+    mapCoords.push([selectedSpcsftDetection.centroid.latitude, selectedSpcsftDetection.centroid.longitude]);
+    const geomCoords = getPolygonPositions(selectedSpcsftDetection.geometry);
+    geomCoords.forEach((pt) => mapCoords.push(pt));
+  } else if (displayedDetections.length > 0) {
+    displayedDetections.forEach((det) => {
+      mapCoords.push([det.centroid.latitude, det.centroid.longitude]);
+      const geomCoords = getPolygonPositions(det.geometry);
+      geomCoords.forEach((pt) => mapCoords.push(pt));
+    });
+  } else if (currentZone) {
     mapCoords.push(currentZone.center);
   }
 
@@ -337,7 +356,7 @@ export const SpaceShiftRealTime: React.FC = () => {
             {mapCoords.length > 0 && <MapBoundsFitter coords={mapCoords} />}
 
             {/* Render Space Shift Detected Oil Slicks */}
-            {spcsftLiveDetections.map((det) => {
+            {displayedDetections.map((det) => {
               const isSelected = selectedSpcsftDetection?.detection_id === det.detection_id;
               const mainPositions = getPolygonPositions(det.geometry);
               const corePositions = getPolygonPositions(det.core_geometry);
@@ -416,7 +435,7 @@ export const SpaceShiftRealTime: React.FC = () => {
                     }}
                   >
                     <Popup>
-                      <div className="p-2 space-y-2 font-mono text-xs min-w-[240px]">
+                      <div className="p-2 space-y-2 font-mono text-xs min-w-[250px]">
                         <div className="flex items-center justify-between border-b pb-1.5">
                           <span className="font-bold text-rose-600">{det.detection_id}</span>
                           <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-bold">
@@ -426,6 +445,12 @@ export const SpaceShiftRealTime: React.FC = () => {
                         <div className="space-y-1 text-slate-700 text-[11px]">
                           <div><span className="font-semibold">Type:</span> {det.slick_type}</div>
                           <div><span className="font-semibold">Area:</span> {det.area_km2.toFixed(1)} km²</div>
+                          {det.properties?.thickness_estimate && (
+                            <div><span className="font-semibold">Thickness:</span> {det.properties.thickness_estimate}</div>
+                          )}
+                          {det.properties?.estimated_volume_m3 && (
+                            <div><span className="font-semibold">Est. Volume:</span> {det.properties.estimated_volume_m3} m³</div>
+                          )}
                           <div><span className="font-semibold">Satellite:</span> {det.satellite}</div>
                           <div><span className="font-semibold">Backscatter:</span> VV: {det.properties?.mean_vv_db ?? -19.4} dB</div>
                         </div>
@@ -459,21 +484,21 @@ export const SpaceShiftRealTime: React.FC = () => {
             <div className="space-y-1.5 text-[11px] text-slate-400">
               <div className="flex justify-between">
                 <span>Active Detections:</span>
-                <span className="text-slate-100 font-bold">{spcsftLiveDetections.length} slicks</span>
+                <span className="text-slate-100 font-bold">{displayedDetections.length} slicks</span>
               </div>
               <div className="flex justify-between">
                 <span>Critical Spills:</span>
                 <span className="text-rose-400 font-bold">
-                  {spcsftLiveDetections.filter((d) => d.severity === 'CRITICAL').length}
+                  {displayedDetections.filter((d) => d.severity === 'CRITICAL').length}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Mean Confidence:</span>
                 <span className="text-cyan-400 font-bold">
-                  {spcsftLiveDetections.length > 0
+                  {displayedDetections.length > 0
                     ? `${(
-                        (spcsftLiveDetections.reduce((acc, d) => acc + d.confidence, 0) /
-                          spcsftLiveDetections.length) *
+                        (displayedDetections.reduce((acc, d) => acc + d.confidence, 0) /
+                          displayedDetections.length) *
                         100
                       ).toFixed(1)}%`
                     : 'N/A'}
@@ -516,13 +541,13 @@ export const SpaceShiftRealTime: React.FC = () => {
               </p>
             </div>
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">
-              {spcsftLiveDetections.length} Target{spcsftLiveDetections.length !== 1 ? 's' : ''}
+              {displayedDetections.length} Target{displayedDetections.length !== 1 ? 's' : ''}
             </span>
           </div>
 
           {/* Detections List */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {spcsftLiveDetections.map((det) => {
+            {displayedDetections.map((det) => {
               const isSelected = selectedSpcsftDetection?.detection_id === det.detection_id;
 
               return (
@@ -574,9 +599,21 @@ export const SpaceShiftRealTime: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-slate-500 block">Classification</span>
-                      <strong className="text-amber-300 truncate block">{det.slick_type.split('/')[0]}</strong>
+                      <strong className="text-amber-300 truncate block">{det.slick_type.split('(')[0]}</strong>
                     </div>
                   </div>
+
+                  {/* Additional Marine Metrics (Volume, Thickness, Wind) */}
+                  {(det.properties?.estimated_volume_m3 || det.properties?.thickness_estimate) && (
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 bg-slate-900/40 px-2 py-1 rounded border border-slate-800/60">
+                      {det.properties.thickness_estimate && (
+                        <span><strong className="text-slate-300">Thickness:</strong> {det.properties.thickness_estimate.split('(')[0]}</span>
+                      )}
+                      {det.properties.estimated_volume_m3 && (
+                        <span><strong className="text-slate-300">Volume:</strong> {det.properties.estimated_volume_m3} m³</span>
+                      )}
+                    </div>
+                  )}
 
                   {/* Coordinate and Satellite details */}
                   <div className="flex items-center justify-between text-[10px] text-slate-400">
@@ -605,7 +642,7 @@ export const SpaceShiftRealTime: React.FC = () => {
               );
             })}
 
-            {spcsftLiveDetections.length === 0 && (
+            {displayedDetections.length === 0 && (
               <div className="p-8 text-center text-slate-500 space-y-3 font-mono">
                 <Satellite className="w-10 h-10 mx-auto text-slate-600 animate-pulse" />
                 <p className="text-xs">No active oil slicks detected in current surveillance window.</p>
