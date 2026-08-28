@@ -529,10 +529,10 @@ export const Reports: React.FC = () => {
                   LEAD INVESTIGATOR & TECHNICAL SIGN-OFF
                 </div>
                 <div className="font-serif italic text-base text-slate-900 border-b border-slate-400 pb-1 pt-2">
-                  Commander Sarah Chen
+                  Commander Vikram Malhotra
                 </div>
-                <div className="text-slate-700 font-bold mt-1">Commander Sarah Chen, USCG</div>
-                <div className="text-slate-500 text-[11px]">Lead Maritime Environmental Operations Officer</div>
+                <div className="text-slate-700 font-bold mt-1">Commander Vikram Malhotra, ICG</div>
+                <div className="text-slate-500 text-[11px]">Regional Commander, Indian Coast Guard (Western Seaboard)</div>
               </div>
 
               <div>
@@ -540,10 +540,10 @@ export const Reports: React.FC = () => {
                   OCEANOGRAPHIC VERIFICATION
                 </div>
                 <div className="font-serif italic text-base text-slate-900 border-b border-slate-400 pb-1 pt-2">
-                  Dr. James Wilson
+                  Dr. Ananya Sharma
                 </div>
-                <div className="text-slate-700 font-bold mt-1">Dr. James Wilson, PhD</div>
-                <div className="text-slate-500 text-[11px]">Senior Oceanographic & Hydrodynamic Modeler</div>
+                <div className="text-slate-700 font-bold mt-1">Dr. Ananya Sharma, PhD</div>
+                <div className="text-slate-500 text-[11px]">Chief Oceanographer, INCOIS / National Institute of Oceanography</div>
               </div>
             </div>
 
