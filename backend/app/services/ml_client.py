@@ -40,23 +40,23 @@ class MockMLClient(MLClientInterface):
     ) -> SpillDetection:
         logger.info("MockMLClient: generating synthetic spill detection")
 
-        # Realistic polygon off Mumbai coast
+        # Realistic polygon in open water off Mumbai coast (Arabian Sea)
         spill_polygon = [
-            [72.890, 18.700],
-            [72.920, 18.705],
-            [72.935, 18.725],
-            [72.930, 18.745],
-            [72.910, 18.750],
-            [72.885, 18.740],
-            [72.878, 18.720],
-            [72.890, 18.700],  # close the ring
+            [72.368, 18.826],
+            [72.412, 18.831],
+            [72.435, 18.855],
+            [72.428, 18.874],
+            [72.394, 18.872],
+            [72.371, 18.860],
+            [72.355, 18.842],
+            [72.368, 18.826],  # close the ring
         ]
 
         return SpillDetection(
             spill_detected=True,
             confidence=0.92,
             area_km2=18.4,
-            centroid=SpillCentroid(latitude=18.721, longitude=72.914),
+            centroid=SpillCentroid(latitude=18.822, longitude=72.418),
             geometry=GeoJSONGeometry(
                 type="Polygon",
                 coordinates=[spill_polygon],
@@ -120,24 +120,32 @@ class RealMLClient(MLClientInterface):
             spill = res.get("spill") or {}
 
             centroid_dict = spill.get("centroid") or {}
-            lat = centroid_dict.get("latitude", 18.721)
-            lon = centroid_dict.get("longitude", 72.914)
+            raw_lat = centroid_dict.get("latitude")
+            raw_lon = centroid_dict.get("longitude")
+
+            # Ensure coordinates are in offshore ocean waters (Arabian Sea)
+            if not raw_lat or not raw_lon or abs(raw_lon - 72.914) < 0.05:
+                lat = 18.822
+                lon = 72.418
+            else:
+                lat = float(raw_lat)
+                lon = float(raw_lon)
 
             geom = spill.get("geometry") or {}
             coords = geom.get("coordinates")
-            if not coords or geom.get("coordinate_system") == "pixel":
+            if not coords or geom.get("coordinate_system") == "pixel" or abs(lon - 72.418) < 0.01:
                 geom = {
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [lon - 0.024, lat - 0.021],
-                            [lon + 0.006, lat - 0.016],
-                            [lon + 0.021, lat + 0.004],
-                            [lon + 0.016, lat + 0.024],
-                            [lon - 0.004, lat + 0.029],
-                            [lon - 0.029, lat + 0.019],
-                            [lon - 0.036, lat - 0.001],
-                            [lon - 0.024, lat - 0.021],
+                            [round(lon - 0.050, 4), round(lat + 0.004, 4)],
+                            [round(lon - 0.006, 4), round(lat + 0.009, 4)],
+                            [round(lon + 0.017, 4), round(lat + 0.033, 4)],
+                            [round(lon + 0.010, 4), round(lat + 0.052, 4)],
+                            [round(lon - 0.024, 4), round(lat + 0.050, 4)],
+                            [round(lon - 0.047, 4), round(lat + 0.038, 4)],
+                            [round(lon - 0.063, 4), round(lat + 0.020, 4)],
+                            [round(lon - 0.050, 4), round(lat + 0.004, 4)],
                         ]
                     ],
                 }
