@@ -198,7 +198,7 @@ export const SatelliteImagery: React.FC = () => {
       {/* ── MAIN WORKSPACE SPLIT ── */}
       <div className="flex-1 flex min-h-0 overflow-hidden relative">
         {/* ── LEFT ANALYSIS PANEL ── */}
-        <aside className="w-80 max-w-[340px] bg-[#111622] border-r border-[#1e293b] flex flex-col overflow-y-auto shrink-0 p-3 space-y-3 z-10 font-sans">
+        <aside className="w-76 max-w-[320px] bg-[#111622] border-r border-[#1e293b] flex flex-col overflow-y-auto shrink-0 p-3 space-y-2.5 z-10 font-sans">
           {/* Analysis Summary Card */}
           <div className="p-3 rounded bg-[#161e2e] border border-[#1e293b] space-y-2 shadow-sm font-mono">
             <div className="flex items-center justify-between">
@@ -385,100 +385,100 @@ export const SatelliteImagery: React.FC = () => {
         <main className="flex-1 flex flex-col min-h-0 bg-[#0c1017] overflow-hidden relative">
           {/* Studio Command Toolbar */}
           <div className="h-10 bg-[#111622] border-b border-[#1e293b] px-3 flex items-center justify-between gap-2 shrink-0 z-20 overflow-x-auto">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               {/* Primary Workspace View Switcher (SAR Radar vs Google Maps Satellite vs Split) */}
-              <div className="flex items-center gap-1 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono">
+              <div className="flex items-center gap-0.5 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono shrink-0">
                 <button
                   onClick={() => setWorkspaceMode('radar')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors cursor-pointer ${
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     workspaceMode === 'radar'
                       ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                   title="Sentinel-1 SAR Radar Analysis Canvas"
                 >
-                  <Satellite className="w-3.5 h-3.5" />
-                  <span>SAR Radar Canvas</span>
+                  <Satellite className="w-3.5 h-3.5 shrink-0" />
+                  <span>Radar Canvas</span>
                 </button>
                 <button
                   onClick={() => setWorkspaceMode('gis-map')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors cursor-pointer ${
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     workspaceMode === 'gis-map'
                       ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                   title="Google Maps Optical Satellite / Hybrid Basemap"
                 >
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>Google Maps Satellite</span>
+                  <Globe className="w-3.5 h-3.5 shrink-0" />
+                  <span>Google Maps</span>
                 </button>
                 <button
                   onClick={() => setWorkspaceMode('split')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors cursor-pointer ${
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     workspaceMode === 'split'
                       ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                   title="Side-by-Side Synchronized Radar + Map View"
                 >
-                  <Columns className="w-3.5 h-3.5" />
-                  <span>Split View</span>
+                  <Columns className="w-3.5 h-3.5 shrink-0" />
+                  <span>Split</span>
                 </button>
               </div>
 
               {/* Sub-mode Tabs (Detection Overlay / Raw / Mask) for Radar View */}
               {workspaceMode !== 'gis-map' && (
-                <div className="flex items-center gap-1 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs">
+                <div className="flex items-center gap-0.5 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs shrink-0">
                   <button
                     onClick={() => setActiveTab('overlay')}
-                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                       activeTab === 'overlay'
                         ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Detection Overlay
+                    Overlay
                   </button>
                   <button
                     onClick={() => setActiveTab('raw')}
-                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                       activeTab === 'raw'
                         ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Raw Backscatter
+                    Raw Sigma0
                   </button>
                   <button
                     onClick={() => setActiveTab('mask')}
-                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                       activeTab === 'mask'
                         ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    U-Net Mask
+                    AI Mask
                   </button>
                 </div>
               )}
             </div>
 
             {/* Sub-controls based on active tab */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               {/* Polarization Selector (when viewing SAR raster) */}
               {activeTab !== 'mask' && (
-                <div className="flex items-center gap-1 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono">
+                <div className="flex items-center gap-0.5 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono shrink-0">
                   {(['VV', 'VH', 'composite'] as SARChannel[]).map((ch) => (
                     <button
                       key={ch}
                       onClick={() => setChannel(ch)}
-                      className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                      className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                         channel === ch
                           ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      {ch === 'composite' ? 'Dual-Pol Composite' : `${ch} Pol`}
+                      {ch === 'composite' ? 'Composite' : `${ch} Pol`}
                     </button>
                   ))}
                 </div>
@@ -486,38 +486,38 @@ export const SatelliteImagery: React.FC = () => {
 
               {/* Mask Type Selector (when viewing U-Net Mask) */}
               {activeTab === 'mask' && (
-                <div className="flex items-center gap-1 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono">
+                <div className="flex items-center gap-0.5 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono shrink-0">
                   <button
                     onClick={() => setMaskType('binary')}
-                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                       maskType === 'binary'
                         ? 'bg-rose-950 text-rose-300 border border-rose-800/60 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Binary Mask
+                    Binary
                   </button>
                   <button
                     onClick={() => setMaskType('prob')}
-                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer whitespace-nowrap ${
                       maskType === 'prob'
                         ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Probability Heatmap
+                    Heatmap
                   </button>
                 </div>
               )}
 
               {/* Layer Visibility Toggles (Overlay mode) */}
               {activeTab === 'overlay' && (
-                <div className="flex items-center gap-1 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono">
+                <div className="flex items-center gap-0.5 bg-[#0c1017] p-0.5 rounded border border-[#1e293b] text-xs font-mono shrink-0">
                   <button
                     onClick={() => setShowContours((prev) => !prev)}
                     title={showContours ? 'Hide Contours' : 'Show Contours'}
-                    className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${
-                      showContours ? 'text-blue-300 bg-blue-950 border border-blue-800/60' : 'text-slate-500'
+                    className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap ${
+                      showContours ? 'text-blue-300 bg-blue-950 border border-blue-800/60 font-semibold' : 'text-slate-500'
                     }`}
                   >
                     {showContours ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -526,8 +526,8 @@ export const SatelliteImagery: React.FC = () => {
                   <button
                     onClick={() => setShowLabels((prev) => !prev)}
                     title={showLabels ? 'Hide Labels' : 'Show Labels'}
-                    className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer ${
-                      showLabels ? 'text-blue-300 bg-blue-950 border border-blue-800/60' : 'text-slate-500'
+                    className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap ${
+                      showLabels ? 'text-blue-300 bg-blue-950 border border-blue-800/60 font-semibold' : 'text-slate-500'
                     }`}
                   >
                     <span>Labels</span>

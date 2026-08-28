@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface SARMetricsBadgeProps {
   vv_db?: number;
   vh_db?: number;
@@ -12,18 +14,18 @@ export const SARMetricsBadge: React.FC<SARMetricsBadgeProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`inline-flex items-center gap-0 rounded-md overflow-hidden border border-[rgba(255,255,255,0.08)] font-mono text-[9px] ${className}`}>
-      <div className="px-2 py-1 bg-cyan-500/10 text-cyan-400 border-r border-[rgba(255,255,255,0.06)]">
-        <span className="text-[8px] text-slate-500 block">VV</span>
-        <span className="font-bold">{vv_db.toFixed(1)} dB</span>
+    <div className={`grid grid-cols-3 rounded overflow-hidden border border-[#1e293b] font-mono text-[10px] text-center ${className}`}>
+      <div className="px-1.5 py-1 bg-blue-950/60 text-blue-300 border-r border-[#1e293b]">
+        <span className="text-[8px] text-slate-400 block font-sans uppercase">VV dB</span>
+        <span className="font-semibold">{vv_db.toFixed(1)}</span>
       </div>
-      <div className="px-2 py-1 bg-blue-500/10 text-blue-400 border-r border-[rgba(255,255,255,0.06)]">
-        <span className="text-[8px] text-slate-500 block">VH</span>
-        <span className="font-bold">{vh_db.toFixed(1)} dB</span>
+      <div className="px-1.5 py-1 bg-blue-950/40 text-blue-300 border-r border-[#1e293b]">
+        <span className="text-[8px] text-slate-400 block font-sans uppercase">VH dB</span>
+        <span className="font-semibold">{vh_db.toFixed(1)}</span>
       </div>
-      <div className="px-2 py-1 bg-amber-500/10 text-amber-400">
-        <span className="text-[8px] text-slate-500 block">CR</span>
-        <span className="font-bold">{contrast_ratio.toFixed(1)}</span>
+      <div className="px-1.5 py-1 bg-amber-950/60 text-amber-300">
+        <span className="text-[8px] text-slate-400 block font-sans uppercase">Contrast</span>
+        <span className="font-semibold">{contrast_ratio.toFixed(1)}</span>
       </div>
     </div>
   );
