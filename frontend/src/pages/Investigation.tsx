@@ -17,7 +17,7 @@ import { MapLegend } from '../components/map/MapLegend';
 import { VesselRankList } from '../components/vessel/VesselRankList';
 import { VesselDetailPanel } from '../components/vessel/VesselDetailPanel';
 import { SpillInfoPanel } from '../components/spill/SpillInfoPanel';
-import { DriftTimelineControl } from '../components/drift/DriftTimelineControl';
+import { DriftPhysicsCard } from '../components/drift/DriftPhysicsCard';
 import { EnvironmentalConditionsCard } from '../components/drift/EnvironmentalConditionsCard';
 import { InvestigationTimeline } from '../components/timeline/InvestigationTimeline';
 
@@ -182,7 +182,7 @@ export const Investigation: React.FC = () => {
 
             {activeTab === 'drift' && (
               <>
-                <DriftTimelineControl />
+                <DriftPhysicsCard />
                 <EnvironmentalConditionsCard />
               </>
             )}

@@ -3,7 +3,7 @@ import { useInvestigation } from '../context/InvestigationContext';
 import { MaritimeMap } from '../components/map/MaritimeMap';
 import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapLegend } from '../components/map/MapLegend';
-import { DriftTimelineControl } from '../components/drift/DriftTimelineControl';
+import { DriftPhysicsCard } from '../components/drift/DriftPhysicsCard';
 import { EnvironmentalConditionsCard } from '../components/drift/EnvironmentalConditionsCard';
 
 const SIM_PARAMS = [
@@ -89,10 +89,10 @@ export const DriftAnalysis: React.FC = () => {
           </div>
         </div>
 
-        {/* RIGHT: Physics Controls Panel */}
-        <div className="w-80 bg-[#111622] border-l border-[#1e293b] flex flex-col overflow-y-auto shrink-0 p-3 space-y-3">
-          {/* Timeline Scrubber */}
-          <DriftTimelineControl />
+        {/* RIGHT: Physics & Metocean Panel */}
+        <div className="w-96 bg-[#111622] border-l border-[#1e293b] flex flex-col overflow-y-auto shrink-0 p-3 space-y-3">
+          {/* Drift Physics & Vector Decomposition */}
+          <DriftPhysicsCard />
 
           {/* Environmental Conditions */}
           <EnvironmentalConditionsCard />
