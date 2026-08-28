@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { InvestigationProvider, useInvestigation } from './context/InvestigationContext';
@@ -20,6 +20,15 @@ import { PipelineProgressModal } from './components/ui/PipelineProgressModal';
 
 const MainLayout: React.FC = () => {
   const { activePage, loading, loadingStep, error, clearError } = useInvestigation();
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
 
   const renderActivePage = () => {
     switch (activePage) {
