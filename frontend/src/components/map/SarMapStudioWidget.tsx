@@ -59,9 +59,14 @@ export const SarMapStudioWidget: React.FC = () => {
               <div className="w-5 h-5 rounded bg-cyan-950/80 border border-cyan-500/60 flex items-center justify-center text-cyan-400">
                 <Satellite className="w-3 h-3" />
               </div>
-              <span className="font-bold text-slate-100 tracking-tight">
-                Sentinel-1 SAR Studio
-              </span>
+              <div>
+                <span className="font-bold text-slate-100 tracking-tight block leading-tight">
+                  Sentinel-1 SAR Studio
+                </span>
+                <span className="text-[9px] font-mono text-cyan-400">
+                  {investigation.investigation_id}
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-1.5">

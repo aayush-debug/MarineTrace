@@ -233,22 +233,34 @@ export const MaritimeMap: React.FC<{
     ] as [[number, number], [number, number]];
   }, [investigation]);
 
-  // Dynamic Sentinel-1 SAR Raster URL based on selected channel/band
+  // Dynamically resolve target incident detection ID for all 10 spills
+  const targetDetId = useMemo(() => {
+    if (!investigation) return 'SPCSFT-2026-ARABIAN-01';
+    const id = (investigation.investigation_id || '').toUpperCase();
+    if (id.includes('BENGAL')) return 'SPCSFT-2026-BENGAL-01';
+    if (id.includes('INDOCEAN')) return 'SPCSFT-2026-INDOCEAN-01';
+    if (id.includes('HORMUZ')) return 'SPCSFT-2026-HORMUZ-02';
+    if (id.includes('KUTCH')) return 'SPCSFT-2026-KUTCH-01';
+    if (id.includes('MALACCA')) return 'SPCSFT-2026-MALACCA-01';
+    if (id.includes('REDSEA')) return 'SPCSFT-2026-REDSEA-01';
+    if (id.includes('SNGPR') || id.includes('SINGAPORE')) return 'SPCSFT-2026-SNGPR-01';
+    if (id.includes('MED')) return 'SPCSFT-2026-MED-01';
+    if (id.includes('ARABIAN-02') || id.includes('SAURASHTRA')) return 'SPCSFT-2026-ARABIAN-02';
+    return 'SPCSFT-2026-ARABIAN-01';
+  }, [investigation]);
+
+  // Dynamic Sentinel-1 SAR Raster URL based on selected channel/band and specific spill ID
   const sarRasterUrl = useMemo(() => {
-    switch (sarConfig.channel) {
-      case 'VV':
-        return '/sar/sample_s1_vv.png';
-      case 'VH':
-        return '/sar/sample_s1_vh.png';
-      case 'prob':
-        return '/sar/sample_s1_prob.png';
-      case 'mask':
-        return '/sar/sample_s1_mask.png';
-      case 'composite':
-      default:
-        return '/sar/sample_s1_composite.png';
-    }
-  }, [sarConfig.channel]);
+    const channelSuffix = {
+      VV: 'vv',
+      VH: 'vh',
+      prob: 'prob',
+      mask: 'mask',
+      composite: 'composite',
+    }[sarConfig.channel] || 'composite';
+
+    return `/sar/sar_${targetDetId}_${channelSuffix}.png`;
+  }, [sarConfig.channel, targetDetId]);
 
   const spillPolygonPositions = useMemo(
     () => (investigation?.spill?.geometry ? getPolygonPositions(investigation.spill.geometry) : []),
