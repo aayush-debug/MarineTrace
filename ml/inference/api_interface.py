@@ -55,7 +55,11 @@ def _load_model(checkpoint_path: str, config: dict, device: torch.device):
     model = create_model(model_cfg)
 
     if os.path.exists(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+        try:
+            checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=True)
+        except Exception:
+            # Fallback for PyTorch installations with complex state dict wrappers
+            checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"])
     else:
         print(f"[WARNING] No checkpoint at {checkpoint_path}. Using untrained model.")

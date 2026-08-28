@@ -22,7 +22,7 @@ class DriftRequest(BaseModel):
     centroid_lon: float = Field(..., ge=-180, le=180)
     observation_time: datetime
     geometry: GeoJSONGeometry | None = None
-    hours: int = 24
+    hours: int = Field(24, ge=1, le=168, description="Simulation duration in hours (1-168)")
 
 
 @router.post("/backward", response_model=DriftResult)

@@ -35,9 +35,9 @@ class InvestigationRequest(BaseModel):
         ...,
         description="Satellite observation timestamp (ISO 8601)",
     )
-    # Optional overrides for the investigation
-    backward_hours: int | None = None
-    forward_hours: int | None = None
+    # Optional overrides for the investigation (bounded 1h to 168h / 7 days)
+    backward_hours: int | None = Field(None, ge=1, le=168, description="Reverse drift duration in hours")
+    forward_hours: int | None = Field(None, ge=1, le=168, description="Forward forecast duration in hours")
     custom_spill: SpillDetection | None = Field(
         None,
         description="Explicit spill detection instance (e.g. from SpaceShift real-time feed).",

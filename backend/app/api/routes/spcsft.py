@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field
 
 from app.core.config import settings
 from app.core.logging import logger
+from app.core.security import is_safe_external_url
 from app.models.investigation import InvestigationRequest, InvestigationResponse
 from app.models.spill import SpillDetection, SpillCentroid, GeoJSONGeometry
 from app.api.routes.investigation import investigate, _real_ml_client, _mock_ml_client
@@ -32,19 +33,19 @@ router = APIRouter(prefix="/spcsft", tags=["spaceshift"])
 # ── Schemas ─────────────────────────────────────────────────────────
 
 class SpaceShiftKeyTestRequest(BaseModel):
-    api_key: str
-    base_url: Optional[str] = None
+    api_key: str = Field(..., min_length=1, max_length=256)
+    base_url: Optional[str] = Field(None, max_length=512)
 
 
 class SpaceShiftJobRequest(BaseModel):
-    zone_id: Optional[str] = "zone_arabian_sea"
-    satellite_id: Optional[str] = "sentinel-1"
-    threshold: Optional[float] = 0.35
+    zone_id: Optional[str] = Field("zone_arabian_sea", max_length=64)
+    satellite_id: Optional[str] = Field("sentinel-1", max_length=64)
+    threshold: Optional[float] = Field(0.35, ge=0.01, le=0.99)
     polarization: Optional[list[str]] = ["VV", "VH"]
     date_start: Optional[str] = None
     date_end: Optional[str] = None
     polygon: Optional[Any] = None
-    name: Optional[str] = None
+    name: Optional[str] = Field(None, max_length=128)
 
 
 # ── Global Pre-Configured Monitoring Zones ──────────────────────────
@@ -525,6 +526,12 @@ async def spcsft_health(authorization: Optional[str] = Header(None)):
 @router.post("/test-key")
 async def test_key(payload: SpaceShiftKeyTestRequest):
     """Validate Space Shift API key."""
+    if payload.base_url:
+        if not is_safe_external_url(payload.base_url):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid or forbidden base_url. Internal or private network addresses are disallowed.",
+            )
     return {
         "status": "online",
         "endpoint": payload.base_url or "https://api.spcsft.com/v1",

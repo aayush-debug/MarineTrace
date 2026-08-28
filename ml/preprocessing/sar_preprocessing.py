@@ -209,9 +209,14 @@ def load_sar_image(image_path: str) -> tuple[np.ndarray, dict]:
             - image: numpy array of shape [C, H, W]
             - metadata: dict with keys like 'crs', 'transform', 'width', 'height'
     """
+    MAX_DIMENSION = 8192
     try:
         import rasterio
         with rasterio.open(image_path) as src:
+            if src.width > MAX_DIMENSION or src.height > MAX_DIMENSION:
+                raise ValueError(
+                    f"SAR image dimensions ({src.width}x{src.height}) exceed maximum allowed limit of {MAX_DIMENSION}x{MAX_DIMENSION}."
+                )
             image = src.read().astype(np.float32)  # [C, H, W]
             metadata = {
                 "crs": src.crs,

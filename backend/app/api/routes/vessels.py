@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-
-from fastapi import APIRouter, Query
+import re
+from datetime import datetime, timedelta
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.core.config import settings
 from app.models.vessel import VesselTrack
@@ -16,6 +16,8 @@ from ais.client import (
 )
 
 router = APIRouter(prefix="/vessels", tags=["vessels"])
+SAFE_MMSI_REGEX = re.compile(r"^[A-Za-z0-9\-_]{3,20}$")
+MAX_SEARCH_WINDOW_DAYS = 14
 
 
 def _get_ais_client() -> AISClientInterface:
@@ -69,6 +71,27 @@ async def search_vessels(
     end_time: datetime = Query(...),
 ):
     """Search AIS vessels within a bounding box and time range."""
+    if min_lat > max_lat:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="min_lat must be less than or equal to max_lat.",
+        )
+    if min_lon > max_lon:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="min_lon must be less than or equal to max_lon.",
+        )
+    if start_time > end_time:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="start_time must be before or equal to end_time.",
+        )
+    if (end_time - start_time) > timedelta(days=MAX_SEARCH_WINDOW_DAYS):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Time window exceeds the maximum allowed duration of {MAX_SEARCH_WINDOW_DAYS} days.",
+        )
+
     client = _get_ais_client()
     tracks = await client.get_historical_tracks(
         min_lat, max_lat, min_lon, max_lon, start_time, end_time,
@@ -80,6 +103,12 @@ async def search_vessels(
 async def get_vessel(mmsi: str):
     """Get vessel details by MMSI (from search results)."""
     from datetime import timezone
+
+    if not SAFE_MMSI_REGEX.match(mmsi):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid MMSI identifier format.",
+        )
 
     client = _get_ais_client()
     tracks = await client.get_historical_tracks(
