@@ -47,7 +47,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#060a12] text-slate-100 select-none relative">
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-[var(--bg-canvas)] text-[var(--text-primary)] select-none relative">
       {/* Top Command Center Header */}
       <TopNav />
 
