@@ -47,7 +47,7 @@ export const SarMapStudioWidget: React.FC = () => {
           }`}>
             {layers.sar ? 'LIVE' : 'OFF'}
           </span>
-          <ChevronUp className="w-3.5 h-3.5 text-slate-400 ml-auto" />
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-auto" />
         </button>
       ) : (
         /* ── Expanded Full Radar Control Studio ── */
@@ -88,7 +88,7 @@ export const SarMapStudioWidget: React.FC = () => {
                 className="text-slate-400 hover:text-slate-200 p-0.5 rounded transition-colors cursor-pointer"
                 title="Minimize Panel"
               >
-                <ChevronDown className="w-4 h-4" />
+                <ChevronUp className="w-4 h-4" />
               </button>
             </div>
           </div>
