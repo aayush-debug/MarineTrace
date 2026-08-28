@@ -153,10 +153,14 @@
 [data-theme="light"] .bg-\[\#070d1d\],
 [data-theme="light"] .bg-\[\#0c121e\],
 [data-theme="light"] .bg-\[\#060b18\],
+[data-theme="light"] .bg-\[\#111827\],
+[data-theme="light"] [class*="bg-[#111827]"],
 .light .bg-\[\#111622\],
 .light .bg-\[\#070d1d\],
 .light .bg-\[\#0c121e\],
-.light .bg-\[\#060b18\] {
+.light .bg-\[\#060b18\],
+.light .bg-\[\#111827\],
+.light [class*="bg-[#111827]"] {
   background-color: #ffffff !important;
 }
 
@@ -167,17 +171,33 @@
 [data-theme="light"] .bg-\[\#141a29\],
 [data-theme="light"] .bg-\[\#121824\],
 [data-theme="light"] .bg-\[\#182232\],
+[data-theme="light"] .bg-\[\#1c2638\],
 [data-theme="light"] .bg-slate-900,
 [data-theme="light"] .bg-slate-950,
+[data-theme="light"] [class*="bg-slate-900"],
+[data-theme="light"] [class*="bg-slate-950"],
 .light .bg-\[\#161e2e\],
 .light .bg-\[\#081024\],
 .light .bg-\[\#151c2b\],
 .light .bg-\[\#141a29\],
 .light .bg-\[\#121824\],
 .light .bg-\[\#182232\],
+.light .bg-\[\#1c2638\],
 .light .bg-slate-900,
-.light .bg-slate-950 {
+.light .bg-slate-950,
+.light [class*="bg-slate-900"],
+.light [class*="bg-slate-950"] {
   background-color: #f1f5f9 !important;
+}
+
+/* Hover States for Light Mode */
+[data-theme="light"] .hover\:bg-\[\#161e2e\]:hover,
+[data-theme="light"] .hover\:bg-\[\#1c2638\]:hover,
+[data-theme="light"] .hover\:bg-slate-800:hover,
+.light .hover\:bg-\[\#161e2e\]:hover,
+.light .hover\:bg-\[\#1c2638\]:hover,
+.light .hover\:bg-slate-800:hover {
+  background-color: #e2e8f0 !important;
 }
 
 /* Border overrides for Light Mode */
@@ -185,26 +205,18 @@
 [data-theme="light"] .border-slate-800,
 [data-theme="light"] .border-slate-700,
 [data-theme="light"] .border-\[\#18202d\],
-[data-theme="light"] .border-cyan-900\/40,
-[data-theme="light"] .border-cyan-500\/20,
-[data-theme="light"] .border-cyan-500\/30,
-[data-theme="light"] .border-\[rgba\(0\,240\,255\,0\.18\)\],
-[data-theme="light"] .border-\[rgba\(0\,240\,255\,0\.15\)\],
-[data-theme="light"] .border-\[rgba\(0\,240\,255\,0\.12\)\],
+[data-theme="light"] [class*="border-slate-800"],
+[data-theme="light"] [class*="border-slate-700"],
 .light .border-\[\#1e293b\],
 .light .border-slate-800,
 .light .border-slate-700,
 .light .border-\[\#18202d\],
-.light .border-cyan-900\/40,
-.light .border-cyan-500\/20,
-.light .border-cyan-500\/30,
-.light .border-\[rgba\(0\,240\,255\,0\.18\)\],
-.light .border-\[rgba\(0\,240\,255\,0\.15\)\],
-.light .border-\[rgba\(0\,240\,255\,0\.12\)\] {
+.light [class*="border-slate-800"],
+.light [class*="border-slate-700"] {
   border-color: #e2e8f0 !important;
 }
 
-/* Text overrides for Light Mode */
+/* High-Contrast Text Overrides for Light Mode */
 [data-theme="light"] .text-slate-100,
 [data-theme="light"] .text-slate-200,
 .light .text-slate-100,
@@ -224,44 +236,38 @@
   color: #64748b !important;
 }
 
-/* Badge / Semantic container overrides for Light Mode */
+/* Status Badges in Light Mode */
 [data-theme="light"] .bg-rose-950,
-[data-theme="light"] .bg-rose-950\/80,
-[data-theme="light"] .bg-rose-950\/60,
+[data-theme="light"] [class*="bg-rose-950"],
 .light .bg-rose-950,
-.light .bg-rose-950\/80,
-.light .bg-rose-950\/60 {
+.light [class*="bg-rose-950"] {
   background-color: #ffe4e6 !important;
   color: #be123c !important;
   border-color: #fecdd3 !important;
 }
 
 [data-theme="light"] .bg-blue-950,
-[data-theme="light"] .bg-blue-950\/80,
-[data-theme="light"] .bg-blue-950\/60,
+[data-theme="light"] [class*="bg-blue-950"],
 .light .bg-blue-950,
-.light .bg-blue-950\/80,
-.light .bg-blue-950\/60 {
+.light [class*="bg-blue-950"] {
   background-color: #e0f2fe !important;
   color: #0369a1 !important;
   border-color: #bae6fd !important;
 }
 
 [data-theme="light"] .bg-emerald-950,
-[data-theme="light"] .bg-emerald-950\/80,
+[data-theme="light"] [class*="bg-emerald-950"],
 .light .bg-emerald-950,
-.light .bg-emerald-950\/80 {
+.light [class*="bg-emerald-950"] {
   background-color: #d1fae5 !important;
   color: #047857 !important;
   border-color: #a7f3d0 !important;
 }
 
 [data-theme="light"] .bg-amber-950,
-[data-theme="light"] .bg-amber-950\/80,
-[data-theme="light"] .bg-amber-950\/70,
+[data-theme="light"] [class*="bg-amber-950"],
 .light .bg-amber-950,
-.light .bg-amber-950\/80,
-.light .bg-amber-950\/70 {
+.light [class*="bg-amber-950"] {
   background-color: #fef3c7 !important;
   color: #b45309 !important;
   border-color: #fde68a !important;
@@ -279,7 +285,7 @@
   border-color: #cbd5e1 !important;
 }
 
-/* GIS Map background for Light Mode */
+/* GIS Map container for Light Mode */
 [data-theme="light"] .leaflet-container,
 .light .leaflet-container {
   background: #e2e8f0 !important;

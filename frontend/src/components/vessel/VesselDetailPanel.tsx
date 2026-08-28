@@ -3,19 +3,17 @@ import {
   Clock,
   MapPin,
   FileCheck2,
-  AlertTriangle,
   Flag,
 } from 'lucide-react';
 import { useInvestigation } from '../../context/InvestigationContext';
 import { ScoreBreakdownBar } from './ScoreBreakdownBar';
-import { AttributionRadarChart } from '../charts/AttributionRadarChart';
 
 export const VesselDetailPanel: React.FC = () => {
-  const { selectedVessel, investigation } = useInvestigation();
+  const { selectedVessel } = useInvestigation();
 
   if (!selectedVessel) {
     return (
-      <div className="p-6 bg-slate-900/60 border border-slate-800 rounded-lg text-slate-400 text-xs text-center">
+      <div className="p-6 bg-[#161e2e] border border-[#1e293b] rounded text-slate-400 text-xs text-center">
         Select a vessel from the list or map to inspect evidence.
       </div>
     );
@@ -28,16 +26,16 @@ export const VesselDetailPanel: React.FC = () => {
   const timeDiffMin = Math.round((100 - feature_scores.temporal) * 1.2);
 
   return (
-    <div className="bg-[#111827]/80 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm text-xs">
+    <div className="bg-[#111622] border border-[#1e293b] rounded p-3.5 space-y-3.5 shadow-sm text-xs">
       {/* Vessel Header */}
-      <div className="border-b border-slate-800 pb-3">
+      <div className="border-b border-[#1e293b] pb-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span
-              className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs font-mono ${
+              className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs font-mono ${
                 selectedVessel.rank === 1
-                  ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                  : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                  ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
+                  : 'bg-amber-950 text-amber-300 border border-amber-800/60'
               }`}
             >
               #{selectedVessel.rank}
@@ -46,8 +44,8 @@ export const VesselDetailPanel: React.FC = () => {
               <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
                 <span>{selectedVessel.vessel_name}</span>
                 {selectedVessel.flag && (
-                  <span className="text-[10px] font-normal px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 flex items-center gap-1 border border-slate-700">
-                    <Flag className="w-2.5 h-2.5 text-sky-400" />
+                  <span className="text-[10px] font-normal px-1.5 py-0.2 rounded bg-[#0c1017] text-slate-300 flex items-center gap-1 border border-[#1e293b]">
+                    <Flag className="w-2.5 h-2.5 text-blue-400" />
                     {selectedVessel.flag}
                   </span>
                 )}
@@ -57,9 +55,9 @@ export const VesselDetailPanel: React.FC = () => {
           </div>
 
           <div className="text-right">
-            <div className="text-[10px] text-slate-400 font-medium">Attribution Score</div>
+            <div className="text-[10px] text-slate-400 font-medium">Attribution</div>
             <div
-              className={`text-2xl font-bold kpi-value ${
+              className={`text-xl font-bold font-mono tabular-nums ${
                 selectedVessel.score >= 80
                   ? 'text-rose-400'
                   : selectedVessel.score >= 50
@@ -75,21 +73,21 @@ export const VesselDetailPanel: React.FC = () => {
 
       {/* Identifiers & Navigation Status Grid */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-slate-900/90 border border-slate-800 p-2.5 rounded-lg">
+        <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400">MMSI / Registry</div>
           <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">{selectedVessel.mmsi}</div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 p-2.5 rounded-lg">
+        <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400">IMO Number</div>
           <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">
             {selectedVessel.mmsi ? `IMO 9${selectedVessel.mmsi.substring(2, 8)}` : 'UNKNOWN'}
           </div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 p-2.5 rounded-lg">
+        <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-slate-500" />
+            <MapPin className="w-3 h-3 text-slate-400" />
             Distance to Origin
           </div>
           <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">
@@ -97,57 +95,49 @@ export const VesselDetailPanel: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 p-2.5 rounded-lg">
+        <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400 flex items-center gap-1">
-            <Clock className="w-3 h-3 text-slate-500" />
+            <Clock className="w-3 h-3 text-slate-400" />
             Time Offset
           </div>
           <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">
-            {timeDiffMin} min window
+            ±{timeDiffMin} mins
           </div>
         </div>
       </div>
 
-      {/* 5-Dimension Radar Profile & Bars */}
-      <div className="space-y-3 bg-slate-900/40 border border-slate-800/70 p-3 rounded-lg">
-        <div className="text-xs font-semibold text-slate-300">
-          5-Factor Explainable Attribution
+      {/* 5-Feature Attribution Breakdown */}
+      <div className="space-y-2 pt-1 border-t border-[#1e293b]">
+        <div className="text-[11px] font-semibold text-slate-300">
+          5-Factor Forensic Correlation Weights
         </div>
-
-        <div className="w-full flex justify-center">
-          <AttributionRadarChart
-            scores={feature_scores}
-            vesselName={selectedVessel.vessel_name}
-          />
-        </div>
-
-        <div className="space-y-2 pt-1 border-t border-slate-800/60">
+        <div className="space-y-1.5">
           <ScoreBreakdownBar
-            label="Spatial Proximity"
+            label="Spatial Proximity (30%)"
             score={feature_scores.spatial}
             weightLabel="30%"
             color="rose"
           />
           <ScoreBreakdownBar
-            label="Temporal Correlation"
+            label="Temporal Correlation (25%)"
             score={feature_scores.temporal}
             weightLabel="25%"
             color="amber"
           />
           <ScoreBreakdownBar
-            label="Trajectory Match"
+            label="Trajectory Intercept (20%)"
             score={feature_scores.trajectory}
             weightLabel="20%"
             color="sky"
           />
           <ScoreBreakdownBar
-            label="Behaviour Anomaly"
+            label="Speed / Maneuver Anomaly (15%)"
             score={feature_scores.behaviour}
             weightLabel="15%"
             color="indigo"
           />
           <ScoreBreakdownBar
-            label="Vessel Type Relevance"
+            label="Vessel Type Risk Relevance (10%)"
             score={feature_scores.vessel_relevance}
             weightLabel="10%"
             color="emerald"
@@ -155,39 +145,23 @@ export const VesselDetailPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* Detailed Investigative Findings */}
-      <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg space-y-2">
-        <div className="text-xs font-semibold text-sky-400 flex items-center gap-1.5">
-          <FileCheck2 className="w-4 h-4 text-sky-400" />
-          <span>Investigative Evidence & Findings</span>
+      {/* Evidence Summary & Reasons */}
+      {reasons && reasons.length > 0 && (
+        <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded space-y-1.5">
+          <div className="text-[10px] font-semibold text-slate-300 flex items-center gap-1">
+            <FileCheck2 className="w-3 h-3 text-blue-400" />
+            <span>Forensic Evidence Findings</span>
+          </div>
+          <ul className="space-y-1 text-[11px] text-slate-300">
+            {reasons.map((r: string, i: number) => (
+              <li key={i} className="flex items-start gap-1.5">
+                <span className="text-blue-400 shrink-0">•</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-
-        <div className="space-y-1.5">
-          {reasons && reasons.length > 0 ? (
-            reasons.map((reason, idx) => (
-              <div
-                key={idx}
-                className="text-[11px] text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2 rounded-md border border-slate-800/60 leading-relaxed"
-              >
-                <span className="text-sky-400 font-bold">›</span>
-                <span>{reason}</span>
-              </div>
-            ))
-          ) : (
-            <p className="text-slate-400 text-xs">No anomalies recorded for this transit.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Decision-Support Notice */}
-      <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-2.5 flex items-start gap-2 text-[11px] text-amber-200/80">
-        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-        <div className="text-[10px] leading-relaxed">
-          {investigation?.disclaimer ||
-            'This analysis establishes statistical correlation only and does not constitute a legal determination of liability.'}
-        </div>
-      </div>
+      )}
     </div>
   );
 };
-
