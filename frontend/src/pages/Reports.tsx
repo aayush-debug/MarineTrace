@@ -143,13 +143,16 @@ export const Reports: React.FC = () => {
       </div>
 
       {/* Main Document Container: Clean Formal White Report Paper */}
-      <div className="p-4 sm:p-8 md:p-12 max-w-5xl mx-auto w-full print:p-0 print:max-w-none">
-        <div className="bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-200 p-8 sm:p-12 md:p-16 space-y-8 font-sans print:shadow-none print:border-none print:p-0 print:rounded-none">
+      <div className="p-4 sm:p-8 md:p-12 max-w-5xl mx-auto w-full print:p-0 print:m-0 print:max-w-none print:w-full">
+        <div
+          id="official-dossier-paper"
+          className="bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-200 p-8 sm:p-12 md:p-16 space-y-8 font-sans print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full"
+        >
 
           {/* ══════════════════════════════════════════════════════════════════
               DOCUMENT HEADER & OFFICIAL EMBLEM
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="border-b-2 border-slate-900 pb-6">
+          <div className="border-b-2 border-slate-900 pb-6 print-avoid-break">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
               {/* Left: Organization & Seal */}
               <div className="flex items-start gap-4">
@@ -194,7 +197,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               EXECUTIVE SUMMARY & PRIMARY FINDINGS
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="bg-slate-50 border-l-4 border-blue-900 p-5 rounded-r">
+          <div className="bg-slate-50 border-l-4 border-blue-900 p-5 rounded-r print-avoid-break">
             <h2 className="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4 text-blue-900" />
               <span>EXECUTIVE SUMMARY & FORENSIC DETERMINATION</span>
@@ -212,7 +215,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               PRIMARY METRICS SUMMARY TILES
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono print-avoid-break">
             <div className="p-3.5 bg-slate-100/80 border border-slate-300 rounded">
               <span className="text-[10px] text-slate-500 uppercase font-bold block">DETECTED SLICK AREA</span>
               <span className="text-base font-extrabold text-slate-900 block mt-0.5">
@@ -249,7 +252,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 1: SATELLITE SAR EARTH OBSERVATION & SLICK MORPHOLOGY
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-3 print-avoid-break">
             <div className="flex items-center gap-2 border-b border-slate-300 pb-2">
               <Satellite className="w-4 h-4 text-blue-900" />
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
@@ -309,7 +312,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 2: HYDRODYNAMIC DRIFT RECONSTRUCTION & METOCEAN FORCING
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-3 print-avoid-break">
             <div className="flex items-center gap-2 border-b border-slate-300 pb-2">
               <Compass className="w-4 h-4 text-blue-900" />
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
@@ -369,7 +372,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 3: AIS VESSEL ATTRIBUTION MATRIX & SUSPECT RANKINGS
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-3 print-avoid-break">
             <div className="flex items-center justify-between border-b border-slate-300 pb-2">
               <div className="flex items-center gap-2">
                 <Ship className="w-4 h-4 text-blue-900" />
@@ -445,7 +448,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 4: SYSTEM PROVENANCE & BENCHMARK VALIDATION
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-3 print-avoid-break">
             <div className="flex items-center gap-2 border-b border-slate-300 pb-2">
               <TrendingUp className="w-4 h-4 text-blue-900" />
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
@@ -484,7 +487,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               SECTION 5: RECOMMENDED ENFORCEMENT & COMPLIANCE ACTIONS
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="space-y-3">
+          <div className="space-y-3 print-avoid-break">
             <div className="flex items-center gap-2 border-b border-slate-300 pb-2">
               <Anchor className="w-4 h-4 text-blue-900" />
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
@@ -519,7 +522,7 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               OFFICIAL SIGN-OFF & ATTESTATION BLOCK
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="pt-6 border-t-2 border-slate-900">
+          <div className="pt-6 border-t-2 border-slate-900 print-avoid-break">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs">
               <div>
                 <div className="text-[10px] font-mono text-slate-500 uppercase font-bold mb-1">

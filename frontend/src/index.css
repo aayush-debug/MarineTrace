@@ -613,7 +613,7 @@
 }
 
 /* ============================================================
-   PRINT STYLES — OFFICIAL DOSSIER
+   PRINT STYLES — OFFICIAL INCIDENT DOSSIER (PDF / PRINT)
    ============================================================ */
 @media print {
   * {
@@ -621,15 +621,49 @@
     print-color-adjust: exact !important;
   }
 
-  body {
+  html, body, #root {
     background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #0f172a !important;
     font-size: 11px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  .no-print {
+  /* Completely eliminate all mission control UI shell elements from the printout */
+  header,
+  aside,
+  nav,
+  .no-print,
+  .hud-panel-bracket,
+  .tactical-grid,
+  .leaflet-container,
+  button,
+  [data-testid="sidebar"] {
     display: none !important;
+  }
+
+  /* Reset outer container layout to allow natural multi-page document pagination */
+  div, main, section {
+    background-color: transparent !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    box-shadow: none !important;
+  }
+
+  #official-dossier-paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
   }
 
   .print-only {
@@ -637,23 +671,23 @@
   }
 
   .print-break-before {
-    page-break-before: always;
+    page-break-before: always !important;
+    break-before: page !important;
   }
 
   .print-break-after {
-    page-break-after: always;
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
   .print-avoid-break {
-    page-break-inside: avoid;
-  }
-
-  .leaflet-container {
-    display: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   @page {
-    size: A4;
-    margin: 18mm 14mm;
+    size: A4 portrait;
+    margin: 14mm 12mm;
   }
 }
+

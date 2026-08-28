@@ -104,7 +104,7 @@ export const Sidebar: React.FC = () => {
   );
 
   return (
-    <aside className="w-64 bg-[#060b18] border-r border-[rgba(0,240,255,0.15)] flex flex-col justify-between select-none z-20 shrink-0 shadow-xl shadow-black/60">
+    <aside className="w-64 bg-[#060b18] border-r border-[rgba(0,240,255,0.15)] flex flex-col justify-between select-none z-20 shrink-0 shadow-xl shadow-black/60 no-print">
       {/* Navigation Subsystem Groups */}
       <nav className="p-3 space-y-4.5 overflow-y-auto">
         <div>

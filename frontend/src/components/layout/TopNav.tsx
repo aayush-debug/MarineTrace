@@ -68,7 +68,7 @@ export const TopNav: React.FC = () => {
   }, []);
 
   return (
-    <header className="h-14 bg-[#070d1d] border-b border-[rgba(0,240,255,0.18)] px-4 sm:px-6 flex items-center justify-between gap-3 select-none z-30 sticky top-0 shrink-0 overflow-x-clip shadow-lg shadow-black/40">
+    <header className="h-14 bg-[#070d1d] border-b border-[rgba(0,240,255,0.18)] px-4 sm:px-6 flex items-center justify-between gap-3 select-none z-30 sticky top-0 shrink-0 overflow-x-clip shadow-lg shadow-black/40 no-print">
       {/* LEFT: NASA Mission Control Brand & Active Orbit Indicator */}
       <div className="flex items-center gap-3 min-w-0 shrink-0">
         <div
