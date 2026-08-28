@@ -4,6 +4,7 @@ import {
   Download,
   FileText,
   FileCheck,
+  Shield,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 
@@ -87,7 +88,7 @@ export const Reports: React.FC = () => {
   }).format(new Date());
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-canvas)] overflow-y-auto print:bg-white print:overflow-visible select-text font-sans">
+    <div className="flex-1 flex flex-col min-h-0 bg-[#080c14] overflow-y-auto print:bg-white print:overflow-visible select-text font-sans">
 
       {/* ── Top Action Toolbar — Hidden on Print ── */}
       <div className="px-6 py-3 bg-[#111622] border-b border-[#1e293b] flex flex-wrap items-center justify-between gap-4 no-print shrink-0 sticky top-0 z-30 shadow-md">
@@ -101,7 +102,7 @@ export const Reports: React.FC = () => {
                 Office Memorandum (OM) // भारत सरकार
               </h1>
               <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60">
-                CSMOP / GOI FORMAT
+                A4 OFFICIAL FORMAT (210 × 297 mm)
               </span>
             </div>
             <p className="text-[11px] font-mono text-slate-400 mt-0.5">
@@ -132,29 +133,36 @@ export const Reports: React.FC = () => {
           <button
             onClick={handlePrint}
             className="flex items-center gap-1.5 px-4 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-sm transition-colors cursor-pointer"
-            title="Open browser print dialog / Save as PDF"
+            title="Open browser print dialog / Save as A4 PDF"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>PRINT / SAVE AS PDF</span>
+            <span>PRINT / SAVE AS A4 PDF</span>
           </button>
         </div>
       </div>
 
-      {/* ── Main Document Sheet: Government of India Official Memorandum ── */}
-      <div className="p-4 sm:p-8 md:p-12 max-w-4xl mx-auto w-full print:p-0 print:m-0 print:max-w-none print:w-full">
+      {/* ── Main Document Viewport: Exact A4 Proportions (210mm × 297mm) ── */}
+      <div className="p-4 sm:p-8 md:p-12 flex justify-center items-start print:p-0 print:m-0 print:block w-full">
         <div
           id="official-dossier-paper"
-          className="bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-300 p-8 sm:p-12 md:p-16 space-y-6 font-serif print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full leading-relaxed"
+          className="w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl rounded-sm border border-slate-300 p-[16mm] sm:p-[20mm] md:p-[24mm] space-y-5 font-serif print:shadow-none print:border-none print:p-0 print:m-0 print:rounded-none print:w-full print:max-w-none leading-relaxed relative"
         >
 
           {/* ══════════════════════════════════════════════════════════════════
-              1. OFFICIAL GOVERNMENT LETTERHEAD & FILE NUMBER (CENTERED)
+              1. OFFICIAL GOVERNMENT LETTERHEAD & EMBLEM (CENTERED)
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-center space-y-0.5 pb-2">
+          <div className="text-center space-y-1 pb-2 border-b border-slate-200">
+            {/* National Emblem Representation */}
+            <div className="flex justify-center pb-0.5">
+              <div className="w-10 h-10 rounded-full border border-slate-400 flex items-center justify-center text-slate-900 bg-slate-50 shadow-inner">
+                <Shield className="w-5 h-5 text-slate-800" />
+              </div>
+            </div>
+
             <div className="text-xs font-mono font-bold text-slate-900 tracking-wider uppercase">
               F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}
             </div>
-            <div className="text-base font-bold text-slate-950">
+            <div className="text-base font-bold text-slate-950 tracking-wide">
               Government of India / भारत सरकार
             </div>
             <div className="text-sm font-semibold text-slate-900">
@@ -163,7 +171,7 @@ export const Reports: React.FC = () => {
             <div className="text-xs font-semibold text-slate-800">
               Headquarters Coast Guard Region (West) / भारतीय तटरक्षक मुख्यालय (पश्चिम)
             </div>
-            <div className="text-xs text-slate-700">
+            <div className="text-[11px] text-slate-700">
               Worli Sea Face, Mumbai – 400030
             </div>
           </div>
@@ -171,9 +179,9 @@ export const Reports: React.FC = () => {
           {/* ══════════════════════════════════════════════════════════════════
               2. LOCATION & DATE (RIGHT-ALIGNED)
               ══════════════════════════════════════════════════════════════════ */}
-          <div className="text-right text-xs text-slate-900 space-y-0.5 pt-1 pb-2 font-serif">
+          <div className="text-right text-xs text-slate-900 space-y-0.5 pt-1 pb-1 font-serif">
             <div>Worli Sea Face, Mumbai</div>
-            <div>Dated {currentDateFormatted}</div>
+            <div>Dated: {currentDateFormatted}</div>
           </div>
 
           {/* ══════════════════════════════════════════════════════════════════
@@ -203,7 +211,7 @@ export const Reports: React.FC = () => {
             </p>
 
             {/* Para 2: SAR Technical Specification Table */}
-            <div>
+            <div className="print-avoid-break">
               <p className="mb-2">
                 2. &nbsp;&nbsp;&nbsp;&nbsp; The physical delineation and backscatter characteristics derived from the dual-polarization ($\sigma_0$ VV/VH) satellite radar acquisition are summarized hereunder:
               </p>
@@ -237,14 +245,14 @@ export const Reports: React.FC = () => {
             </div>
 
             {/* Para 3: Hydrodynamic Drift & Origin Estimation */}
-            <div>
+            <div className="print-avoid-break">
               <p className="mb-2">
                 3. &nbsp;&nbsp;&nbsp;&nbsp; High-resolution reverse Lagrangian hydrodynamic advection backtracking (OpenDrift with INCOIS Arabian Sea current vector fields and ECMWF ERA5 winds) localized the probable discharge envelope to <strong>{drift.origin.latitude.toFixed(4)}°N, {drift.origin.longitude.toFixed(4)}°E</strong> with an estimated discharge time window between <strong>2026-08-24 10:30 UTC</strong> and <strong>2026-08-24 16:00 UTC</strong> (Discharge Origin Certainty: <strong>{(drift.origin.confidence * 100).toFixed(0)}%</strong>).
               </p>
             </div>
 
             {/* Para 4: AIS Correlation Table */}
-            <div>
+            <div className="print-avoid-break">
               <p className="mb-2">
                 4. &nbsp;&nbsp;&nbsp;&nbsp; Spatio-temporal correlation against the National Automatic Identification System (NAIS) coastal station network and the Indian Navy NC3I chain evaluated candidate vessels transiting the discharge envelope during the relevant window:
               </p>
@@ -284,7 +292,7 @@ export const Reports: React.FC = () => {
             </div>
 
             {/* Para 5: Model Provenance Table */}
-            <div>
+            <div className="print-avoid-break">
               <p className="mb-2">
                 5. &nbsp;&nbsp;&nbsp;&nbsp; The technical accuracy and evidentiary provenance of the automated detection and attribution pipeline have been validated against standard operational benchmarks:
               </p>
@@ -314,7 +322,7 @@ export const Reports: React.FC = () => {
             </div>
 
             {/* Para 6: Statutory Orders */}
-            <div>
+            <div className="print-avoid-break">
               <p className="mb-2">
                 6. &nbsp;&nbsp;&nbsp;&nbsp; In view of the high forensic attribution score ({topSuspect?.score.toFixed(1)}%) established against primary suspect <strong>{topSuspect?.vessel_name || 'Target Vessel'}</strong> (MMSI: {topSuspect?.mmsi}), the competent authority has approved the following statutory enforcement actions:
               </p>
@@ -387,6 +395,15 @@ export const Reports: React.FC = () => {
               STATUTORY NOTE (MERCHANT SHIPPING ACT, 1958 / NOS-DCP):
             </strong>
             This Office Memorandum constitutes an official technical assessment formulated pursuant to Section 356J & 356K of the Merchant Shipping Act, 1958 and Rule 15 of Merchant Shipping (Prevention of Pollution by Oil) Rules, 2010.
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════
+              10. A4 FOOTER METADATA
+              ══════════════════════════════════════════════════════════════════ */}
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-[9px] font-mono text-slate-400">
+            <span>F. No. ICG/MRCC-MUM/POL-OPS/2026/INV-{investigation.investigation_id}</span>
+            <span>Government of India · Confidential Statutory Record</span>
+            <span>Page 1 of 1</span>
           </div>
 
         </div>
