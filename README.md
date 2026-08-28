@@ -116,9 +116,6 @@ pip install -r requirements.txt
 cp ../.env.example ../.env  # Configure keys if desired
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-- **Backend API**: `http://localhost:8000`
-- **Interactive Swagger Docs**: `http://localhost:8000/docs`
-- **Health Probe**: `http://localhost:8000/ping`
 
 ---
 
@@ -128,14 +125,33 @@ cd frontend
 npm install
 npm run dev
 ```
-- **Workstation Console**: `http://localhost:5173`
 
 ---
 
-### 5. Running Full-Stack with Docker Compose
+### 5. 🌐 Localhost Access Endpoints & Web Portals
+
+Once both services are started, access the workstation and APIs locally:
+
+| Service / Portal | Localhost URL | Description |
+| :--- | :--- | :--- |
+| **🛰️ SpaceShift Live Surveillance (Landing)** | [`http://localhost:5173`](http://localhost:5173) | Interactive real-time satellite radar surveillance & map-based oil spill target selector |
+| **🔍 Investigation Workspace** | [`http://localhost:5173`](http://localhost:5173) (via `/investigation`) | Full-bleed GIS canvas, OpenDrift advection, and 5D vessel attribution matrix |
+| **🌊 Hydrodynamic Drift Physics** | [`http://localhost:5173`](http://localhost:5173) (via `/drift`) | Metocean vector decomposition and Lagrangian reverse advection physics |
+| **📑 Government of India Dossier (A4)** | [`http://localhost:5173`](http://localhost:5173) (via `/reports`) | Official A4 Office Memorandum (OM) formatted to GoI / ICG statutory standards |
+| **⚡ FastAPI Core Engine** | [`http://localhost:8000`](http://localhost:8000) | Root REST orchestration API server |
+| **📖 Interactive Swagger UI Docs** | [`http://localhost:8000/docs`](http://localhost:8000/docs) | Interactive OpenAPI testing console with executable endpoints |
+| **📚 ReDoc Technical Reference** | [`http://localhost:8000/redoc`](http://localhost:8000/redoc) | Clean formatted API schema & model definitions |
+| **💓 Backend Health Probe** | [`http://localhost:8000/ping`](http://localhost:8000/ping) | Service liveness and dependency status probe |
+| **📡 SpaceShift SateAIs™ Feed API** | [`http://localhost:8000/spcsft/live-feed`](http://localhost:8000/spcsft/live-feed) | Live synchronized SAR telemetry feed endpoint |
+
+---
+
+### 6. Running Full-Stack with Docker Compose
 ```bash
 docker compose up --build
 ```
+- **Backend API**: `http://localhost:8000`
+- **Swagger Docs**: `http://localhost:8000/docs`
 
 ---
 
