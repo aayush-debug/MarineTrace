@@ -21,10 +21,10 @@ export const TopNav: React.FC = () => {
     executeDemo,
     loading,
     setActivePage,
-    investigationList,
     investigation,
     spcsftLiveDetections,
     spcsftSyncEnabled,
+    setIsIncidentSelectorOpen,
   } = useInvestigation();
   const [utcString, setUtcString] = useState<string>('');
   const [localString, setLocalString] = useState<string>('');
@@ -62,7 +62,6 @@ export const TopNav: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const activeCount = investigationList.length;
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
@@ -103,27 +102,40 @@ export const TopNav: React.FC = () => {
         {/* Structural Divider */}
         <div className="h-4 w-px bg-slate-800 hidden md:block shrink-0" />
 
-        {/* Active Incident Case Pill */}
+        {/* Active Incident Case Pill & Scenario Picker */}
         {investigation ? (
-          <div
-            onClick={() => setActivePage('investigation')}
-            className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161e2e] border border-rose-900/60 text-slate-200 text-xs cursor-pointer hover:border-rose-700/80 transition-colors shrink-0 whitespace-nowrap"
-            title={`Active Case #${investigation.investigation_id}`}
+          <div className="hidden md:flex items-center gap-1 shrink-0">
+            <div
+              onClick={() => setActivePage('investigation')}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161e2e] border border-rose-900/60 text-slate-200 text-xs cursor-pointer hover:border-rose-700/80 transition-colors shrink-0 whitespace-nowrap"
+              title={`Active Case #${investigation.investigation_id} — Click to view investigation`}
+            >
+              <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+              <span className="font-mono font-medium text-[11px] text-slate-200">
+                Case #{investigation.investigation_id}
+              </span>
+              <span className="text-[9px] font-mono text-rose-400 font-semibold bg-rose-950 px-1 py-0.2 rounded border border-rose-900/60 shrink-0">
+                {(investigation.spill.confidence * 100).toFixed(0)}% Conf
+              </span>
+            </div>
+
+            <button
+              onClick={() => setIsIncidentSelectorOpen(true)}
+              className="px-2 py-0.5 rounded bg-[#111622] hover:bg-[#161e2e] border border-[#1e293b] hover:border-blue-500/60 text-blue-400 hover:text-blue-300 text-[10px] font-mono transition-colors cursor-pointer whitespace-nowrap"
+              title="Open Oil Spill Target Selector"
+            >
+              Switch Spill
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsIncidentSelectorOpen(true)}
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-medium cursor-pointer transition-colors shrink-0"
           >
-            <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-            <span className="font-mono font-medium text-[11px] text-slate-200">
-              Case #{investigation.investigation_id}
-            </span>
-            <span className="text-[9px] font-mono text-rose-400 font-semibold bg-rose-950 px-1 py-0.2 rounded border border-rose-900/60 shrink-0">
-              {(investigation.spill.confidence * 100).toFixed(0)}% Conf
-            </span>
-          </div>
-        ) : activeCount > 0 ? (
-          <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#161e2e] border border-slate-800 text-slate-300 text-xs shrink-0 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-            <span className="font-mono text-[11px]">{activeCount} Cases Active</span>
-          </div>
-        ) : null}
+            <Compass className="w-3.5 h-3.5 text-blue-400" />
+            <span>Select Target Oil Spill</span>
+          </button>
+        )}
       </div>
 
       {/* CENTER: Compact Status (Only on massive screens to prevent overflow) */}

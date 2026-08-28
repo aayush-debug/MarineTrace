@@ -455,3 +455,314 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
     'This analysis provides potential vessel attribution and investigative priority only. It does not constitute a definitive or legal determination of responsibility.',
 };
 
+export const DEMO_BENGAL_INVESTIGATION: InvestigationResponse = {
+  investigation_id: 'SPCSFT-2026-BENGAL-01',
+  status: 'COMPLETE',
+  created_at: '2026-08-25T15:30:00Z',
+  observation_time: '2026-08-25T11:45:00Z',
+  spill: {
+    detected: true,
+    confidence: 0.918,
+    area_km2: 9.4,
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [84.56, 17.78],
+          [84.64, 17.80],
+          [84.69, 17.86],
+          [84.63, 17.89],
+          [84.55, 17.84],
+          [84.56, 17.78],
+        ],
+      ],
+    },
+    core_geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [84.59, 17.81],
+          [84.65, 17.82],
+          [84.66, 17.85],
+          [84.61, 17.86],
+          [84.59, 17.81],
+        ],
+      ],
+    },
+  },
+  drift: {
+    origin: {
+      latitude: 18.05,
+      longitude: 84.45,
+      confidence: 0.89,
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [84.40, 18.00],
+            [84.50, 18.00],
+            [84.50, 18.10],
+            [84.40, 18.10],
+            [84.40, 18.00],
+          ],
+        ],
+      },
+    },
+    origin_time_window: {
+      start: '2026-08-24T12:00:00Z',
+      end: '2026-08-24T17:30:00Z',
+    },
+    backward_trajectory: {
+      direction: 'backward',
+      geometry: {
+        type: 'LineString',
+        coordinates: [
+          [84.62, 17.82],
+          [84.53, 17.93],
+          [84.45, 18.05],
+        ],
+      },
+      timestamps: [
+        '2026-08-25T11:45:00Z (Detection)',
+        '2026-08-25T00:00:00Z (T-12h)',
+        '2026-08-24T14:00:00Z (Est. Origin)',
+      ],
+      points: [
+        [84.62, 17.82],
+        [84.53, 17.93],
+        [84.45, 18.05],
+      ],
+    },
+  },
+  vessels: [
+    {
+      rank: 1,
+      vessel_name: 'MT Blue Horizon',
+      mmsi: '419001188',
+      score: 88.4,
+      confidence: 'high',
+      heading: 195,
+      feature_scores: {
+        spatial: 92.0,
+        temporal: 89.0,
+        trajectory: 86.0,
+        behaviour: 84.0,
+        vessel_relevance: 91.0,
+      },
+      reasons: [
+        'Transited directly across estimated discharge origin at 14:15 UTC (CPA: 1.1 km)',
+        'Speed reduction of 3.4 knots during nighttime transit corridor',
+        'Chemical/Product Tanker profile with tank cleaning operations history',
+      ],
+      investigative_priority: 'CRITICAL',
+      vessel_type: 'Chemical Tanker',
+      flag: 'IN',
+      trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [84.40, 18.30],
+          [84.43, 18.15],
+          [84.45, 18.05],
+          [84.48, 17.90],
+          [84.52, 17.75],
+        ],
+      },
+    },
+    {
+      rank: 2,
+      vessel_name: 'MV Bengal Carrier',
+      mmsi: '419002233',
+      score: 52.1,
+      confidence: 'medium',
+      heading: 210,
+      feature_scores: {
+        spatial: 54.0,
+        temporal: 60.0,
+        trajectory: 48.0,
+        behaviour: 30.0,
+        vessel_relevance: 68.0,
+      },
+      reasons: [
+        'Transited 6.8 km east of discharge origin core',
+        'Constant transit speed of 12.8 knots',
+      ],
+      investigative_priority: 'MEDIUM',
+      vessel_type: 'Bulk Carrier',
+      flag: 'PA',
+      trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [84.55, 18.25],
+          [84.58, 18.10],
+          [84.60, 17.95],
+          [84.63, 17.80],
+        ],
+      },
+    },
+  ],
+  pipeline_duration_seconds: 1.35,
+  is_demo: true,
+  disclaimer:
+    'This analysis provides potential vessel attribution and investigative priority only. It does not constitute a definitive or legal determination of responsibility.',
+};
+
+export const DEMO_INDOCEAN_INVESTIGATION: InvestigationResponse = {
+  investigation_id: 'SPCSFT-2026-INDOCEAN-01',
+  status: 'COMPLETE',
+  created_at: '2026-08-25T15:30:00Z',
+  observation_time: '2026-08-25T12:10:00Z',
+  spill: {
+    detected: true,
+    confidence: 0.951,
+    area_km2: 16.2,
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [81.28, 5.86],
+          [81.42, 5.89],
+          [81.48, 5.97],
+          [81.40, 6.01],
+          [81.27, 5.94],
+          [81.28, 5.86],
+        ],
+      ],
+    },
+    core_geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [81.33, 5.89],
+          [81.43, 5.92],
+          [81.44, 5.96],
+          [81.35, 5.95],
+          [81.33, 5.89],
+        ],
+      ],
+    },
+  },
+  drift: {
+    origin: {
+      latitude: 6.18,
+      longitude: 81.12,
+      confidence: 0.94,
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [81.08, 6.14],
+            [81.16, 6.14],
+            [81.16, 6.22],
+            [81.08, 6.22],
+            [81.08, 6.14],
+          ],
+        ],
+      },
+    },
+    origin_time_window: {
+      start: '2026-08-24T08:00:00Z',
+      end: '2026-08-24T14:00:00Z',
+    },
+    backward_trajectory: {
+      direction: 'backward',
+      geometry: {
+        type: 'LineString',
+        coordinates: [
+          [81.38, 5.92],
+          [81.25, 6.05],
+          [81.12, 6.18],
+        ],
+      },
+      timestamps: [
+        '2026-08-25T12:10:00Z (Detection)',
+        '2026-08-24T22:00:00Z (T-14h)',
+        '2026-08-24T11:00:00Z (Est. Origin)',
+      ],
+      points: [
+        [81.38, 5.92],
+        [81.25, 6.05],
+        [81.12, 6.18],
+      ],
+    },
+  },
+  vessels: [
+    {
+      rank: 1,
+      vessel_name: 'MT Arabian Dawn',
+      mmsi: '636019944',
+      score: 93.7,
+      confidence: 'high',
+      heading: 105,
+      feature_scores: {
+        spatial: 96.0,
+        temporal: 94.0,
+        trajectory: 92.0,
+        behaviour: 91.0,
+        vessel_relevance: 96.0,
+      },
+      reasons: [
+        'Transited directly across origin core at 11:18 UTC (CPA: 0.6 km)',
+        '38-minute AIS transponder silence / position report gap during passage',
+        'VLCC crude tanker underway in ballast with unrecorded bilge discharge signature',
+      ],
+      investigative_priority: 'CRITICAL',
+      vessel_type: 'VLCC Crude Tanker',
+      flag: 'LR',
+      trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [80.85, 6.28],
+          [81.00, 6.22],
+          [81.12, 6.18],
+          [81.30, 6.12],
+          [81.55, 6.04],
+        ],
+      },
+    },
+  ],
+  pipeline_duration_seconds: 1.48,
+  is_demo: true,
+  disclaimer:
+    'This analysis provides potential vessel attribution and investigative priority only. It does not constitute a definitive or legal determination of responsibility.',
+};
+
+export const ALL_INCIDENT_PRESETS = [
+  {
+    id: 'MT-2026-ARABIAN-01',
+    name: 'Mumbai Offshore Tanker Discharge',
+    region: 'Arabian Sea (Indian EEZ)',
+    area_km2: 18.4,
+    confidence: 0.942,
+    satellite: 'Sentinel-1A SAR',
+    primary_suspect: 'MV Ocean Star (Crude Tanker)',
+    suspect_score: 91.2,
+    severity: 'CRITICAL',
+    data: DEMO_INVESTIGATION_DATA,
+  },
+  {
+    id: 'SPCSFT-2026-BENGAL-01',
+    name: 'Bay of Bengal Tanker Sludge Plume',
+    region: 'Bay of Bengal (Vizag / Paradip Fairway)',
+    area_km2: 9.4,
+    confidence: 0.918,
+    satellite: 'Sentinel-1A SAR',
+    primary_suspect: 'MT Blue Horizon (Chemical Tanker)',
+    suspect_score: 88.4,
+    severity: 'HIGH',
+    data: DEMO_BENGAL_INVESTIGATION,
+  },
+  {
+    id: 'SPCSFT-2026-INDOCEAN-01',
+    name: 'Indian Ocean De-ballasting Anomaly',
+    region: 'Southern Indian Ocean (6-Degree Channel)',
+    area_km2: 16.2,
+    confidence: 0.951,
+    satellite: 'Sentinel-1B SAR',
+    primary_suspect: 'MT Arabian Dawn (VLCC Tanker)',
+    suspect_score: 93.7,
+    severity: 'CRITICAL',
+    data: DEMO_INDOCEAN_INVESTIGATION,
+  },
+];
+
+

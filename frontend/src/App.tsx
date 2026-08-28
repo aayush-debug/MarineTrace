@@ -17,6 +17,7 @@ import { AccessLogs } from './pages/AccessLogs';
 import { LoginPage } from './pages/LoginPage';
 import { AlertCircle, X, Compass } from 'lucide-react';
 import { PipelineProgressModal } from './components/ui/PipelineProgressModal';
+import { IncidentSelectorModal } from './components/common/IncidentSelectorModal';
 
 const MainLayout: React.FC = () => {
   const { activePage, loading, loadingStep, error, clearError } = useInvestigation();
@@ -68,6 +69,9 @@ const MainLayout: React.FC = () => {
           {renderActivePage()}
         </main>
       </div>
+
+      {/* Global Incident Target Scenario Selection Modal */}
+      <IncidentSelectorModal />
 
       {/* Global High-Priority Multi-Stage Pipeline Progress Modal */}
       <PipelineProgressModal isOpen={loading} currentStepMessage={loadingStep} />

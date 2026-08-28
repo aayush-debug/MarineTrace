@@ -26,7 +26,7 @@ import {
   testSpcsftKey as apiTestSpcsftKey,
   launchInvestigationFromSpcsft as apiLaunchInvestigationFromSpcsft,
 } from '../api/spcsft';
-import { DEMO_INVESTIGATION_DATA } from '../data/demo/demoData';
+import { DEMO_INVESTIGATION_DATA, ALL_INCIDENT_PRESETS } from '../data/demo/demoData';
 import type { BasemapType } from '../utils/mapTiles';
 
 export type PageId =
@@ -75,6 +75,10 @@ interface InvestigationContextType {
   loadInvestigationById: (id: string) => void;
   refreshHistory: () => Promise<void>;
   clearError: () => void;
+  // ── Incident Target Scenario Selection Modal ──
+  isIncidentSelectorOpen: boolean;
+  setIsIncidentSelectorOpen: (open: boolean) => void;
+  selectPresetScenario: (scenarioId: string) => void;
 
   // ── Space Shift (SateAIs™) Real-Time Synchronization State ──
   spcsftLiveDetections: SpaceShiftDetection[];
@@ -135,6 +139,31 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [investigation, setInvestigation] = useState<InvestigationResponse | null>(DEMO_INVESTIGATION_DATA);
   const [investigationList, setInvestigationList] = useState<InvestigationResponse[]>([DEMO_INVESTIGATION_DATA]);
   const [selectedVesselMmsi, setSelectedVesselMmsi] = useState<string | null>(null);
+  const [isIncidentSelectorOpen, setIsIncidentSelectorOpen] = useState<boolean>(() => {
+    try {
+      return !sessionStorage.getItem('marinetrace_scenario_selected');
+    } catch {
+      return true;
+    }
+  });
+
+  const selectPresetScenario = (scenarioId: string) => {
+    const preset = ALL_INCIDENT_PRESETS.find((p) => p.id === scenarioId) || ALL_INCIDENT_PRESETS[0];
+    if (preset) {
+      setInvestigation(preset.data);
+      setSelectedVesselMmsi(preset.data.vessels[0]?.mmsi || null);
+      setInvestigationList((prev) => {
+        const exists = prev.some((p) => p.investigation_id === preset.data.investigation_id);
+        return exists ? prev : [preset.data, ...prev];
+      });
+      try {
+        sessionStorage.setItem('marinetrace_scenario_selected', 'true');
+      } catch {
+        // Ignore storage errors
+      }
+      setIsIncidentSelectorOpen(false);
+    }
+  };
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingStep, setLoadingStep] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -439,6 +468,9 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
         loadInvestigationById,
         refreshHistory,
         clearError,
+        isIncidentSelectorOpen,
+        setIsIncidentSelectorOpen,
+        selectPresetScenario,
 
         // Space Shift (SateAIs™) Real-Time Synchronization
         spcsftLiveDetections,

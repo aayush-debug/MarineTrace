@@ -4,7 +4,7 @@ import {
   Satellite,
   Ship,
   Plus,
-  Play,
+  Compass,
   Activity,
   ChevronRight,
   Clock,
@@ -50,11 +50,10 @@ export const Dashboard: React.FC = () => {
   const {
     investigationList,
     setActivePage,
-    executeDemo,
-    loading,
     investigation,
     spcsftLiveDetections,
     spcsftSyncEnabled,
+    setIsIncidentSelectorOpen,
   } = useInvestigation();
 
   const activeCount = investigationList.length > 0 ? investigationList.length : 1;
@@ -88,20 +87,20 @@ export const Dashboard: React.FC = () => {
 
         <div className="flex items-center gap-2 shrink-0">
           <button
+            onClick={() => setIsIncidentSelectorOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:text-white font-medium text-xs shadow-sm transition-colors cursor-pointer"
+            title="Open interactive scenario selector"
+          >
+            <Compass className="w-3.5 h-3.5 text-blue-400" />
+            <span>Choose Oil Spill Target</span>
+          </button>
+
+          <button
             onClick={() => setActivePage('new-investigation')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-sm transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Investigation</span>
-          </button>
-
-          <button
-            onClick={executeDemo}
-            disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] text-slate-200 text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
-          >
-            <Play className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
-            <span>{loading ? 'Simulating...' : 'Demo Scenario'}</span>
           </button>
         </div>
       </div>
