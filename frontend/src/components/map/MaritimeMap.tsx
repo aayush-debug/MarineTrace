@@ -216,20 +216,41 @@ export const MaritimeMap: React.FC<{
   const defaultCenter: [number, number] = [18.95, 72.30];
   const activeBasemap = BASEMAP_CONFIGS[basemap] || BASEMAP_CONFIGS['google-hybrid'];
 
-  // Geodetic Bounding Box for SAR Radar Overlay matching the active spill
+  // Geodetic Bounding Box for SAR Radar Overlay matching the active spill exactly
   const sarBbox = useMemo(() => {
     if (!investigation) return null;
     const positions = getPolygonPositions(investigation.spill.geometry);
     if (positions.length === 0) return null;
     const lats = positions.map((p) => p[0]);
     const lons = positions.map((p) => p[1]);
-    const minLat = Math.min(...lats) - 0.045;
-    const maxLat = Math.max(...lats) + 0.045;
-    const minLon = Math.min(...lons) - 0.045;
-    const maxLon = Math.max(...lons) + 0.045;
+
+    if (investigation.spill.sheen_geometry) {
+      for (const sheen of investigation.spill.sheen_geometry) {
+        for (const pt of getPolygonPositions(sheen)) {
+          lats.push(pt[0]);
+          lons.push(pt[1]);
+        }
+      }
+    }
+    if (investigation.spill.core_geometry) {
+      for (const pt of getPolygonPositions(investigation.spill.core_geometry)) {
+        lats.push(pt[0]);
+        lons.push(pt[1]);
+      }
+    }
+
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLon = Math.min(...lons);
+    const maxLon = Math.max(...lons);
+
+    const dLat = Math.max(maxLat - minLat, 0.04);
+    const dLon = Math.max(maxLon - minLon, 0.04);
+    const pad = 0.35;
+
     return [
-      [minLat, minLon],
-      [maxLat, maxLon],
+      [minLat - pad * dLat, minLon - pad * dLon],
+      [maxLat + pad * dLat, maxLon + pad * dLon],
     ] as [[number, number], [number, number]];
   }, [investigation]);
 
