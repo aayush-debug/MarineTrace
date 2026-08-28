@@ -8,7 +8,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 from app.models.drift import DriftResult
-from app.models.spill import SpillSummary
+from app.models.spill import SpillDetection, SpillSummary
 from app.models.vessel import VesselAttribution
 
 
@@ -38,6 +38,10 @@ class InvestigationRequest(BaseModel):
     # Optional overrides for the investigation
     backward_hours: int | None = None
     forward_hours: int | None = None
+    custom_spill: SpillDetection | None = Field(
+        None,
+        description="Explicit spill detection instance (e.g. from SpaceShift real-time feed).",
+    )
 
 
 class InvestigationResponse(BaseModel):

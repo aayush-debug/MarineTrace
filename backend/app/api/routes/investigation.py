@@ -114,12 +114,21 @@ async def investigate(
 
     try:
         # ── Step 1: ML Oil Detection ─────────────────────
-        logger.info("[1/4] Running oil-spill detection...")
-        ml_client = _real_ml_client if settings.use_real_ml else _mock_ml_client
-        spill = await ml_client.detect_oil(
-            image_data=request.image,
-            observation_time=request.observation_time,
-        )
+        if request.custom_spill:
+            spill = request.custom_spill
+            logger.info(
+                "[1/4] Using specified spill detection at (%.4f, %.4f) — area: %.1f km²",
+                spill.centroid.latitude if spill.centroid else 0.0,
+                spill.centroid.longitude if spill.centroid else 0.0,
+                spill.area_km2,
+            )
+        else:
+            logger.info("[1/4] Running oil-spill detection...")
+            ml_client = _real_ml_client if settings.use_real_ml else _mock_ml_client
+            spill = await ml_client.detect_oil(
+                image_data=request.image,
+                observation_time=request.observation_time,
+            )
 
         if not spill.spill_detected:
             logger.info("No spill detected — investigation complete")

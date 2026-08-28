@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field
 from app.core.config import settings
 from app.core.logging import logger
 from app.models.investigation import InvestigationRequest, InvestigationResponse
+from app.models.spill import SpillDetection, SpillCentroid, GeoJSONGeometry
 from app.api.routes.investigation import investigate, _real_ml_client, _mock_ml_client
 
 router = APIRouter(prefix="/spcsft", tags=["spaceshift"])
@@ -666,10 +667,27 @@ async def launch_investigation_from_spcsft(payload: dict):
         except Exception:
             pass
 
+    custom_spill = None
+    if target_det:
+        lat = float(target_det["centroid"]["latitude"])
+        lon = float(target_det["centroid"]["longitude"])
+        custom_spill = SpillDetection(
+            spill_detected=True,
+            confidence=float(target_det.get("confidence", 0.92)),
+            area_km2=float(target_det.get("area_km2", 15.0)),
+            centroid=SpillCentroid(latitude=lat, longitude=lon),
+            geometry=GeoJSONGeometry(
+                type=target_det["geometry"]["type"],
+                coordinates=target_det["geometry"]["coordinates"],
+            ),
+            observation_time=obs_time,
+        )
+
     req = InvestigationRequest(
         observation_time=obs_time,
         backward_hours=payload.get("backward_hours", 24),
         forward_hours=payload.get("forward_hours", 24),
+        custom_spill=custom_spill,
     )
 
     return await investigate(req)
