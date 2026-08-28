@@ -13,6 +13,7 @@ import {
   Radio,
   RefreshCw,
   Zap,
+  Satellite,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { BASEMAP_CONFIGS } from '../utils/mapTiles';
@@ -130,18 +131,18 @@ export const SpaceShiftRealTime: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-bold text-slate-100 tracking-tight flex items-center gap-2">
-                <span>Space Shift SateAIs™ Real-Time Oil Surveillance</span>
+                <span>SpaceShift SateAIs™ Real-Time Oil Surveillance</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60 font-bold">
-                  ● LIVE API
+                  ● LIVE SATELLITE TELEMETRY
                 </span>
               </h1>
             </div>
             <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5 font-mono">
               <span className="text-blue-400 font-semibold">
-                Space Shift SateAIs
+                Recent Satellite Radar Telemetry
               </span>
               <span className="text-slate-600">·</span>
-              <span>Sentinel-1 SAR C-Band AI Segmentation</span>
+              <span>Sentinel-1 SAR C-Band AI Detections</span>
               {spcsftLastSync && (
                 <>
                   <span className="text-slate-600">·</span>
@@ -434,15 +435,23 @@ export const SpaceShiftRealTime: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                 <h2 className="text-xs font-bold text-slate-100 uppercase tracking-wide">
-                  LIVE OIL DETECTIONS FEED
+                  RECENT SATELLITE SAR DETECTIONS
                 </h2>
               </div>
               <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                Real-time SAR backscatter signatures from Space Shift SateAIs
+                Real-time SAR backscatter signatures received from SpaceShift SateAIs™
               </p>
             </div>
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60">
               {displayedDetections.length} Targets
+            </span>
+          </div>
+
+          {/* Interactive User Selection Prompt */}
+          <div className="p-3 bg-blue-950/40 border-b border-blue-800/50 text-[11px] font-mono text-blue-200 flex items-start gap-2.5 shrink-0">
+            <Satellite className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <span className="leading-relaxed">
+              <strong>Interactive Target Selection:</strong> Click any detected oil spill slick on the map or select from the list below to view physical radar metrics and launch forensic attribution.
             </span>
           </div>
 

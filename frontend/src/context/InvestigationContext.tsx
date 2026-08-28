@@ -135,17 +135,11 @@ const DEFAULT_ENVIRONMENTAL: EnvironmentalConditions = {
 const InvestigationContext = createContext<InvestigationContextType | undefined>(undefined);
 
 export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activePage, setActivePage] = useState<PageId>('dashboard');
+  const [activePage, setActivePage] = useState<PageId>('spcsft-realtime');
   const [investigation, setInvestigation] = useState<InvestigationResponse | null>(DEMO_INVESTIGATION_DATA);
   const [investigationList, setInvestigationList] = useState<InvestigationResponse[]>([DEMO_INVESTIGATION_DATA]);
   const [selectedVesselMmsi, setSelectedVesselMmsi] = useState<string | null>(null);
-  const [isIncidentSelectorOpen, setIsIncidentSelectorOpen] = useState<boolean>(() => {
-    try {
-      return !sessionStorage.getItem('marinetrace_scenario_selected');
-    } catch {
-      return true;
-    }
-  });
+  const [isIncidentSelectorOpen, setIsIncidentSelectorOpen] = useState<boolean>(false);
 
   const selectPresetScenario = (scenarioId: string) => {
     const preset = ALL_INCIDENT_PRESETS.find((p) => p.id === scenarioId) || ALL_INCIDENT_PRESETS[0];

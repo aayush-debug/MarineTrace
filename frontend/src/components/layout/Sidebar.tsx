@@ -23,8 +23,8 @@ interface NavItem {
 }
 
 const SURVEILLANCE_NAV: NavItem[] = [
+  { id: 'spcsft-realtime', label: 'SpaceShift Live Surveillance', icon: Radio, badge: 'Live', badgeType: 'alert' },
   { id: 'dashboard', label: 'Situation Overview', icon: LayoutDashboard },
-  { id: 'spcsft-realtime', label: 'SpaceShift Radar Station', icon: Radio, badge: 'Live', badgeType: 'alert' },
   { id: 'new-investigation', label: 'New Investigation', icon: PlusCircle },
   { id: 'satellite', label: 'Sentinel-1 SAR Viewer', icon: Satellite },
 ];
