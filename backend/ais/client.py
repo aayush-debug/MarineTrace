@@ -47,18 +47,18 @@ class MockAISClient(AISClientInterface):
     headings, and types.
     """
 
-    # Pre-defined vessels for the demo scenario
+    # Pre-defined vessels for the demo scenario in Arabian Sea shipping corridors
     MOCK_VESSELS = [
-        # ── Strong candidates (near drift origin zone ~73.20°E, 18.91°N) ──
+        # ── Strong candidates (near drift origin zone ~72.38°E, 18.95°N) ──
         {
             "mmsi": "419001234",
             "name": "MV Ocean Star",
             "vessel_type": "Oil Tanker",
             "flag": "PA",
-            "base_lon": 73.18,
-            "base_lat": 18.92,
-            "speed_kn": 8.5,
-            "heading": 215,
+            "base_lon": 72.18,
+            "base_lat": 19.12,
+            "speed_kn": 12.5,
+            "heading": 155,
             "anomaly": True,  # will show speed deviation
         },
         {
@@ -66,10 +66,10 @@ class MockAISClient(AISClientInterface):
             "name": "MT Blue Horizon",
             "vessel_type": "Chemical Tanker",
             "flag": "MH",
-            "base_lon": 73.22,
-            "base_lat": 18.88,
+            "base_lon": 72.28,
+            "base_lat": 19.18,
             "speed_kn": 11.0,
-            "heading": 190,
+            "heading": 170,
             "anomaly": False,
         },
         {
@@ -77,10 +77,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Pacific Trader",
             "vessel_type": "Cargo Ship",
             "flag": "LR",
-            "base_lon": 73.15,
-            "base_lat": 18.95,
-            "speed_kn": 10.5,
-            "heading": 250,
+            "base_lon": 72.05,
+            "base_lat": 19.22,
+            "speed_kn": 13.5,
+            "heading": 205,
             "anomaly": False,
         },
         # ── Moderate candidates ──
@@ -89,9 +89,9 @@ class MockAISClient(AISClientInterface):
             "name": "MT Arabian Sun",
             "vessel_type": "Oil Tanker",
             "flag": "HK",
-            "base_lon": 73.10,
-            "base_lat": 18.98,
-            "speed_kn": 12.0,
+            "base_lon": 72.35,
+            "base_lat": 19.05,
+            "speed_kn": 11.5,
             "heading": 180,
             "anomaly": False,
         },
@@ -100,10 +100,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Coastal Express",
             "vessel_type": "Container Ship",
             "flag": "LR",
-            "base_lon": 72.90,
-            "base_lat": 18.78,
-            "speed_kn": 14.0,
-            "heading": 270,
+            "base_lon": 72.48,
+            "base_lat": 18.90,
+            "speed_kn": 14.5,
+            "heading": 245,
             "anomaly": False,
         },
         {
@@ -111,10 +111,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Gujarat Pearl",
             "vessel_type": "Bulk Carrier",
             "flag": "IN",
-            "base_lon": 72.70,
-            "base_lat": 18.95,
-            "speed_kn": 9.0,
-            "heading": 200,
+            "base_lon": 71.90,
+            "base_lat": 19.35,
+            "speed_kn": 10.0,
+            "heading": 195,
             "anomaly": False,
         },
         {
@@ -122,10 +122,10 @@ class MockAISClient(AISClientInterface):
             "name": "FV Silver Catch",
             "vessel_type": "Fishing Vessel",
             "flag": "MT",
-            "base_lon": 72.88,
-            "base_lat": 18.80,
+            "base_lon": 72.42,
+            "base_lat": 18.82,
             "speed_kn": 5.0,
-            "heading": 160,
+            "heading": 215,
             "anomaly": False,
         },
         # ── Far away vessels (should be filtered out) ──
@@ -134,10 +134,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Atlantic Voyager",
             "vessel_type": "Container Ship",
             "flag": "BS",
-            "base_lon": 73.20,
-            "base_lat": 19.30,
-            "speed_kn": 18.0,
-            "heading": 90,
+            "base_lon": 71.50,
+            "base_lat": 19.10,
+            "speed_kn": 17.0,
+            "heading": 255,
             "anomaly": False,
         },
         {
@@ -145,10 +145,10 @@ class MockAISClient(AISClientInterface):
             "name": "MT Global Spirit",
             "vessel_type": "Oil Tanker",
             "flag": "PA",
-            "base_lon": 72.40,
-            "base_lat": 18.40,
-            "speed_kn": 13.0,
-            "heading": 0,
+            "base_lon": 72.10,
+            "base_lat": 18.35,
+            "speed_kn": 12.5,
+            "heading": 220,
             "anomaly": False,
         },
         {
@@ -156,10 +156,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Southern Cross",
             "vessel_type": "Bulk Carrier",
             "flag": "BR",
-            "base_lon": 73.50,
-            "base_lat": 19.50,
-            "speed_kn": 11.0,
-            "heading": 135,
+            "base_lon": 71.70,
+            "base_lat": 19.30,
+            "speed_kn": 11.5,
+            "heading": 180,
             "anomaly": False,
         },
         {
@@ -167,10 +167,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Korea Star",
             "vessel_type": "Container Ship",
             "flag": "KR",
-            "base_lon": 73.10,
-            "base_lat": 19.20,
+            "base_lon": 71.30,
+            "base_lat": 18.80,
             "speed_kn": 16.0,
-            "heading": 45,
+            "heading": 245,
             "anomaly": False,
         },
         {
@@ -178,10 +178,10 @@ class MockAISClient(AISClientInterface):
             "name": "FV Deep Fisher",
             "vessel_type": "Fishing Vessel",
             "flag": "AG",
-            "base_lon": 72.50,
-            "base_lat": 18.50,
-            "speed_kn": 4.0,
-            "heading": 300,
+            "base_lon": 72.20,
+            "base_lat": 18.55,
+            "speed_kn": 4.5,
+            "heading": 230,
             "anomaly": False,
         },
         {
@@ -189,10 +189,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Nordic Wind",
             "vessel_type": "Cargo Ship",
             "flag": "NO",
-            "base_lon": 73.30,
-            "base_lat": 19.40,
+            "base_lon": 71.80,
+            "base_lat": 19.25,
             "speed_kn": 12.0,
-            "heading": 180,
+            "heading": 185,
             "anomaly": False,
         },
         {
@@ -200,10 +200,10 @@ class MockAISClient(AISClientInterface):
             "name": "MT Mediterranean",
             "vessel_type": "Chemical Tanker",
             "flag": "MT",
-            "base_lon": 72.30,
-            "base_lat": 18.30,
-            "speed_kn": 10.0,
-            "heading": 270,
+            "base_lon": 71.95,
+            "base_lat": 18.45,
+            "speed_kn": 10.5,
+            "heading": 250,
             "anomaly": False,
         },
         {
@@ -211,10 +211,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Singapore Star",
             "vessel_type": "Container Ship",
             "flag": "SG",
-            "base_lon": 73.40,
-            "base_lat": 19.10,
-            "speed_kn": 17.0,
-            "heading": 120,
+            "base_lon": 72.30,
+            "base_lat": 18.95,
+            "speed_kn": 16.0,
+            "heading": 165,
             "anomaly": False,
         },
         {
@@ -222,10 +222,10 @@ class MockAISClient(AISClientInterface):
             "name": "MV Panama Express",
             "vessel_type": "Bulk Carrier",
             "flag": "PA",
-            "base_lon": 72.60,
-            "base_lat": 18.60,
-            "speed_kn": 10.5,
-            "heading": 330,
+            "base_lon": 72.15,
+            "base_lat": 18.75,
+            "speed_kn": 11.0,
+            "heading": 235,
             "anomaly": False,
         },
         {
@@ -233,10 +233,10 @@ class MockAISClient(AISClientInterface):
             "name": "FV Mumbai Fisher",
             "vessel_type": "Fishing Vessel",
             "flag": "IN",
-            "base_lon": 72.95,
-            "base_lat": 19.00,
-            "speed_kn": 3.5,
-            "heading": 200,
+            "base_lon": 72.52,
+            "base_lat": 18.85,
+            "speed_kn": 4.0,
+            "heading": 210,
             "anomaly": False,
         },
     ]
@@ -288,19 +288,30 @@ class MockAISClient(AISClientInterface):
         end_time: datetime,
         rng: np.random.Generator,
     ) -> list[VesselPosition]:
-        """Generate a realistic multi-point AIS track for a vessel."""
+        """Generate a realistic multi-point AIS track for a vessel staying strictly in ocean waters."""
         positions = []
         interval_minutes = 30  # AIS report interval
         total_minutes = (end_time - start_time).total_seconds() / 60
         n_points = max(int(total_minutes / interval_minutes), 2)
 
-        lon = vessel["base_lon"]
-        lat = vessel["base_lat"]
-        speed = vessel["speed_kn"]
-        heading = vessel["heading"]
+        lon = float(vessel["base_lon"])
+        lat = float(vessel["base_lat"])
+        speed = float(vessel["speed_kn"])
+        heading = float(vessel["heading"])
 
         for i in range(n_points):
             t = start_time + timedelta(minutes=interval_minutes * i)
+
+            # ── Maritime Land Avoidance Safety Constraints ──
+            # 1. Eastern coast clamp (Maharashtra mainland): keep in open sea (lon <= 72.70)
+            if lon > 72.68:
+                heading = 240.0 + float(rng.normal(0, 3))
+                lon = 72.68
+
+            # 2. Northern clamp (Gujarat Saurashtra Peninsula): keep south of 19.80°N
+            if lat > 19.80:
+                heading = 190.0 + float(rng.normal(0, 3))
+                lat = 19.80
 
             # Simulate movement (speed in knots → degrees per interval)
             speed_deg_per_min = (speed * 1.852 / 111.0) / 60  # rough conversion
@@ -309,27 +320,33 @@ class MockAISClient(AISClientInterface):
             lon += speed_deg_per_min * np.sin(heading_rad) * interval_minutes
             lat += speed_deg_per_min * np.cos(heading_rad) * interval_minutes
 
-            # Add noise
-            lon += rng.normal(0, 0.001)
-            lat += rng.normal(0, 0.001)
+            # Post-step safety enforcement
+            if lon > 72.70:
+                lon = 72.70 - abs(float(rng.normal(0, 0.005)))
+            if lat > 19.85:
+                lat = 19.85 - abs(float(rng.normal(0, 0.005)))
+
+            # Add minor GPS jitter
+            lon += float(rng.normal(0, 0.0005))
+            lat += float(rng.normal(0, 0.0005))
 
             current_speed = speed
 
             # If anomaly vessel, introduce a speed drop in the middle of track
             if vessel.get("anomaly") and 0.3 < (i / n_points) < 0.5:
-                current_speed = speed * 0.2  # dramatic speed reduction
-                heading += rng.normal(0, 15)  # erratic heading
+                current_speed = speed * 0.22  # dramatic speed reduction
+                heading += float(rng.normal(0, 8))  # course alteration
 
-            heading += rng.normal(0, 2)  # slight heading variation
+            heading += float(rng.normal(0, 1.5))  # slight heading variation
 
             positions.append(
                 VesselPosition(
                     timestamp=t,
                     latitude=round(lat, 6),
                     longitude=round(lon, 6),
-                    speed=round(current_speed + rng.normal(0, 0.3), 1),
+                    speed=round(current_speed + float(rng.normal(0, 0.2)), 1),
                     heading=round(heading % 360, 1),
-                    course=round((heading + rng.normal(0, 3)) % 360, 1),
+                    course=round((heading + float(rng.normal(0, 2)) ) % 360, 1),
                 )
             )
 

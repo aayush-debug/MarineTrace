@@ -18,23 +18,23 @@ from attribution.ranking import rank_vessels
 def test_attribution_scoring_and_ranking():
     origin = DriftOrigin(
         latitude=18.915,
-        longitude=73.203,
+        longitude=72.250,
         confidence=0.84,
-        geometry=GeoJSONGeometry(type="Polygon", coordinates=[[[73.15, 18.89], [73.25, 18.89], [73.25, 18.95], [73.15, 18.89]]]),
+        geometry=GeoJSONGeometry(type="Polygon", coordinates=[[[72.20, 18.89], [72.30, 18.89], [72.30, 18.95], [72.20, 18.89]]]),
     )
     time_win = DriftTimeWindow(
         start=datetime(2026, 8, 24, 10, 30, 0, tzinfo=timezone.utc),
         end=datetime(2026, 8, 24, 16, 30, 0, tzinfo=timezone.utc),
     )
 
-    # Tanker near origin
+    # Tanker near origin (Arabian Sea)
     near_vessel = VesselTrack(
         mmsi="111111111",
         name="Near Tanker",
         vessel_type="Oil Tanker",
         positions=[
-            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 0, 0, tzinfo=timezone.utc), latitude=18.916, longitude=73.204, speed=2.0, heading=200),
-            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 30, 0, tzinfo=timezone.utc), latitude=18.917, longitude=73.205, speed=10.0, heading=200),
+            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 0, 0, tzinfo=timezone.utc), latitude=18.916, longitude=72.251, speed=2.0, heading=200),
+            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 30, 0, tzinfo=timezone.utc), latitude=18.917, longitude=72.252, speed=10.0, heading=200),
         ],
     )
 
@@ -44,7 +44,7 @@ def test_attribution_scoring_and_ranking():
         name="Far Cargo",
         vessel_type="Cargo Ship",
         positions=[
-            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 0, 0, tzinfo=timezone.utc), latitude=18.50, longitude=72.50, speed=12.0, heading=180),
+            VesselPosition(timestamp=datetime(2026, 8, 24, 12, 0, 0, tzinfo=timezone.utc), latitude=18.50, longitude=71.50, speed=12.0, heading=180),
         ],
     )
 
