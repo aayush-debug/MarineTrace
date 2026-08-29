@@ -221,9 +221,7 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   });
   const [spcsftSelectedZone, setSpcsftSelectedZone] = useState<string>('all');
-  const [selectedSpcsftDetection, setSelectedSpcsftDetection] = useState<SpaceShiftDetection | null>(
-    DEFAULT_SPCSFT_DETECTIONS[0] || null
-  );
+  const [selectedSpcsftDetection, setSelectedSpcsftDetection] = useState<SpaceShiftDetection | null>(null);
 
   const setSpcsftApiKey = (key: string) => {
     setSpcsftApiKeyState(key);

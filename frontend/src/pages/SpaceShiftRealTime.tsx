@@ -5,6 +5,7 @@ import {
   Polygon,
   CircleMarker,
   Popup,
+  Tooltip,
   useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -14,11 +15,14 @@ import {
   RefreshCw,
   Zap,
   Satellite,
+  Maximize2,
+  Crosshair,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { BASEMAP_CONFIGS } from '../utils/mapTiles';
 import { getPolygonPositions } from '../components/map/MaritimeMap';
 import { ingestSatellitePass } from '../api/spcsft';
+import type { SpaceShiftDetection, SpaceShiftMonitoringZone } from '../types/spcsft';
 
 // Helper to format dynamic time ago for live satellite passes
 function formatTimeAgo(isoString: string): string {
@@ -35,31 +39,62 @@ function formatTimeAgo(isoString: string): string {
 
 // Custom Auto Bounds Fitter for Space Shift map
 const MapBoundsFitter: React.FC<{
-  coords: [number, number][];
-}> = ({ coords }) => {
+  selectedDetection: SpaceShiftDetection | null;
+  selectedZone: string;
+  zones: SpaceShiftMonitoringZone[];
+  detections: SpaceShiftDetection[];
+}> = ({ selectedDetection, selectedZone, zones, detections }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!coords || coords.length === 0) return;
     try {
-      const lats = coords.map((c) => c[0]);
-      const lons = coords.map((c) => c[1]);
-      const minLat = Math.min(...lats);
-      const maxLat = Math.max(...lats);
-      const minLon = Math.min(...lons);
-      const maxLon = Math.max(...lons);
-
-      map.fitBounds(
-        [
-          [minLat - 0.12, minLon - 0.12],
-          [maxLat + 0.12, maxLon + 0.12],
-        ],
-        { padding: [40, 40], maxZoom: 12, animate: true }
-      );
+      if (selectedDetection) {
+        // Zoom closely into the selected detection
+        const lat = selectedDetection.centroid.latitude;
+        const lon = selectedDetection.centroid.longitude;
+        map.flyTo([lat, lon], 10, { animate: true, duration: 1.0 });
+      } else if (selectedZone && selectedZone !== 'all') {
+        // Zoom to the selected monitoring zone
+        const zone = zones.find((z) => z.zone_id === selectedZone);
+        if (zone && zone.bbox) {
+          map.fitBounds(
+            [
+              [zone.bbox[1] - 0.2, zone.bbox[0] - 0.2],
+              [zone.bbox[3] + 0.2, zone.bbox[2] + 0.2],
+            ],
+            { padding: [50, 50], maxZoom: 8, animate: true, duration: 1.0 }
+          );
+        }
+      } else {
+        // Full World / Global Maritime Theater overview (Mediterranean to Southeast Asia & Indian Ocean)
+        if (detections.length > 0) {
+          const lats = detections.map((d) => d.centroid.latitude);
+          const lons = detections.map((d) => d.centroid.longitude);
+          const minLat = Math.min(...lats, 0.0);
+          const maxLat = Math.max(...lats, 38.0);
+          const minLon = Math.min(...lons, 12.0);
+          const maxLon = Math.max(...lons, 105.0);
+          map.fitBounds(
+            [
+              [minLat - 2.0, minLon - 2.0],
+              [maxLat + 2.0, maxLon + 2.0],
+            ],
+            { padding: [40, 40], maxZoom: 4, animate: true, duration: 1.0 }
+          );
+        } else {
+          map.fitBounds(
+            [
+              [-2.0, 38.0],
+              [38.0, 108.0],
+            ],
+            { padding: [40, 40], maxZoom: 4, animate: true, duration: 1.0 }
+          );
+        }
+      }
     } catch {
       // Map may not be ready
     }
-  }, [coords, map]);
+  }, [selectedDetection, selectedZone, zones, detections, map]);
 
   return null;
 };
@@ -94,6 +129,12 @@ export const SpaceShiftRealTime: React.FC = () => {
     setIsRefreshing(true);
     await refreshSpcsftFeed();
     setTimeout(() => setIsRefreshing(false), 500);
+  };
+
+  // Reset to full global map view
+  const handleResetToGlobal = () => {
+    setSelectedSpcsftDetection(null);
+    setSpcsftSelectedZone('all');
   };
 
   // Trigger Immediate Live Satellite Pass Ingestion
@@ -178,23 +219,7 @@ export const SpaceShiftRealTime: React.FC = () => {
           );
         });
 
-  // Collect map coordinates for auto-fit based on selection
-  const mapCoords: [number, number][] = [];
-  if (selectedSpcsftDetection) {
-    mapCoords.push([selectedSpcsftDetection.centroid.latitude, selectedSpcsftDetection.centroid.longitude]);
-    const geomCoords = getPolygonPositions(selectedSpcsftDetection.geometry);
-    geomCoords.forEach((pt) => mapCoords.push(pt));
-  } else if (displayedDetections.length > 0) {
-    displayedDetections.forEach((det) => {
-      mapCoords.push([det.centroid.latitude, det.centroid.longitude]);
-      const geomCoords = getPolygonPositions(det.geometry);
-      geomCoords.forEach((pt) => mapCoords.push(pt));
-    });
-  } else if (currentZone) {
-    mapCoords.push(currentZone.center);
-  }
-
-  const defaultCenter: [number, number] = currentZone ? currentZone.center : [18.85, 72.40];
+  const defaultCenter: [number, number] = [18.0, 68.0];
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-canvas)] overflow-hidden select-none">
@@ -248,34 +273,32 @@ export const SpaceShiftRealTime: React.FC = () => {
             className={`px-3 py-1.5 rounded border text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
               spcsftSyncEnabled
                 ? 'bg-emerald-950 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60'
-                : 'bg-[#161e2e] border-[#1e293b] text-slate-400 hover:bg-[#1c2638]'
+                : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
             }`}
-            title="Toggle background polling sync"
+            title="Toggle Space Shift live feed auto-sync polling"
           >
-            <span className={`w-2 h-2 rounded-full ${spcsftSyncEnabled ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}`} />
+            <span className={`w-2 h-2 rounded-full ${spcsftSyncEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
             <span>{spcsftSyncEnabled ? `Auto-Sync (${spcsftSyncInterval}s)` : 'Sync Paused'}</span>
           </button>
 
-          {/* Sync Interval Selector */}
+          {/* Polling Interval Switcher */}
           <select
             value={spcsftSyncInterval}
             onChange={(e) => setSpcsftSyncInterval(Number(e.target.value))}
-            className="bg-[#0c1017] border border-[#1e293b] rounded text-xs text-slate-300 px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-mono cursor-pointer"
-            title="Auto-sync interval frequency"
+            className="bg-[#161e2e] border border-[#1e293b] text-slate-300 text-xs rounded px-2 py-1.5 font-mono cursor-pointer outline-none focus:border-blue-500"
           >
             <option value={5}>5s Poll</option>
-            <option value={10}>10s Poll</option>
             <option value={15}>15s Poll</option>
             <option value={30}>30s Poll</option>
             <option value={60}>60s Poll</option>
           </select>
 
-          {/* Manual Refresh */}
+          {/* Refresh button */}
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-1.5 bg-[#161e2e] hover:bg-[#1c2638] border border-[#1e293b] rounded text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title="Force immediate refresh"
+            className="p-1.5 rounded bg-[#161e2e] border border-[#1e293b] text-slate-300 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+            title="Force immediate radar telemetry refresh"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
           </button>
@@ -290,9 +313,9 @@ export const SpaceShiftRealTime: React.FC = () => {
         </span>
 
         <button
-          onClick={() => setSpcsftSelectedZone('all')}
+          onClick={handleResetToGlobal}
           className={`px-3 py-1 rounded text-xs font-medium shrink-0 transition-colors cursor-pointer font-mono ${
-            spcsftSelectedZone === 'all'
+            spcsftSelectedZone === 'all' && !selectedSpcsftDetection
               ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
               : 'bg-[#161e2e] text-slate-400 hover:text-slate-200 border border-[#1e293b]'
           }`}
@@ -304,12 +327,15 @@ export const SpaceShiftRealTime: React.FC = () => {
           const zoneCount = spcsftLiveDetections.filter((d) =>
             d.zone_name.toLowerCase().includes(z.name.toLowerCase().split('(')[0].trim())
           ).length;
-          const isSelected = spcsftSelectedZone === z.zone_id;
+          const isSelected = spcsftSelectedZone === z.zone_id && !selectedSpcsftDetection;
 
           return (
             <button
               key={z.zone_id}
-              onClick={() => setSpcsftSelectedZone(z.zone_id)}
+              onClick={() => {
+                setSpcsftSelectedZone(z.zone_id);
+                setSelectedSpcsftDetection(null);
+              }}
               className={`px-3 py-1 rounded text-xs font-medium shrink-0 flex items-center gap-1.5 transition-colors cursor-pointer font-mono ${
                 isSelected
                   ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
@@ -334,7 +360,7 @@ export const SpaceShiftRealTime: React.FC = () => {
         <div className="flex-1 relative min-h-[300px] lg:min-h-0 bg-[#070b12]">
           <MapContainer
             center={defaultCenter}
-            zoom={8}
+            zoom={4}
             minZoom={3}
             maxZoom={18}
             maxBounds={[[-85, -180], [85, 180]]}
@@ -380,7 +406,10 @@ export const SpaceShiftRealTime: React.FC = () => {
                     fillOpacity: isSelected ? 0.08 : 0.02,
                   }}
                   eventHandlers={{
-                    click: () => setSpcsftSelectedZone(zone.zone_id),
+                    click: () => {
+                      setSpcsftSelectedZone(zone.zone_id);
+                      setSelectedSpcsftDetection(null);
+                    },
                   }}
                 >
                   <Popup>
@@ -400,7 +429,7 @@ export const SpaceShiftRealTime: React.FC = () => {
               );
             })}
 
-            {/* Live Oil Detection Polygons & Markers */}
+            {/* Live Oil Detection Polygons & High-Visibility Radar Anomaly Target Dots */}
             {displayedDetections.map((det) => {
               const isSelected = selectedSpcsftDetection?.detection_id === det.detection_id;
               const isCritical = det.severity === 'CRITICAL';
@@ -411,13 +440,14 @@ export const SpaceShiftRealTime: React.FC = () => {
 
               return (
                 <React.Fragment key={det.detection_id}>
+                  {/* Detailed polygon geometry when available */}
                   {polygonPositions.length > 0 && (
                     <Polygon
                       positions={polygonPositions}
                       pathOptions={{
                         color: strokeColor,
                         fillColor: fillColor,
-                        fillOpacity: isSelected ? 0.5 : 0.28,
+                        fillOpacity: isSelected ? 0.55 : 0.3,
                         weight: isSelected ? 3 : 1.5,
                       }}
                       eventHandlers={{
@@ -448,39 +478,71 @@ export const SpaceShiftRealTime: React.FC = () => {
                     </Polygon>
                   )}
 
-                  {/* Centroid Marker Dot */}
+                  {/* Outer Pulsing Radar Anomaly Beacon Halo */}
                   <CircleMarker
                     center={[det.centroid.latitude, det.centroid.longitude]}
-                    radius={isSelected ? 7 : 5}
+                    radius={isSelected ? 16 : 11}
                     pathOptions={{
-                      color: '#ffffff',
+                      color: strokeColor,
                       fillColor: strokeColor,
-                      fillOpacity: 1,
-                      weight: 1.5,
+                      fillOpacity: isSelected ? 0.35 : 0.2,
+                      weight: isSelected ? 2 : 1,
+                      dashArray: isSelected ? undefined : '3 3',
                     }}
                     eventHandlers={{
                       click: () => setSelectedSpcsftDetection(det),
                     }}
                   />
+
+                  {/* Inner Solid Target Dot */}
+                  <CircleMarker
+                    center={[det.centroid.latitude, det.centroid.longitude]}
+                    radius={isSelected ? 7 : 5.5}
+                    pathOptions={{
+                      color: '#ffffff',
+                      fillColor: strokeColor,
+                      fillOpacity: 1,
+                      weight: 2,
+                    }}
+                    eventHandlers={{
+                      click: () => setSelectedSpcsftDetection(det),
+                    }}
+                  >
+                    <Tooltip direction="top" offset={[0, -8]} opacity={0.95}>
+                      <div className="p-1 font-mono text-[11px] text-slate-900 font-bold">
+                        🎯 {det.detection_id}
+                        <div className="text-[10px] font-normal text-slate-600">
+                          {det.zone_name} • {det.area_km2.toFixed(1)} km²
+                        </div>
+                      </div>
+                    </Tooltip>
+                  </CircleMarker>
                 </React.Fragment>
               );
             })}
 
-            <MapBoundsFitter coords={mapCoords} />
+            <MapBoundsFitter
+              selectedDetection={selectedSpcsftDetection}
+              selectedZone={spcsftSelectedZone}
+              zones={spcsftMonitoringZones}
+              detections={displayedDetections}
+            />
           </MapContainer>
 
           {/* Floating Map Basemap / Telemetry Controls */}
-          <div className="absolute top-3 left-3 z-10 bg-[#111622]/90 backdrop-blur-md border border-[#1e293b] rounded p-2 text-xs font-mono text-slate-200 shadow-xl space-y-1">
-            <div className="flex items-center gap-2 border-b border-[#1e293b] pb-1 font-bold text-blue-400">
-              <Radio className="w-3.5 h-3.5" />
-              <span>Sentinel-1 SAR Feed</span>
+          <div className="absolute top-3 left-3 z-10 bg-[#111622]/90 backdrop-blur-md border border-[#1e293b] rounded p-2 text-xs font-mono text-slate-200 shadow-xl space-y-1.5">
+            <div className="flex items-center justify-between gap-2 border-b border-[#1e293b] pb-1 font-bold text-blue-400">
+              <div className="flex items-center gap-1.5">
+                <Radio className="w-3.5 h-3.5" />
+                <span>Sentinel-1 SAR Feed</span>
+              </div>
               <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60 font-normal">
                 ACTIVE RADAR
               </span>
             </div>
             <div className="text-[11px] text-slate-400 space-y-0.5">
               <div className="flex justify-between gap-4">
-                <span>Active Detections:</span>
+                <span>Active Targets:</span>
                 <span className="font-bold text-slate-200">{displayedDetections.length} slicks</span>
               </div>
               <div className="flex justify-between gap-4">
@@ -500,6 +562,17 @@ export const SpaceShiftRealTime: React.FC = () => {
                 </span>
               </div>
             </div>
+
+            {/* Reset to Global View Button */}
+            {(selectedSpcsftDetection || spcsftSelectedZone !== 'all') && (
+              <button
+                onClick={handleResetToGlobal}
+                className="w-full mt-1 py-1 px-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/50 text-blue-200 text-[10px] font-semibold rounded flex items-center justify-center gap-1 transition-colors cursor-pointer"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span>Reset to Global View</span>
+              </button>
+            )}
 
             {/* Basemap selector */}
             <div className="pt-1.5 border-t border-[#1e293b] flex items-center gap-1">
@@ -543,9 +616,9 @@ export const SpaceShiftRealTime: React.FC = () => {
 
           {/* Interactive User Selection Prompt */}
           <div className="p-3 bg-blue-950/40 border-b border-blue-800/50 text-[11px] font-mono text-blue-200 flex items-start gap-2.5 shrink-0">
-            <Satellite className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <Crosshair className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
             <span className="leading-relaxed">
-              <strong>Target Selection:</strong> Click any detected hydrocarbon signature on the map canvas or registry below to inspect physical wave damping parameters and initiate Lagrangian forensic attribution.
+              <strong>Interactive Target Selection:</strong> Click any radar anomaly target dot on the world map or select from the registry below to inspect wave damping & initiate forensic attribution.
             </span>
           </div>
 
