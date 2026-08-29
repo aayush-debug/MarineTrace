@@ -36,14 +36,14 @@ export const SarMapStudioWidget: React.FC = () => {
       {!isExpanded ? (
         <button
           onClick={() => setIsExpanded(true)}
-          className="bg-[#111622]/95 hover:bg-[#161e2e] text-slate-200 border border-cyan-500/40 rounded-lg px-3 py-2 shadow-2xl backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all cursor-pointer group"
+          className="bg-white/95 hover:bg-slate-50 text-slate-800 border-slate-300 dark:bg-[#111622]/95 dark:hover:bg-[#161e2e] dark:text-slate-200 dark:border-cyan-500/40 rounded-lg px-3 py-2 shadow-2xl backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all cursor-pointer group border"
         >
-          <div className="w-5 h-5 rounded bg-cyan-950/80 border border-cyan-500/60 flex items-center justify-center text-cyan-400">
+          <div className="w-5 h-5 rounded bg-cyan-100 dark:bg-cyan-950/80 border border-cyan-400 dark:border-cyan-500/60 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
             <Satellite className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
           </div>
-          <span>Sentinel-1 SAR Analysis</span>
+          <span className="font-bold">Sentinel-1 SAR Analysis</span>
           <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
-            layers.sar ? 'bg-cyan-950 text-cyan-300 border border-cyan-800' : 'bg-slate-800 text-slate-400'
+            layers.sar ? 'bg-cyan-100 text-cyan-800 border border-cyan-300 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
           }`}>
             {layers.sar ? 'ACTIVE' : 'OFF'}
           </span>
@@ -51,19 +51,19 @@ export const SarMapStudioWidget: React.FC = () => {
         </button>
       ) : (
         /* ── Expanded Full Radar Control Studio ── */
-        <div className="bg-[#111622]/95 border border-[#1e293b] rounded-xl shadow-2xl backdrop-blur-md overflow-hidden text-xs text-slate-200">
+        <div className="bg-white/95 text-slate-900 border-slate-300 dark:bg-[#111622]/95 dark:text-slate-200 dark:border-[#1e293b] rounded-xl shadow-2xl backdrop-blur-md overflow-hidden text-xs border">
           
           {/* Header */}
-          <div className="px-3 py-2.5 bg-[#161e2e] border-b border-[#1e293b] flex items-center justify-between">
+          <div className="px-3 py-2.5 bg-slate-50 dark:bg-[#161e2e] border-b border-slate-200 dark:border-[#1e293b] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded bg-cyan-950/80 border border-cyan-500/60 flex items-center justify-center text-cyan-400">
+              <div className="w-5 h-5 rounded bg-cyan-100 dark:bg-cyan-950/80 border border-cyan-400 dark:border-cyan-500/60 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                 <Satellite className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="font-bold text-slate-100 tracking-tight block leading-tight font-mono uppercase text-[11px]">
+                <span className="font-bold text-slate-900 dark:text-slate-100 tracking-tight block leading-tight font-mono uppercase text-[11px]">
                   Sentinel-1 C-SAR Analysis
                 </span>
-                <span className="text-[9px] font-mono text-cyan-400">
+                <span className="text-[9px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold">
                   REF: {investigation.investigation_id}
                 </span>
               </div>
@@ -75,8 +75,8 @@ export const SarMapStudioWidget: React.FC = () => {
                 onClick={() => toggleLayer('sar')}
                 className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-colors cursor-pointer border ${
                   layers.sar
-                    ? 'bg-cyan-950 text-cyan-300 border-cyan-700/80 hover:bg-cyan-900/60'
-                    : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+                    ? 'bg-cyan-100 text-cyan-800 border-cyan-300 hover:bg-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-700/80 dark:hover:bg-cyan-900/60'
+                    : 'bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700'
                 }`}
                 title="Toggle SAR Satellite Raster Layer"
               >
@@ -85,7 +85,7 @@ export const SarMapStudioWidget: React.FC = () => {
 
               <button
                 onClick={() => setIsExpanded(false)}
-                className="text-slate-400 hover:text-slate-200 p-0.5 rounded transition-colors cursor-pointer"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-0.5 rounded transition-colors cursor-pointer"
                 title="Minimize Panel"
               >
                 <ChevronUp className="w-4 h-4" />
@@ -97,9 +97,9 @@ export const SarMapStudioWidget: React.FC = () => {
             
             {/* 1. Band / Polarization Channel Selection */}
             <div>
-              <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between font-semibold">
                 <span>SAR Product Band</span>
-                <span className="text-cyan-400 font-bold">{sarConfig.channel}</span>
+                <span className="text-cyan-600 dark:text-cyan-400 font-bold">{sarConfig.channel}</span>
               </div>
               <div className="grid grid-cols-3 gap-1">
                 {channels.map((ch) => {
@@ -110,8 +110,8 @@ export const SarMapStudioWidget: React.FC = () => {
                       onClick={() => updateSarConfig({ channel: ch.id })}
                       className={`p-1.5 rounded border text-left transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-cyan-950/70 border-cyan-500 text-cyan-200 font-bold shadow-sm'
-                          : 'bg-[#0c1017] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                          ? 'bg-cyan-50 border-cyan-500 text-cyan-900 font-bold dark:bg-cyan-950/70 dark:border-cyan-500 dark:text-cyan-200 shadow-sm'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-300 dark:bg-[#0c1017] dark:border-slate-800 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-700'
                       }`}
                     >
                       <div className="text-[11px] leading-none">{ch.label}</div>
@@ -124,9 +124,9 @@ export const SarMapStudioWidget: React.FC = () => {
 
             {/* 2. Raster Opacity Slider */}
             <div>
-              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1">
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 mb-1 font-semibold">
                 <span>Calibrated Raster Opacity</span>
-                <span className="text-slate-200 font-bold">{(sarConfig.opacity * 100).toFixed(0)}%</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">{(sarConfig.opacity * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -135,15 +135,15 @@ export const SarMapStudioWidget: React.FC = () => {
                 step="0.05"
                 value={sarConfig.opacity}
                 onChange={(e) => updateSarConfig({ opacity: parseFloat(e.target.value) })}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
             </div>
 
             {/* 3. Verification & Comparison Controls */}
-            <div className="p-2 bg-[#0c1017] rounded-lg border border-slate-800 space-y-2">
-              <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
+            <div className="p-2 bg-slate-50 dark:bg-[#0c1017] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-between font-semibold">
                 <span>Evidentiary Correlation</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" />
                   {(investigation.spill.confidence * 100).toFixed(1)}% Match
                 </span>
@@ -154,27 +154,27 @@ export const SarMapStudioWidget: React.FC = () => {
                 onClick={() => toggleLayer('spill')}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded text-[11px] border transition-colors cursor-pointer ${
                   layers.spill
-                    ? 'bg-rose-950/50 border-rose-600/70 text-rose-200 font-medium'
-                    : 'bg-[#161e2e] border-slate-800 text-slate-400 hover:text-slate-300'
+                    ? 'bg-rose-50 border-rose-300 text-rose-800 font-semibold dark:bg-rose-950/50 dark:border-rose-600/70 dark:text-rose-200'
+                    : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 dark:bg-[#161e2e] dark:border-slate-800 dark:text-slate-400 dark:hover:text-slate-300'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full bg-rose-500 ${!layers.spill ? 'opacity-30' : ''}`} />
                   <span>Overlay Delineated Vector Contour</span>
                 </div>
-                {layers.spill ? <Eye className="w-3.5 h-3.5 text-rose-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-600" />}
+                {layers.spill ? <Eye className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />}
               </button>
             </div>
 
             {/* 4. Physical Radar Telemetry */}
-            <div className="grid grid-cols-2 gap-1.5 text-[9.5px] font-mono text-slate-400 pt-1 border-t border-slate-800">
+            <div className="grid grid-cols-2 gap-1.5 text-[9.5px] font-mono text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">
               <div>
                 <span className="text-slate-500 block">Mean σ₀ Backscatter</span>
-                <strong className="text-slate-200 font-bold">-24.8 dB (Damped)</strong>
+                <strong className="text-slate-800 dark:text-slate-200 font-bold">-24.8 dB (Damped)</strong>
               </div>
               <div>
                 <span className="text-slate-500 block">Suppression Ratio</span>
-                <strong className="text-cyan-400 font-bold">7.4 dB vs Sea</strong>
+                <strong className="text-cyan-600 dark:text-cyan-400 font-bold">7.4 dB vs Sea</strong>
               </div>
             </div>
 

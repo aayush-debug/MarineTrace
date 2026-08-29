@@ -176,7 +176,7 @@ export const Dashboard: React.FC = () => {
           <span className="font-medium text-slate-200 flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5 text-blue-400" />
             <span>SpaceShift Satellite AIS & SAR Stream:</span>
-            <span className="font-mono text-slate-100 bg-[#1e293b] px-1.5 py-0.2 rounded font-semibold">
+            <span className="font-mono text-blue-700 bg-blue-100 border border-blue-300 dark:text-blue-300 dark:bg-[#1e293b] dark:border-blue-900/60 px-2 py-0.5 rounded font-bold">
               {spcsftLiveDetections.length} Live Detections
             </span>
           </span>

@@ -105,31 +105,31 @@ export const MapLayerControls: React.FC = () => {
     return (
       <button
         onClick={() => setIsCollapsed(false)}
-        className="absolute top-3 right-3 z-[1000] bg-[#111622]/95 hover:bg-[#161e2e] text-slate-200 border border-blue-500/50 rounded-lg px-3 py-2 shadow-2xl backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all cursor-pointer group"
+        className="absolute top-3 right-3 z-[1000] bg-white/95 hover:bg-slate-50 text-slate-800 border-slate-300 dark:bg-[#111622]/95 dark:hover:bg-[#161e2e] dark:text-slate-200 dark:border-blue-500/50 rounded-lg px-3 py-2 shadow-2xl backdrop-blur-md flex items-center gap-2 text-xs font-semibold transition-all cursor-pointer group border"
       >
-        <div className="w-5 h-5 rounded bg-blue-950/80 border border-blue-500/60 flex items-center justify-center text-blue-400">
+        <div className="w-5 h-5 rounded bg-blue-100 dark:bg-blue-950/80 border border-blue-400 dark:border-blue-500/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
           <Activity className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
         </div>
-        <span>Mission Intelligence HUD</span>
-        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+        <span className="font-bold">Mission Intelligence HUD</span>
+        <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-auto" />
       </button>
     );
   }
 
   return (
-    <div className="absolute top-3 right-3 z-[1000] bg-[#111622]/95 border border-[#1e293b] rounded-xl shadow-2xl backdrop-blur-md overflow-hidden text-xs text-slate-200 font-sans select-none w-80">
+    <div className="absolute top-3 right-3 z-[1000] bg-white/95 text-slate-900 border-slate-300 dark:bg-[#111622]/95 dark:border-[#1e293b] dark:text-slate-200 rounded-xl shadow-2xl backdrop-blur-md overflow-hidden text-xs font-sans select-none w-80 border">
       
       {/* Header & Tabs */}
-      <div className="px-3 py-2.5 bg-[#161e2e] border-b border-[#1e293b] flex items-center justify-between">
+      <div className="px-3 py-2.5 bg-slate-50 dark:bg-[#161e2e] border-b border-slate-200 dark:border-[#1e293b] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-blue-950 border border-blue-500/60 flex items-center justify-center text-blue-400">
+          <div className="w-5 h-5 rounded bg-blue-100 dark:bg-blue-950 border border-blue-400 dark:border-blue-500/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
             <Activity className="w-3 h-3" />
           </div>
           <div>
-            <div className="font-bold text-slate-100 tracking-tight leading-tight">
+            <div className="font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
               Mission Intelligence HUD
             </div>
-            <div className="text-[9px] font-mono text-slate-400">
+            <div className="text-[9px] font-mono text-slate-500 dark:text-slate-400">
               Forensic Presets & Environmental Forcing
             </div>
           </div>
@@ -137,7 +137,7 @@ export const MapLayerControls: React.FC = () => {
 
         <button
           onClick={() => setIsCollapsed(true)}
-          className="text-slate-400 hover:text-slate-200 p-0.5 rounded transition-colors cursor-pointer"
+          className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-0.5 rounded transition-colors cursor-pointer"
           title="Minimize HUD"
         >
           <ChevronUp className="w-4 h-4" />
@@ -145,13 +145,13 @@ export const MapLayerControls: React.FC = () => {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="grid grid-cols-4 p-1 bg-[#0c1017] border-b border-[#1e293b] text-[10.5px] font-mono">
+      <div className="grid grid-cols-4 p-1 bg-slate-100 dark:bg-[#0c1017] border-b border-slate-200 dark:border-[#1e293b] text-[10.5px] font-mono">
         <button
           onClick={() => setActiveTab('presets')}
           className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
             activeTab === 'presets'
-              ? 'bg-[#161e2e] text-blue-300 font-bold border border-blue-800/50'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
           }`}
         >
           Presets
@@ -160,8 +160,8 @@ export const MapLayerControls: React.FC = () => {
           onClick={() => setActiveTab('metocean')}
           className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
             activeTab === 'metocean'
-              ? 'bg-[#161e2e] text-blue-300 font-bold border border-blue-800/50'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
           }`}
         >
           Metocean
@@ -170,8 +170,8 @@ export const MapLayerControls: React.FC = () => {
           onClick={() => setActiveTab('basemap')}
           className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
             activeTab === 'basemap'
-              ? 'bg-[#161e2e] text-blue-300 font-bold border border-blue-800/50'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
           }`}
         >
           Basemaps
@@ -180,8 +180,8 @@ export const MapLayerControls: React.FC = () => {
           onClick={() => setActiveTab('layers')}
           className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
             activeTab === 'layers'
-              ? 'bg-[#161e2e] text-blue-300 font-bold border border-blue-800/50'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
           }`}
         >
           Layers
