@@ -11,12 +11,10 @@ import {
   ArrowRight,
   Server,
   Database,
-  Radio,
   Sparkles,
   AlertCircle,
   Loader2,
   CheckCircle2,
-  Anchor,
   Radar,
   Sun,
   Moon,
@@ -40,37 +38,10 @@ const DEMO_ROLES: DemoRoleCard[] = [
     id: 'commander',
     name: 'Cmdr. Vikram Malhotra',
     role: 'Indian Coast Guard Commander',
-    agency: 'Indian Coast Guard (ICG)',
+    agency: 'Indian Coast Guard (ICG) - Western Command',
     email: 'commander@marinetrace.org',
     badgeColor: 'border-sky-500/40 bg-sky-500/10 text-sky-300',
     icon: Shield,
-  },
-  {
-    id: 'analyst',
-    name: 'Dr. Ananya Sharma',
-    role: 'Chief Oceanographer',
-    agency: 'INCOIS / NIO Ocean Modeling',
-    email: 'analyst@marinetrace.org',
-    badgeColor: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300',
-    icon: Compass,
-  },
-  {
-    id: 'surveillance',
-    name: 'Off. Rohan Deshmukh',
-    role: 'Satellite SAR Surveillance Lead',
-    agency: 'NRSC - ISRO Earth Observation',
-    email: 'surveillance@marinetrace.org',
-    badgeColor: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
-    icon: Radio,
-  },
-  {
-    id: 'inspector',
-    name: 'Insp. Rajiv Patel',
-    role: 'Port State Control Inspector',
-    agency: 'DG Shipping / IMO PSC Mumbai',
-    email: 'inspector@marinetrace.org',
-    badgeColor: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
-    icon: Anchor,
   },
 ];
 
@@ -222,10 +193,10 @@ export const LoginPage: React.FC = () => {
                 <span>Instant Operator Access</span>
               </div>
               <h2 className="text-base font-bold text-slate-100">
-                Select Pre-Configured Role
+                Coast Guard Officer Access
               </h2>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Click any maritime officer persona to immediately authenticate and test the full SAR spill investigation pipeline.
+                Click below to immediately authenticate as the Duty Coast Guard Commander and access the full SAR oil spill investigation workspace.
               </p>
             </div>
 

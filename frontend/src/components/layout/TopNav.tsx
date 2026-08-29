@@ -338,7 +338,7 @@ export const TopNav: React.FC = () => {
             {/* Modal Body: Quick Role Presets */}
             <div className="p-4 space-y-3">
               <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-                Select Operational Operator Profile:
+                Duty Coast Guard Officer Access:
               </div>
 
               <div className="space-y-2">
@@ -348,24 +348,6 @@ export const TopNav: React.FC = () => {
                     name: 'Commander Vikram Malhotra',
                     role: 'Indian Coast Guard (ICG) - Western Command',
                     desc: 'Operational Command, Enforcement & Interception Authorization',
-                  },
-                  {
-                    roleKey: 'analyst' as const,
-                    name: 'Dr. Ananya Sharma',
-                    role: 'Chief Oceanographer, INCOIS / NIO',
-                    desc: 'Lagrangian Hydrodynamic Drift Modeling & Metocean Analysis',
-                  },
-                  {
-                    roleKey: 'surveillance' as const,
-                    name: 'Officer Rohan Deshmukh',
-                    role: 'Satellite SAR Reconnaissance Lead, ISRO / NRSC',
-                    desc: 'Sentinel-1 Dual-Pol SAR Acquisition & U-Net AI Delineation',
-                  },
-                  {
-                    roleKey: 'inspector' as const,
-                    name: 'Capt. Rajesh Vardhan',
-                    role: 'Port State Control & MARPOL Annex I Inspector',
-                    desc: 'Vessel Boarding Evidence Dossier & Legal Attribution',
                   },
                 ].map((item) => (
                   <button
