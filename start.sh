@@ -1,19 +1,35 @@
 #!/bin/bash
 # MarineTrace All-in-One Startup Script
 
-# Clean up any lingering background processes on ports 8000 & 5173
+# If Docker is available and running, default to Docker Compose
+if docker info >/dev/null 2>&1; then
+    echo "🌊 ==================================================================="
+    echo "🛰️  STARTING MARINETRACE PLATFORM (DOCKER ENVIRONMENT)"
+    echo "🌊 ==================================================================="
+    docker compose up -d
+    echo ""
+    echo "✅ MarineTrace is running:"
+    echo "🔹 React Frontend:    http://localhost:5173"
+    echo "🔹 FastAPI Backend:   http://localhost:8000"
+    echo "🔹 Swagger API Docs:  http://localhost:8000/docs"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "💡 Run 'docker compose logs -f' to stream live logs, or 'docker compose down' to stop."
+    exit 0
+fi
+
+# Fallback: Native local process execution
 lsof -ti:8000 | xargs kill -9 2>/dev/null
 lsof -ti:5173 | xargs kill -9 2>/dev/null
 
 echo "🌊 ==================================================================="
-echo "🛰️  STARTING MARINETRACE PLATFORM"
+echo "🛰️  STARTING MARINETRACE PLATFORM (NATIVE PROCESSES)"
 echo "🌊 ==================================================================="
 echo "🔹 FastAPI Backend:   http://localhost:8000 (Docs: http://localhost:8000/docs)"
 echo "🔹 React Frontend:    http://localhost:5173"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Start backend in background
-(cd backend && ./venv/bin/python -m uvicorn app.main:app --reload --port 8000) &
+(cd backend && uvicorn app.main:app --reload --port 8000) &
 BACKEND_PID=$!
 
 # Start frontend
