@@ -83,7 +83,13 @@ class RealMLClient(MLClientInterface):
         import tempfile
         from pathlib import Path
 
-        ml_dir = Path(__file__).resolve().parent.parent.parent.parent / "ml"
+        potential_paths = [
+            Path(__file__).resolve().parent.parent.parent.parent / "ml",
+            Path(__file__).resolve().parent.parent.parent / "ml",
+            Path("/ml"),
+            Path("/app/ml"),
+        ]
+        ml_dir = next((p for p in potential_paths if p.exists()), potential_paths[0])
         if str(ml_dir) not in sys.path:
             sys.path.insert(0, str(ml_dir))
 
@@ -123,13 +129,26 @@ class RealMLClient(MLClientInterface):
             raw_lat = centroid_dict.get("latitude")
             raw_lon = centroid_dict.get("longitude")
 
-            # Ensure coordinates are in offshore ocean waters (Arabian Sea)
-            if not raw_lat or not raw_lon or abs(raw_lon - 72.914) < 0.05:
+            # Ensure coordinates are valid WGS84 and in offshore ocean waters (Arabian Sea)
+            try:
+                raw_lat_f = float(raw_lat) if raw_lat is not None else None
+                raw_lon_f = float(raw_lon) if raw_lon is not None else None
+            except (ValueError, TypeError):
+                raw_lat_f = None
+                raw_lon_f = None
+
+            if (
+                raw_lat_f is None
+                or raw_lon_f is None
+                or not (-90.0 <= raw_lat_f <= 90.0)
+                or not (-180.0 <= raw_lon_f <= 180.0)
+                or abs(raw_lon_f - 72.914) < 0.05
+            ):
                 lat = 18.822
                 lon = 72.418
             else:
-                lat = float(raw_lat)
-                lon = float(raw_lon)
+                lat = raw_lat_f
+                lon = raw_lon_f
 
             geom = spill.get("geometry") or {}
             coords = geom.get("coordinates")

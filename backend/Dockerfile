@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────
 # MarineTrace Backend Dockerfile
-# Python 3.11-slim + GEOS/PROJ for geospatial libraries
-# Targets: linux/amd64, linux/arm64 (Apple Silicon)
+# Python 3.11-slim + Geospatial / NetCDF / PyTorch CPU + OpenDrift
+# Compatible with linux/amd64 and linux/arm64 (Apple Silicon)
 # ─────────────────────────────────────────────────────────────────
 FROM python:3.11-slim
 
@@ -10,16 +10,18 @@ WORKDIR /app
 # Python runtime flags
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app:/ml
 
 # System packages:
-#   gcc / g++     — compile C/C++ extensions
-#   libgeos-dev   — Shapely geometry operations
-#   libproj-dev   — Pyproj / coordinate transforms
-#   libnetcdf-dev — NetCDF C libraries
-#   libhdf5-dev   — HDF5 storage
-#   liblzma-dev   — XZ compression for roaring-landmask
-#   curl          — Docker HEALTHCHECK
+#   gcc / g++       — compile C/C++ extensions
+#   libgeos-dev     — Shapely geometry operations
+#   libproj-dev     — Pyproj / coordinate transforms
+#   proj-bin        — PROJ command line tools & datum grid support
+#   libnetcdf-dev   — NetCDF C libraries for hydrodynamic forcing
+#   libhdf5-dev     — HDF5 storage
+#   liblzma-dev     — XZ compression for roaring-landmask
+#   libgdal-dev     — Geospatial raster / vector abstraction
+#   curl            — Docker HEALTHCHECK
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
@@ -29,30 +31,42 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libnetcdf-dev \
     libhdf5-dev \
     liblzma-dev \
+    libgdal-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies first (cached layer)
-COPY requirements.txt .
+# Install PyTorch CPU first (compact layer, ~200MB vs multi-GB CUDA)
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-# Copy all source code
-COPY . .
+# Install backend dependencies & ML inference packages
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir \
+      segmentation-models-pytorch>=0.3.3 \
+      rasterio>=1.3.0 \
+      scikit-image>=0.21.0 \
+      opencv-python-headless>=4.8.0 \
+      tifffile>=2023.7.0 \
+      albumentations>=1.3.0 \
+      pyyaml>=6.0 \
+      tqdm>=4.65.0
 
-# Ensure the data directory exists inside the image and create non-root user
-RUN mkdir -p /app/data/demo /app/data/copernicus /app/db && \
+# Copy application source code
+COPY . /app
+
+# Create necessary runtime directories and configure non-root user
+RUN mkdir -p /app/data/demo /app/data/copernicus /app/db /ml && \
     useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app /ml
 
 USER appuser
 
 EXPOSE 8000
 
 # Healthcheck — FastAPI /ping route
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:8000/ping || exit 1
 
-# Production: no --reload
-# Dev mode is controlled by docker-compose command override
+# Production default command (overridable in docker-compose for dev mode)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

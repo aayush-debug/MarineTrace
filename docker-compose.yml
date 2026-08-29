@@ -1,7 +1,8 @@
 services:
-  # ─────────────────────────────────────────────────
-  # FastAPI Backend  →  http://localhost:8000
-  # ─────────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────────
+  # 🛰️ MarineTrace Backend (FastAPI + OpenDrift + ML + AIS)
+  # http://localhost:8000 | Swagger Docs: http://localhost:8000/docs
+  # ─────────────────────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -10,33 +11,66 @@ services:
     container_name: marinetrace-backend
     ports:
       - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app", "--reload-dir", "/ml"]
     env_file:
       - .env
     environment:
-      # Override to use SQLite inside the container (no Postgres needed for demo)
       DATABASE_URL: "sqlite:///./marinetrace.db"
-      AIS_API_KEY: ${AIS_API_KEY:-}
+      USE_REAL_ML: "true"
+      AIS_API_KEY: ${AIS_API_KEY:-d23f615198ebddbc0442eb17eb7962faeecc961b}
       AIS_BASE_URL: ${AIS_BASE_URL:-wss://stream.aisstream.io/v0/stream}
       AIS_PROVIDER: ${AIS_PROVIDER:-aisstream}
-      COPERNICUSMARINE_SERVICE_USERNAME: ${COPERNICUSMARINE_SERVICE_USERNAME:-}
-      COPERNICUSMARINE_SERVICE_PASSWORD: ${COPERNICUSMARINE_SERVICE_PASSWORD:-}
-      USE_REAL_ML: "true"
+      COPERNICUS_USERNAME: ${COPERNICUS_USERNAME:-SIH}
+      COPERNICUS_PASSWORD: ${COPERNICUS_PASSWORD:-Sihteam@2026}
     volumes:
-      # Mount only source code — NOT the whole /app dir (preserves pip-installed packages)
+      # Mount source code for live development & hot reloading
       - ./backend/app:/app/app
       - ./backend/ais:/app/ais
       - ./backend/drift:/app/drift
       - ./backend/attribution:/app/attribution
       - ./backend/data:/app/data
-      # Persist the SQLite database across restarts
+      - ./backend/scripts:/app/scripts
+      - ./backend/tests:/app/tests
+      - ./run_demo.py:/app/run_demo.py
+      # Mount ML pipeline directory for U-Net SAR models & weights
+      - ./ml:/ml
+      # Persist the SQLite database across container restarts
       - marinetrace_db:/app/db
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/ping"]
-      interval: 30s
+      interval: 15s
       timeout: 5s
-      start_period: 10s
-      retries: 3
+      start_period: 15s
+      retries: 5
+
+  # ─────────────────────────────────────────────────────────────────
+  # 💻 MarineTrace Frontend (React 19 + Vite + Tailwind + Leaflet)
+  # http://localhost:5173
+  # ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: marinetrace-frontend:latest
+    container_name: marinetrace-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+      VITE_API_BASE_URL: "http://localhost:8000"
+    volumes:
+      # Live reload mounts for UI development
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      # Anonymous volume so host node_modules does not conflict with container
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   marinetrace_db:

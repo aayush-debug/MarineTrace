@@ -212,6 +212,15 @@ def detect_oil(
         channel_bounds=channel_bounds,
     )
 
+    # Ensure 2 channels [2, H, W] (VV + VH) for UNet
+    if image_preprocessed.ndim == 2:
+        image_preprocessed = np.stack([image_preprocessed, image_preprocessed], axis=0)
+    elif image_preprocessed.ndim == 3:
+        if image_preprocessed.shape[0] == 1:
+            image_preprocessed = np.repeat(image_preprocessed, 2, axis=0)
+        elif image_preprocessed.shape[0] > 2:
+            image_preprocessed = image_preprocessed[:2]
+
     # --- Load model and run inference ---
     device = _get_device()
     model = _load_model(checkpoint_path, config, device)

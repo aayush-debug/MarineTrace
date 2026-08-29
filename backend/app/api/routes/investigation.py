@@ -65,12 +65,24 @@ async def detect_spill(request: DetectSpillRequest):
       - image: path to SAR GeoTIFF or base64 encoded data (optional, falls back to sample_s1.tif)
       - threshold: detection confidence threshold (float, optional)
     """
-    repo_root = Path(__file__).resolve().parents[4]
-    if not (repo_root / "ml").exists():
-        repo_root = Path(__file__).resolve().parents[3]
-    ml_dir = repo_root / "ml"
+    potential_paths = [
+        Path(__file__).resolve().parents[4] / "ml",
+        Path(__file__).resolve().parents[3] / "ml",
+        Path("/ml"),
+        Path("/app/ml"),
+    ]
+    ml_dir = next((p for p in potential_paths if p.exists()), potential_paths[0])
     if str(ml_dir) not in sys.path:
         sys.path.insert(0, str(ml_dir))
+
+    # Allowed directories for local image access
+    allowed_bases = [
+        Path(__file__).resolve().parents[3],
+        Path(__file__).resolve().parents[2],
+        Path("/app"),
+        Path("/ml"),
+        ml_dir,
+    ]
 
     image_data = request.image
     threshold = request.threshold
@@ -96,7 +108,12 @@ async def detect_spill(request: DetectSpillRequest):
             else:
                 # Path verification: ensure path is within repository project directories
                 candidate_path = Path(image_data).resolve()
-                if not is_safe_path(repo_root, candidate_path) or not candidate_path.exists():
+                is_safe = any(
+                    is_safe_path(base, candidate_path)
+                    for base in allowed_bases
+                    if base.exists() and str(base.resolve()) != "/"
+                )
+                if not is_safe or not candidate_path.exists():
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail="Invalid image path specified. Path must exist within the project directory.",

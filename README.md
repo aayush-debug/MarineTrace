@@ -146,12 +146,17 @@ Once both services are started, access the workstation and APIs locally:
 
 ---
 
-### 6. Running Full-Stack with Docker Compose
+### 6. Running Full-Stack with Docker Compose (Recommended)
+Launch the entire platform (FastAPI backend, React frontend, OpenDrift hydrodynamic engine, ML pipeline, and persistent SQLite database) with a single command:
 ```bash
-docker compose up --build
+./docker-start.sh
+# or:
+docker compose up --build -d
 ```
-- **Backend API**: `http://localhost:8000`
-- **Swagger Docs**: `http://localhost:8000/docs`
+- **💻 React Frontend**: `http://localhost:5173`
+- **🛰️ FastAPI Backend**: `http://localhost:8000`
+- **📖 Swagger API Docs**: `http://localhost:8000/docs`
+- **🩺 Health Check**: `http://localhost:8000/ping`
 
 ---
 
