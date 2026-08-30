@@ -90,7 +90,7 @@ export const VesselRankList: React.FC = () => {
                         : 'text-emerald-400'
                     }`}
                   >
-                    {vessel.score.toFixed(1)}%
+                    {Math.round(vessel.score)}%
                   </div>
                 </div>
               </div>
@@ -111,11 +111,27 @@ export const VesselRankList: React.FC = () => {
                 </span>
 
                 <span className="px-1.5 py-0.5 rounded bg-[#0c1017] text-slate-300 font-mono">
-                  Spatial: {vessel.feature_scores.spatial.toFixed(0)}%
+                  {(() => {
+                    let dStr: string | null = null;
+                    if (vessel.cpa?.distance_to_origin_km !== undefined) {
+                      dStr = `${vessel.cpa.distance_to_origin_km.toFixed(1)} km`;
+                    } else if (vessel.reasons) {
+                      const match = vessel.reasons.find((r) => r.includes('km of estimated origin') || r.includes('Passed within'));
+                      if (match) {
+                        const m = match.match(/([\d.]+)\s*km/i);
+                        if (m) dStr = `${m[1]} km`;
+                      }
+                    }
+                    if (!dStr && vessel.feature_scores.spatial > 0) {
+                      const d = Math.max(0, -10.0 * Math.log(Math.min(vessel.feature_scores.spatial, 99.9) / 100));
+                      dStr = `${d.toFixed(1)} km`;
+                    }
+                    return dStr ? `CPA: ${dStr}` : `Spatial: ${vessel.feature_scores.spatial.toFixed(0)}%`;
+                  })()}
                 </span>
 
                 <span className="px-1.5 py-0.5 rounded bg-[#0c1017] text-slate-300 font-mono">
-                  Temporal: {vessel.feature_scores.temporal.toFixed(0)}%
+                  {vessel.feature_scores.temporal >= 70 ? 'In Window' : `Temporal: ${vessel.feature_scores.temporal.toFixed(0)}%`}
                 </span>
               </div>
 

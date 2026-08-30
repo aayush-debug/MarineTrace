@@ -76,7 +76,7 @@ export const VesselAttribution: React.FC = () => {
               {/* Score display */}
               <div className="text-right">
                 <div className="text-xl sm:text-2xl font-bold font-mono text-rose-400 tabular-nums">
-                  {topSuspect.score.toFixed(1)}%
+                  {Math.round(topSuspect.score)}%
                 </div>
                 <div className="text-[10px] text-slate-400 uppercase font-medium">Attribution Match</div>
               </div>

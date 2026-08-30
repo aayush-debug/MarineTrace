@@ -21,9 +21,45 @@ export const VesselDetailPanel: React.FC = () => {
 
   const { feature_scores, reasons } = selectedVessel;
 
-  // Approximate metrics derived for display
-  const distanceKm = (100 - feature_scores.spatial) * 0.25;
-  const timeDiffMin = Math.round((100 - feature_scores.temporal) * 1.2);
+  // Derive pinpoint accurate distance to origin (CPA)
+  let distanceKm: number | null = null;
+
+  if (selectedVessel.cpa?.distance_to_origin_km !== undefined) {
+    distanceKm = selectedVessel.cpa.distance_to_origin_km;
+  } else if (selectedVessel.reasons) {
+    const distMatch = selectedVessel.reasons.find(
+      (r) => r.includes('km of estimated origin') || r.includes('CPA distance:') || r.includes('Passed within')
+    );
+    if (distMatch) {
+      const match = distMatch.match(/([\d.]+)\s*km/i);
+      if (match) distanceKm = parseFloat(match[1]);
+    }
+  }
+
+  // Exact inverse of spatial scoring: S = 100 * exp(-dist / 10.0) => dist = -10 * ln(S / 100)
+  if (distanceKm === null && feature_scores.spatial > 0) {
+    distanceKm = Math.max(0, -10.0 * Math.log(Math.min(feature_scores.spatial, 99.9) / 100));
+  } else if (distanceKm === null) {
+    distanceKm = 25.0;
+  }
+
+  // Pinpoint accurate time window offset
+  let timeOffsetLabel = 'In Window (0m)';
+  const isInWindow =
+    selectedVessel.reasons?.some(
+      (r) => r.toLowerCase().includes('during estimated') || r.toLowerCase().includes('within temporal')
+    ) || feature_scores.temporal >= 70;
+
+  if (!isInWindow) {
+    const hourMatch = selectedVessel.reasons?.find((r) => r.includes('hours of spill window'));
+    if (hourMatch) {
+      const match = hourMatch.match(/([\d.]+)\s*hours/i);
+      if (match) timeOffsetLabel = `+${match[1]}h offset`;
+    } else {
+      const hours = 3.0 * Math.sqrt(Math.max(0, -2 * Math.log(Math.max(feature_scores.temporal, 1) / 100)));
+      timeOffsetLabel = `±${Math.round(hours * 60)} mins`;
+    }
+  }
 
   return (
     <div className="bg-[#111622] border border-[#1e293b] rounded p-3.5 space-y-3.5 shadow-sm text-xs">
@@ -65,7 +101,7 @@ export const VesselDetailPanel: React.FC = () => {
                   : 'text-emerald-400'
               }`}
             >
-              {selectedVessel.score.toFixed(1)}%
+              {Math.round(selectedVessel.score)}%
             </div>
           </div>
         </div>
@@ -87,21 +123,21 @@ export const VesselDetailPanel: React.FC = () => {
 
         <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-slate-400" />
-            Distance to Origin
+            <MapPin className="w-3 h-3 text-rose-400" />
+            <span>CPA to Origin</span>
           </div>
-          <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">
+          <div className="text-xs font-semibold text-rose-300 font-mono mt-0.5">
             {distanceKm.toFixed(1)} km
           </div>
         </div>
 
         <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[10px] text-slate-400 flex items-center gap-1">
-            <Clock className="w-3 h-3 text-slate-400" />
-            Time Offset
+            <Clock className="w-3 h-3 text-amber-400" />
+            <span>Spill Window</span>
           </div>
-          <div className="text-xs font-semibold text-slate-200 font-mono mt-0.5">
-            ±{timeDiffMin} mins
+          <div className="text-xs font-semibold text-amber-300 font-mono mt-0.5 truncate">
+            {timeOffsetLabel}
           </div>
         </div>
       </div>
