@@ -206,18 +206,18 @@ export const SpaceShiftRealTime: React.FC = () => {
     spcsftSelectedZone === 'all'
       ? spcsftLiveDetections
       : spcsftLiveDetections.filter((d) => {
-          if (!currentZone) return true;
-          const zoneKey = currentZone.name.toLowerCase().split('(')[0].trim();
-          const detZone = d.zone_name.toLowerCase();
-          return (
-            detZone.includes(zoneKey) ||
-            (currentZone.bbox &&
-              d.centroid.longitude >= currentZone.bbox[0] - 0.5 &&
-              d.centroid.latitude >= currentZone.bbox[1] - 0.5 &&
-              d.centroid.longitude <= currentZone.bbox[2] + 0.5 &&
-              d.centroid.latitude <= currentZone.bbox[3] + 0.5)
-          );
-        });
+        if (!currentZone) return true;
+        const zoneKey = currentZone.name.toLowerCase().split('(')[0].trim();
+        const detZone = d.zone_name.toLowerCase();
+        return (
+          detZone.includes(zoneKey) ||
+          (currentZone.bbox &&
+            d.centroid.longitude >= currentZone.bbox[0] - 0.5 &&
+            d.centroid.latitude >= currentZone.bbox[1] - 0.5 &&
+            d.centroid.longitude <= currentZone.bbox[2] + 0.5 &&
+            d.centroid.latitude <= currentZone.bbox[3] + 0.5)
+        );
+      });
 
   const defaultCenter: [number, number] = [18.0, 68.0];
 
@@ -270,11 +270,10 @@ export const SpaceShiftRealTime: React.FC = () => {
           {/* Sync status button */}
           <button
             onClick={toggleSpcsftSync}
-            className={`px-3 py-1.5 rounded border text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
-              spcsftSyncEnabled
+            className={`px-3 py-1.5 rounded border text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer ${spcsftSyncEnabled
                 ? 'bg-emerald-950 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60'
                 : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
-            }`}
+              }`}
             title="Toggle Space Shift live feed auto-sync polling"
           >
             <span className={`w-2 h-2 rounded-full ${spcsftSyncEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
@@ -314,11 +313,10 @@ export const SpaceShiftRealTime: React.FC = () => {
 
         <button
           onClick={handleResetToGlobal}
-          className={`px-3 py-1 rounded text-xs font-medium shrink-0 transition-colors cursor-pointer font-mono ${
-            spcsftSelectedZone === 'all' && !selectedSpcsftDetection
+          className={`px-3 py-1 rounded text-xs font-medium shrink-0 transition-colors cursor-pointer font-mono ${spcsftSelectedZone === 'all' && !selectedSpcsftDetection
               ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
               : 'bg-[#161e2e] text-slate-400 hover:text-slate-200 border border-[#1e293b]'
-          }`}
+            }`}
         >
           All Global Zones ({spcsftLiveDetections.length})
         </button>
@@ -336,11 +334,10 @@ export const SpaceShiftRealTime: React.FC = () => {
                 setSpcsftSelectedZone(z.zone_id);
                 setSelectedSpcsftDetection(null);
               }}
-              className={`px-3 py-1 rounded text-xs font-medium shrink-0 flex items-center gap-1.5 transition-colors cursor-pointer font-mono ${
-                isSelected
+              className={`px-3 py-1 rounded text-xs font-medium shrink-0 flex items-center gap-1.5 transition-colors cursor-pointer font-mono ${isSelected
                   ? 'bg-blue-950 text-blue-200 border border-blue-800/60 font-semibold'
                   : 'bg-[#161e2e] text-slate-400 hover:text-slate-200 border border-[#1e293b]'
-              }`}
+                }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${z.risk_level === 'CRITICAL' ? 'bg-rose-400' : z.risk_level === 'HIGH' ? 'bg-amber-400' : 'bg-blue-400'}`} />
               <span>{z.name}</span>
@@ -581,11 +578,10 @@ export const SpaceShiftRealTime: React.FC = () => {
                 <button
                   key={b}
                   onClick={() => setBasemap(b)}
-                  className={`px-1.5 py-0.5 rounded text-[10px] transition-colors cursor-pointer ${
-                    basemap === b
+                  className={`px-1.5 py-0.5 rounded text-[10px] transition-colors cursor-pointer ${basemap === b
                       ? 'bg-blue-950 text-blue-300 border border-blue-800/60 font-bold'
                       : 'text-slate-400 hover:text-slate-200'
-                  }`}
+                    }`}
                 >
                   {b.replace('google-', '').charAt(0).toUpperCase() + b.replace('google-', '').slice(1)}
                 </button>
@@ -632,23 +628,21 @@ export const SpaceShiftRealTime: React.FC = () => {
                 <div
                   key={det.detection_id}
                   onClick={() => setSelectedSpcsftDetection(det)}
-                  className={`p-3 rounded border text-xs space-y-2.5 transition-colors cursor-pointer ${
-                    isSelected
+                  className={`p-3 rounded border text-xs space-y-2.5 transition-colors cursor-pointer ${isSelected
                       ? isCritical
                         ? 'bg-[#161e2e] border-rose-500 shadow-md ring-1 ring-rose-500/50'
                         : 'bg-[#161e2e] border-blue-500 shadow-md ring-1 ring-blue-500/50'
                       : 'bg-[#161e2e] border-[#1e293b] hover:border-slate-700'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="font-mono font-bold text-slate-200">{det.detection_id}</span>
                       <span
-                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
-                          isCritical
+                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${isCritical
                             ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
                             : 'bg-amber-950 text-amber-300 border border-amber-800/60'
-                        }`}
+                          }`}
                       >
                         {det.severity}
                       </span>

@@ -118,7 +118,7 @@ export const MapLayerControls: React.FC = () => {
 
   return (
     <div className="absolute top-3 right-3 z-[1000] bg-white/95 text-slate-900 border-slate-300 dark:bg-[#111622]/95 dark:border-[#1e293b] dark:text-slate-200 rounded-xl shadow-2xl backdrop-blur-md overflow-hidden text-xs font-sans select-none w-80 border">
-      
+
       {/* Header & Tabs */}
       <div className="px-3 py-2.5 bg-slate-50 dark:bg-[#161e2e] border-b border-slate-200 dark:border-[#1e293b] flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -148,41 +148,37 @@ export const MapLayerControls: React.FC = () => {
       <div className="grid grid-cols-4 p-1 bg-slate-100 dark:bg-[#0c1017] border-b border-slate-200 dark:border-[#1e293b] text-[10.5px] font-mono">
         <button
           onClick={() => setActiveTab('presets')}
-          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
-            activeTab === 'presets'
+          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${activeTab === 'presets'
               ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+            }`}
         >
           Presets
         </button>
         <button
           onClick={() => setActiveTab('metocean')}
-          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
-            activeTab === 'metocean'
+          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${activeTab === 'metocean'
               ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+            }`}
         >
           Metocean
         </button>
         <button
           onClick={() => setActiveTab('basemap')}
-          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
-            activeTab === 'basemap'
+          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${activeTab === 'basemap'
               ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+            }`}
         >
           Basemaps
         </button>
         <button
           onClick={() => setActiveTab('layers')}
-          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${
-            activeTab === 'layers'
+          className={`py-1 rounded font-medium transition-colors cursor-pointer text-center ${activeTab === 'layers'
               ? 'bg-white text-blue-700 font-bold border border-blue-300 dark:bg-[#161e2e] dark:text-blue-300 dark:border-blue-800/50 shadow-sm'
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+            }`}
         >
           Layers
         </button>
@@ -338,11 +334,10 @@ export const MapLayerControls: React.FC = () => {
               <button
                 key={bm.id}
                 onClick={() => setBasemap(bm.id as BasemapType)}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${
-                  isSelected
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${isSelected
                     ? 'bg-blue-950 text-blue-200 font-bold border border-blue-800/60'
                     : 'text-slate-400 hover:bg-[#161e2e]/50 border border-transparent'
-                }`}
+                  }`}
               >
                 <span className="text-[11px]">{bm.name}</span>
                 {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
@@ -364,11 +359,10 @@ export const MapLayerControls: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => toggleLayer(item.id)}
-                className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-xs transition-colors cursor-pointer ${
-                  isVisible
+                className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-xs transition-colors cursor-pointer ${isVisible
                     ? 'bg-[#161e2e] text-slate-100 font-medium'
                     : 'text-slate-400 hover:bg-[#161e2e]/50'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${item.dotColor} ${!isVisible ? 'opacity-30' : ''}`} />

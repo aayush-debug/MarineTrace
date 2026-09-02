@@ -38,9 +38,8 @@ export const ScoreBreakdownBar: React.FC<ScoreBreakdownBarProps> = ({
 
       <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${
-            colorMap[color] || 'bg-sky-500'
-          }`}
+          className={`h-full rounded-full transition-all duration-500 ease-out ${colorMap[color] || 'bg-sky-500'
+            }`}
           style={{ width: `${clampedScore}%` }}
         />
       </div>

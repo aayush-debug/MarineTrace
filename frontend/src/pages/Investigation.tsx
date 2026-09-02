@@ -84,11 +84,10 @@ export const Investigation: React.FC = () => {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setShowTimeline(!showTimeline)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border transition-colors cursor-pointer ${
-              showTimeline
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border transition-colors cursor-pointer ${showTimeline
                 ? 'bg-blue-950 border-blue-800 text-blue-300'
                 : 'bg-[#161e2e] border-[#1e293b] text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Activity className="w-3.5 h-3.5" />
             <span>Audit Timeline</span>
@@ -158,11 +157,10 @@ export const Investigation: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex flex-col items-center py-2 gap-1 text-[11px] font-medium transition-colors border-b-2 cursor-pointer ${
-                    activeTab === tab.id
+                  className={`flex-1 flex flex-col items-center py-2 gap-1 text-[11px] font-medium transition-colors border-b-2 cursor-pointer ${activeTab === tab.id
                       ? 'text-slate-100 font-semibold border-blue-500 bg-[#111622]'
                       : 'text-slate-400 hover:text-slate-200 border-transparent'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span className="truncate">{tab.label}</span>

@@ -68,11 +68,10 @@ export const VesselDetailPanel: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span
-              className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs font-mono ${
-                selectedVessel.rank === 1
+              className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs font-mono ${selectedVessel.rank === 1
                   ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
                   : 'bg-amber-950 text-amber-300 border border-amber-800/60'
-              }`}
+                }`}
             >
               #{selectedVessel.rank}
             </span>
@@ -93,13 +92,12 @@ export const VesselDetailPanel: React.FC = () => {
           <div className="text-right">
             <div className="text-[10px] text-slate-400 font-medium">Attribution</div>
             <div
-              className={`text-xl font-bold font-mono tabular-nums ${
-                selectedVessel.score >= 80
+              className={`text-xl font-bold font-mono tabular-nums ${selectedVessel.score >= 80
                   ? 'text-rose-400'
                   : selectedVessel.score >= 50
-                  ? 'text-amber-400'
-                  : 'text-emerald-400'
-              }`}
+                    ? 'text-amber-400'
+                    : 'text-emerald-400'
+                }`}
             >
               {Math.round(selectedVessel.score)}%
             </div>

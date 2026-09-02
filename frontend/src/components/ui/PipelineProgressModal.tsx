@@ -121,13 +121,12 @@ export const PipelineProgressModal: React.FC<PipelineProgressModalProps> = ({
             return (
               <div
                 key={step.id}
-                className={`p-3 rounded-lg border flex items-start gap-3 transition-all duration-300 ${
-                  isCurrent
+                className={`p-3 rounded-lg border flex items-start gap-3 transition-all duration-300 ${isCurrent
                     ? 'bg-cyan-500/10 border-cyan-500/50 shadow-md shadow-cyan-950/40 ring-1 ring-cyan-500/30'
                     : isCompleted
-                    ? 'bg-[#0d1424]/60 border-slate-800/80 text-slate-300'
-                    : 'bg-slate-950/40 border-slate-900 text-slate-600'
-                }`}
+                      ? 'bg-[#0d1424]/60 border-slate-800/80 text-slate-300'
+                      : 'bg-slate-950/40 border-slate-900 text-slate-600'
+                  }`}
               >
                 <div className="mt-0.5">
                   {isCompleted ? (
@@ -142,13 +141,12 @@ export const PipelineProgressModal: React.FC<PipelineProgressModalProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-xs font-bold ${
-                        isCurrent
+                      className={`text-xs font-bold ${isCurrent
                           ? 'text-cyan-300'
                           : isCompleted
-                          ? 'text-slate-200'
-                          : 'text-slate-500'
-                      }`}
+                            ? 'text-slate-200'
+                            : 'text-slate-500'
+                        }`}
                     >
                       {step.label}
                     </span>

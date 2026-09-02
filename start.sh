@@ -29,7 +29,7 @@ echo "🔹 React Frontend:    http://localhost:5173"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Start backend in background
-(cd backend && uvicorn app.main:app --reload --port 8000) &
+(cd backend && ( [ -f venv/bin/python3 ] && venv/bin/python3 -m uvicorn app.main:app --reload --port 8000 || uvicorn app.main:app --reload --port 8000 )) &
 BACKEND_PID=$!
 
 # Start frontend

@@ -73,11 +73,10 @@ export const IncidentSelectorModal: React.FC = () => {
               <div
                 key={preset.id}
                 onClick={() => handleSelect(preset.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer relative group ${
-                  isCurrent
+                className={`p-4 rounded-xl border transition-all cursor-pointer relative group ${isCurrent
                     ? 'bg-blue-950/30 border-blue-500/80 ring-1 ring-blue-500/50 shadow-lg'
                     : 'bg-[#0c1017] border-[#1e293b] hover:border-slate-600 hover:bg-[#161e2e]'
-                }`}
+                  }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div className="space-y-1.5 flex-1 min-w-0">
@@ -89,11 +88,10 @@ export const IncidentSelectorModal: React.FC = () => {
                         {preset.name}
                       </span>
                       <span
-                        className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${
-                          preset.severity === 'CRITICAL'
+                        className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${preset.severity === 'CRITICAL'
                             ? 'bg-rose-950 text-rose-300 border-rose-800/60'
                             : 'bg-amber-950 text-amber-300 border-amber-800/60'
-                        }`}
+                          }`}
                       >
                         {preset.severity}
                       </span>
@@ -134,11 +132,10 @@ export const IncidentSelectorModal: React.FC = () => {
                         e.stopPropagation();
                         handleSelect(preset.id);
                       }}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer w-full justify-center ${
-                        isCurrent
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer w-full justify-center ${isCurrent
                           ? 'bg-blue-600 hover:bg-blue-500 text-white'
                           : 'bg-[#161e2e] hover:bg-blue-600 text-slate-200 hover:text-white border border-[#1e293b] group-hover:border-blue-500/60'
-                      }`}
+                        }`}
                     >
                       <span>{isCurrent ? 'Inspect Active Case' : 'Select Incident'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />

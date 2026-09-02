@@ -227,21 +227,19 @@ export const Dashboard: React.FC = () => {
           <div className="flex border-b border-[#1e293b] bg-[#0c1017] shrink-0 text-xs">
             <button
               onClick={() => setActiveRightTab('spill')}
-              className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${
-                activeRightTab === 'spill'
+              className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${activeRightTab === 'spill'
                   ? 'border-blue-500 text-slate-100 font-semibold bg-[#111622]'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
-              }`}
+                }`}
             >
               Incident Target
             </button>
             <button
               onClick={() => setActiveRightTab('vessels')}
-              className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${
-                activeRightTab === 'vessels'
+              className={`flex-1 py-2 font-medium transition-colors border-b-2 cursor-pointer ${activeRightTab === 'vessels'
                   ? 'border-blue-500 text-slate-100 font-semibold bg-[#111622]'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
-              }`}
+                }`}
             >
               Suspect Vessels ({investigation?.vessels.length || 0})
             </button>

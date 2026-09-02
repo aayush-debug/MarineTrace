@@ -52,17 +52,15 @@ export const Sidebar: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActivePage(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition-colors group cursor-pointer ${
-                isActive
-                  ? 'bg-[#161e2e] text-slate-100 font-semibold border-l-2 border-blue-500 pl-2.5'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#161e2e]/50'
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition-colors group cursor-pointer ${isActive
+                ? 'bg-[#161e2e] text-slate-100 font-semibold border-l-2 border-blue-500 pl-2.5'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-[#161e2e]/50'
+                }`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <Icon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'
-                  }`}
+                  className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'
+                    }`}
                 />
                 <span className="truncate text-[12px]">{item.label}</span>
               </div>
@@ -70,13 +68,12 @@ export const Sidebar: React.FC = () => {
               {/* Status Badge */}
               {item.badge && (
                 <span
-                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 ${
-                    item.badgeType === 'alert'
-                      ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
-                      : item.badgeType === 'info'
+                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 ${item.badgeType === 'alert'
+                    ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
+                    : item.badgeType === 'info'
                       ? 'bg-blue-950 text-blue-300 border border-blue-800/60'
                       : 'bg-[#161e2e] text-slate-400 border border-[#1e293b]'
-                  }`}
+                    }`}
                 >
                   {item.badge}
                 </span>

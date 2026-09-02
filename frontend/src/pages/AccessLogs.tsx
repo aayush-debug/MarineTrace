@@ -348,11 +348,10 @@ export const AccessLogs: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('logs')}
-            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${
-              activeTab === 'logs'
+            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${activeTab === 'logs'
                 ? 'border-cyan-400 text-cyan-300 font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Activity className="w-4 h-4" />
             <span>Login Activity Stream ({filteredLogs.length})</span>
@@ -360,11 +359,10 @@ export const AccessLogs: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('docker')}
-            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${
-              activeTab === 'docker'
+            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${activeTab === 'docker'
                 ? 'border-cyan-400 text-cyan-300 font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Terminal className="w-4 h-4" />
             <span>Docker stdout Console</span>
@@ -372,11 +370,10 @@ export const AccessLogs: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('operators')}
-            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${
-              activeTab === 'operators'
+            className={`px-4 py-2.5 border-b-2 font-medium text-xs transition-all flex items-center gap-2 ${activeTab === 'operators'
                 ? 'border-cyan-400 text-cyan-300 font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Users className="w-4 h-4" />
             <span>Personnel Directory ({operators.length})</span>

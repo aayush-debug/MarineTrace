@@ -43,23 +43,21 @@ export const VesselRankList: React.FC = () => {
             <div
               key={vessel.mmsi}
               onClick={() => setSelectedVesselMmsi(vessel.mmsi)}
-              className={`p-3 rounded border transition-colors cursor-pointer ${
-                isSelected
+              className={`p-3 rounded border transition-colors cursor-pointer ${isSelected
                   ? 'bg-[#161e2e] border-blue-500 shadow-sm'
                   : 'bg-[#111622] hover:bg-[#161e2e]/60 border-[#1e293b]'
-              }`}
+                }`}
             >
               {/* Card Header: Rank, Name, Score */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div
-                    className={`w-6 h-6 rounded flex items-center justify-center font-bold text-xs font-mono shrink-0 ${
-                      isRank1
+                    className={`w-6 h-6 rounded flex items-center justify-center font-bold text-xs font-mono shrink-0 ${isRank1
                         ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
                         : vessel.rank === 2
-                        ? 'bg-amber-950 text-amber-300 border border-amber-800/60'
-                        : 'bg-slate-800 text-slate-300 border border-slate-700'
-                    }`}
+                          ? 'bg-amber-950 text-amber-300 border border-amber-800/60'
+                          : 'bg-slate-800 text-slate-300 border border-slate-700'
+                      }`}
                   >
                     #{vessel.rank}
                   </div>
@@ -82,13 +80,12 @@ export const VesselRankList: React.FC = () => {
                 <div className="text-right shrink-0">
                   <div className="text-[10px] text-slate-400 font-medium">Match</div>
                   <div
-                    className={`text-base font-bold font-mono tabular-nums ${
-                      vessel.score >= 80
+                    className={`text-base font-bold font-mono tabular-nums ${vessel.score >= 80
                         ? 'text-rose-400'
                         : vessel.score >= 50
-                        ? 'text-amber-400'
-                        : 'text-emerald-400'
-                    }`}
+                          ? 'text-amber-400'
+                          : 'text-emerald-400'
+                      }`}
                   >
                     {Math.round(vessel.score)}%
                   </div>
@@ -98,13 +95,12 @@ export const VesselRankList: React.FC = () => {
               {/* Priority & Anomaly Pill */}
               <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[10px]">
                 <span
-                  className={`px-2 py-0.5 rounded font-medium flex items-center gap-1 ${
-                    vessel.investigative_priority === 'HIGH'
+                  className={`px-2 py-0.5 rounded font-medium flex items-center gap-1 ${vessel.investigative_priority === 'HIGH'
                       ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
                       : vessel.investigative_priority === 'MEDIUM'
-                      ? 'bg-amber-950 text-amber-300 border border-amber-800/60'
-                      : 'bg-emerald-950 text-emerald-300 border border-emerald-800/60'
-                  }`}
+                        ? 'bg-amber-950 text-amber-300 border border-amber-800/60'
+                        : 'bg-emerald-950 text-emerald-300 border border-emerald-800/60'
+                    }`}
                 >
                   <AlertTriangle className="w-3 h-3" />
                   {vessel.investigative_priority} Priority

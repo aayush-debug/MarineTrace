@@ -3,6 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
 @layer base {
+
   :root,
   .dark,
   [data-theme="dark"] {
@@ -94,7 +95,10 @@
   }
 
   /* Monospaced numeric styling for coordinates, timestamps, metrics */
-  .font-mono, code, pre, [class*="font-mono"] {
+  .font-mono,
+  code,
+  pre,
+  [class*="font-mono"] {
     font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
@@ -429,7 +433,9 @@
     box-sizing: border-box !important;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #0f172a !important;

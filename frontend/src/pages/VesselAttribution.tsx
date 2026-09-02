@@ -82,11 +82,10 @@ export const VesselAttribution: React.FC = () => {
               </div>
 
               {/* Priority badge */}
-              <div className={`px-2.5 py-1 rounded text-center font-mono font-semibold text-xs uppercase border ${
-                topSuspect.investigative_priority === 'HIGH'
+              <div className={`px-2.5 py-1 rounded text-center font-mono font-semibold text-xs uppercase border ${topSuspect.investigative_priority === 'HIGH'
                   ? 'bg-rose-950 text-rose-300 border-rose-800/60'
                   : 'bg-amber-950 text-amber-300 border-amber-800/60'
-              }`}>
+                }`}>
                 {topSuspect.investigative_priority} Priority
               </div>
 
