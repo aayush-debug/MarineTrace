@@ -6,7 +6,7 @@ interface MLModelCardProps {
 
 const ML_LIMITATIONS = [
   'Model confidence ≠ certainty of oil presence.',
-  'Low wind / biogenic slicks may produce false positives.',
+  'Low wind / biogenic spills may produce false positives.',
   'Geographic accuracy depends on input image georeferencing quality.',
   'Vessel attribution handled by downstream AIS + drift modules.',
 ];

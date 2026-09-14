@@ -1,10 +1,10 @@
 import { Compass, Waves, Wind, Thermometer, Navigation, Cpu, Crosshair } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { MaritimeMap } from '../components/map/MaritimeMap';
-import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapLegend } from '../components/map/MapLegend';
 import { DriftPhysicsCard } from '../components/drift/DriftPhysicsCard';
 import { EnvironmentalConditionsCard } from '../components/drift/EnvironmentalConditionsCard';
+import { DriftTimelineControl } from '../components/drift/DriftTimelineControl';
 
 const SIM_PARAMS = [
   { label: 'Particles', value: '500', color: 'text-slate-200' },
@@ -18,7 +18,7 @@ const SIM_PARAMS = [
 ];
 
 export const DriftAnalysis: React.FC = () => {
-  const { investigation, environmental } = useInvestigation();
+  const { investigation, environmental, setIsIncidentSelectorOpen } = useInvestigation();
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-[#0c1017] overflow-hidden select-none">
@@ -43,15 +43,23 @@ export const DriftAnalysis: React.FC = () => {
             </p>
           </div>
         </div>
-        {investigation && (
-          <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setIsIncidentSelectorOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:text-white font-medium text-xs shadow-sm transition-colors cursor-pointer"
+            title="Choose or switch between pollution target incidents"
+          >
+            <Compass className="w-3.5 h-3.5 text-blue-400" />
+            <span>Select Target Incident</span>
+          </button>
+          {investigation && (
             <div className="flex items-center gap-2 px-3 py-1 bg-amber-950/70 border border-amber-800/60 rounded text-xs font-mono font-medium">
               <span className="w-2 h-2 rounded-full bg-amber-400" />
               <span className="text-amber-300">Origin Confidence:</span>
               <span className="text-amber-100 font-semibold font-mono">{(investigation.drift.origin.confidence * 100).toFixed(0)}%</span>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Simulation Parameter Telemetry Strip */}
@@ -84,13 +92,15 @@ export const DriftAnalysis: React.FC = () => {
           </div>
           <div className="flex-1 relative bg-[#0b0f17]">
             <MaritimeMap />
-            <MapLayerControls />
             <MapLegend />
           </div>
         </div>
 
         {/* RIGHT: Physics & Metocean Panel */}
         <div className="w-96 bg-[#111622] border-l border-[#1e293b] flex flex-col overflow-y-auto shrink-0 p-3 space-y-3">
+          {/* Interactive Simulation Controls */}
+          <DriftTimelineControl />
+
           {/* Drift Physics & Vector Decomposition */}
           <DriftPhysicsCard />
 
@@ -134,7 +144,7 @@ export const DriftAnalysis: React.FC = () => {
             </div>
             <p className="text-slate-400 leading-relaxed text-[11px]">
               Backward advection inverts regional surface current vectors while applying Monte Carlo turbulent diffusion,
-              converging the simulated slick envelope onto the probable time and geodetic coordinate of discharge.
+              converging the simulated spill envelope onto the probable time and geodetic coordinate of discharge.
             </p>
           </div>
         </div>

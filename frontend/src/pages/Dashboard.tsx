@@ -7,13 +7,11 @@ import {
   Compass,
   Activity,
   ChevronRight,
-  Clock,
   Radio,
   Crosshair,
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { MaritimeMap } from '../components/map/MaritimeMap';
-import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapLegend } from '../components/map/MapLegend';
 import { SpillInfoPanel } from '../components/spill/SpillInfoPanel';
 import { VesselRankList } from '../components/vessel/VesselRankList';
@@ -118,7 +116,7 @@ export const Dashboard: React.FC = () => {
             sub: 'Arabian Sea Corridor',
           },
           {
-            label: 'Confirmed Slicks',
+            label: 'Confirmed Spills',
             value: totalSpills,
             suffix: '',
             icon: AlertTriangle,
@@ -216,7 +214,6 @@ export const Dashboard: React.FC = () => {
 
           <div className="flex-1 relative bg-[#0b0f17]">
             <MaritimeMap />
-            <MapLayerControls />
             <MapLegend />
           </div>
         </div>
@@ -254,39 +251,6 @@ export const Dashboard: React.FC = () => {
             {activeRightTab === 'vessels' && (
               <VesselRankList />
             )}
-          </div>
-
-          {/* Recent Incident Cases */}
-          <div className="border-t border-[#1e293b] p-3 bg-[#0c1017] shrink-0">
-            <div className="flex items-center justify-between text-xs font-medium text-slate-400 mb-2">
-              <span>Recent Case Log</span>
-              <span className="text-[10px] text-slate-500 font-mono">Past 30 Days</span>
-            </div>
-            <div className="space-y-1.5">
-              {investigationList.slice(0, 2).map((inv) => (
-                <button
-                  key={inv.investigation_id}
-                  onClick={() => setActivePage('investigation')}
-                  className="w-full flex items-center justify-between p-2 rounded bg-[#111622] hover:bg-[#161e2e] border border-[#1e293b] text-xs transition-colors group cursor-pointer"
-                >
-                  <div className="text-left min-w-0">
-                    <div className="text-[11px] font-mono font-medium text-slate-200 group-hover:text-blue-400 transition-colors">
-                      Case #{inv.investigation_id}
-                    </div>
-                    <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-2.5 h-2.5 text-slate-500" />
-                      {new Date(inv.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-mono font-medium text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-900/60">
-                      {inv.status}
-                    </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
-                  </div>
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </div>

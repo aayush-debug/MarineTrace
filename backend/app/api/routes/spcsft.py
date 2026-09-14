@@ -734,8 +734,25 @@ async def initiate_sar_scan(payload: SpaceShiftJobRequest):
 
     # Run real ML detection
     try:
+        potential_paths = [
+            Path(__file__).resolve().parents[4] / "ml",
+            Path(__file__).resolve().parents[3] / "ml",
+            Path("/ml"),
+            Path("/app/ml"),
+        ]
+        ml_dir = next((p for p in potential_paths if p.exists()), potential_paths[0])
+        if str(ml_dir) not in sys.path:
+            sys.path.insert(0, str(ml_dir))
+
         from inference.api_interface import detect_oil
-        sample_s1_path = str(Path(__file__).resolve().parents[4] / "ml" / "data" / "sample_s1.tif")
+        potential_s1 = [
+            Path(__file__).resolve().parents[4] / "ml" / "data" / "sample_s1.tif",
+            Path(__file__).resolve().parents[3] / "ml" / "data" / "sample_s1.tif",
+            Path("/ml/data/sample_s1.tif"),
+            Path("/app/ml/data/sample_s1.tif"),
+        ]
+        sample_s1_file = next((p for p in potential_s1 if p.exists()), potential_s1[0])
+        sample_s1_path = str(sample_s1_file)
         ml_res = detect_oil(sample_s1_path, threshold=payload.threshold or 0.35)
         candidates = ml_res.get("candidates") or []
         spill = ml_res.get("spill") or {}

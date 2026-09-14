@@ -136,7 +136,7 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp ../.env.example ../.env  # Configure credentials if needed
+cp ../.env.example ../.env  # Configure environment variables
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -146,6 +146,28 @@ cd frontend
 npm install
 npm run dev
 ```
+
+---
+
+### 5. 🧠 ML Model & Dataset Setup
+
+> [!NOTE]
+> **Dataset Policy**: The training datasets are intentionally excluded from the Git repository because of their size.
+> Production inference requires only the ML source code and a trained model checkpoint (`ml/checkpoints/best_model_v2.pth` or `best_model.pth`).
+
+- **Pre-trained Checkpoints**: Model weights are located in `ml/checkpoints/`. For production deployments where checkpoints are hosted externally, weights can be supplied via Git LFS, Hugging Face Hub, or object storage (e.g., AWS S3 / Cloudflare R2) and referenced via `ML_MODEL_PATH`.
+- **Lightweight Test Fixtures**: Synthetic verification rasters and masks are included in `ml/data/test_synthetic/` and `ml/data/sample_s1.tif` to allow full local test validation without downloading the 40GB+ Zenodo dataset.
+- **CPU Fallback**: The inference engine automatically detects hardware accelerators (CUDA -> Apple MPS -> CPU) or can be explicitly forced to CPU mode using `ML_DEVICE=cpu`.
+
+---
+
+### 6. 🌐 Target Production Architecture
+
+MarineTrace is architected for decoupled cloud deployment:
+- **Frontend**: Static SPA hosted on **Vercel** (`npm run build` -> `dist/`) configured with `VITE_API_URL`.
+- **Backend & ML**: Containerized FastAPI service running on **Render** (or AWS ECS / Fly.io / GCP Cloud Run) with dynamic `$PORT`, health probes (`/ping`), and environment-driven CORS.
+- **Database**: SQLite with persistent volume for prototypes; drop-in upgrade path to PostgreSQL + PostGIS for enterprise scale.
+- For complete step-by-step deployment instructions, refer to **[DEPLOYMENT.md](DEPLOYMENT.md)**.
 
 ---
 

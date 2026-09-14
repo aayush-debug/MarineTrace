@@ -42,7 +42,7 @@ export const DEMO_SAR_SCENE: SARSceneDetails = {
     {
         "candidate_id": 1,
         "oil_probability": 0.924,
-        "classification": "Potential Oil Slick",
+        "classification": "Potential Oil Spill",
         "area_km2": 18.4,
         "area_pixels": 28672,
         "centroid": {
@@ -580,7 +580,7 @@ export const DEMO_SAR_SCENE: SARSceneDetails = {
     {
         "candidate_id": 2,
         "oil_probability": 0.715,
-        "classification": "Potential Oil Slick",
+        "classification": "Potential Oil Spill",
         "area_km2": 3.2,
         "area_pixels": 4992,
         "centroid": {

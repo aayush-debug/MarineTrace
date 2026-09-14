@@ -1,0 +1,19 @@
+{
+  "experiment_name": "experiment_001_loss/focal_dice",
+  "loss_type": "focal_dice",
+  "augmentation": true,
+  "epochs": 15,
+  "learning_rate": 0.0002,
+  "batch_size": 8,
+  "seed": 42,
+  "model": {
+    "architecture": "Unet",
+    "encoder_name": "resnet34",
+    "encoder_weights": "imagenet",
+    "in_channels": 2,
+    "classes": 1,
+    "activation": null,
+    "image_size": 256
+  },
+  "optimal_threshold_selected_on_val": 0.6
+}

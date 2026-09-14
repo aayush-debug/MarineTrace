@@ -89,13 +89,13 @@ export const MapLayerControls: React.FC = () => {
 
   const layerItems: { id: keyof LayerVisibility; label: string; dotColor: string }[] = [
     { id: 'sar', label: 'Sentinel-1 SAR Radar Image', dotColor: 'bg-cyan-400' },
-    { id: 'spill', label: 'Oil Slick Delineation', dotColor: 'bg-rose-500' },
+    { id: 'spill', label: 'Oil Spill Delineation', dotColor: 'bg-rose-500' },
     { id: 'origin', label: 'Origin Probability Envelope', dotColor: 'bg-amber-500' },
     { id: 'drift', label: 'Reverse Hindcast Drift', dotColor: 'bg-sky-400' },
     { id: 'forecast', label: '24h Forward Spread Forecast', dotColor: 'bg-emerald-500' },
     { id: 'vessels', label: 'Candidate AIS Transponders', dotColor: 'bg-indigo-400' },
     { id: 'tracks', label: 'Historical Track Vectors', dotColor: 'bg-purple-400' },
-    { id: 'spcsft', label: 'SpaceShift Live Slicks', dotColor: 'bg-blue-400' },
+    { id: 'spcsft', label: 'SpaceShift Live Spills', dotColor: 'bg-blue-400' },
   ];
 
   const basemapList = Object.values(BASEMAP_CONFIGS);
@@ -214,7 +214,7 @@ export const MapLayerControls: React.FC = () => {
                 <span>SAR Match</span>
               </div>
               <div className="text-[9px] text-slate-400 font-mono mt-0.5">
-                Radar damping & slick
+                Radar damping & spill
               </div>
             </button>
 

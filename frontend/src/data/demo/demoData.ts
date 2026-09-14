@@ -9,35 +9,19 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
     detected: true,
     confidence: 0.942,
     area_km2: 18.4,
-    // Scientifically scaled multi-branched hydrocarbon slick footprint (exact 18.40 km² geodesic area)
+    // Scientifically scaled multi-branched hydrocarbon slick footprint matching Sentinel-1 SAR C-Band backscatter depression
     geometry: {
       type: 'Polygon',
       coordinates: [
         [
-          [72.3756, 18.8541],
-          [72.3859, 18.8496],
-          [72.3961, 18.8426],
-          [72.4051, 18.8381],
-          [72.4141, 18.8349],
-          [72.4244, 18.8304],
-          [72.4334, 18.8271],
-          [72.4437, 18.8220],
-          [72.4540, 18.8130],
-          [72.4617, 18.8046],
-          [72.4656, 18.7976],
-          [72.4630, 18.7924],
-          [72.4553, 18.7937],
-          [72.4463, 18.8001],
-          [72.4373, 18.8053],
-          [72.4270, 18.8104],
-          [72.4180, 18.8156],
-          [72.4077, 18.8207],
-          [72.3974, 18.8259],
-          [72.3871, 18.8323],
-          [72.3775, 18.8400],
-          [72.3691, 18.8477],
-          [72.3666, 18.8516],
-          [72.3756, 18.8541],
+          [72.368, 18.826],
+          [72.412, 18.831],
+          [72.435, 18.855],
+          [72.428, 18.874],
+          [72.394, 18.872],
+          [72.371, 18.860],
+          [72.355, 18.842],
+          [72.368, 18.826],
         ],
       ],
     },
@@ -46,17 +30,12 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
       type: 'Polygon',
       coordinates: [
         [
-          [72.4013, 18.8374],
-          [72.4167, 18.8323],
-          [72.4309, 18.8265],
-          [72.4424, 18.8194],
-          [72.4489, 18.8091],
-          [72.4437, 18.8040],
-          [72.4309, 18.8117],
-          [72.4154, 18.8194],
-          [72.4000, 18.8271],
-          [72.3949, 18.8336],
-          [72.4013, 18.8374],
+          [72.390, 18.845],
+          [72.418, 18.848],
+          [72.422, 18.862],
+          [72.400, 18.865],
+          [72.385, 18.854],
+          [72.390, 18.845],
         ],
       ],
     },
@@ -66,23 +45,13 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
         type: 'Polygon',
         coordinates: [
           [
-            [72.3601, 18.8606],
-            [72.3711, 18.8554],
-            [72.3679, 18.8522],
-            [72.3563, 18.8574],
-            [72.3601, 18.8606],
-          ],
-        ],
-      },
-      {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [72.4681, 18.7918],
-            [72.4771, 18.7834],
-            [72.4720, 18.7796],
-            [72.4630, 18.7873],
-            [72.4681, 18.7918],
+            [72.350, 18.818],
+            [72.430, 18.820],
+            [72.455, 18.865],
+            [72.435, 18.890],
+            [72.380, 18.885],
+            [72.340, 18.850],
+            [72.350, 18.818],
           ],
         ],
       },
@@ -343,6 +312,19 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
           [72.680, 18.420], // Current vessel position at observation time T_obs
         ],
       },
+      future_trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [72.680, 18.420], // T0 Current observed AIS position
+          [72.765, 18.285], // T+6h waypoint
+          [72.855, 18.145], // T+12h waypoint
+          [72.950, 18.000], // T+18h waypoint
+          [73.045, 17.850], // T+24h projected forecast position
+        ],
+      },
+      destination: 'Colombo (CMB) / Malacca Transit',
+      eta: '2026-08-27 18:00 UTC',
+      route_corridor: 'Western India Deep-Sea TSS Route',
     },
     {
       rank: 2,
@@ -380,6 +362,19 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
           [72.610, 18.500],
         ],
       },
+      future_trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [72.610, 18.500], // T0 Current observed
+          [72.685, 18.380], // T+6h waypoint
+          [72.760, 18.255], // T+12h waypoint
+          [72.835, 18.130], // T+18h waypoint
+          [72.910, 18.000], // T+24h projected forecast position
+        ],
+      },
+      destination: 'Mormugao Port (INMRM)',
+      eta: '2026-08-26 14:30 UTC',
+      route_corridor: 'Konkan Coast Southbound Corridor',
     },
     {
       rank: 3,
@@ -414,6 +409,19 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
           [71.900, 18.720],
         ],
       },
+      future_trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [71.900, 18.720], // T0
+          [71.860, 18.590], // T+6h
+          [71.820, 18.460], // T+12h
+          [71.775, 18.320], // T+18h
+          [71.730, 18.180], // T+24h
+        ],
+      },
+      destination: 'Port of Richards Bay (ZARCB)',
+      eta: '2026-09-04 06:00 UTC',
+      route_corridor: 'Arabian Sea Oceanic Route',
     },
     {
       rank: 4,
@@ -447,6 +455,19 @@ export const DEMO_INVESTIGATION_DATA: InvestigationResponse = {
           [72.080, 18.620],
         ],
       },
+      future_trajectory: {
+        type: 'LineString',
+        coordinates: [
+          [72.080, 18.620], // T0
+          [72.080, 18.490], // T+6h
+          [72.080, 18.360], // T+12h
+          [72.080, 18.220], // T+18h
+          [72.080, 18.080], // T+24h
+        ],
+      },
+      destination: 'Fujairah Anchorage (AEFJR)',
+      eta: '2026-08-28 12:00 UTC',
+      route_corridor: 'North-South Tanker Transit Lane',
     },
   ],
   pipeline_duration_seconds: 1.42,

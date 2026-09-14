@@ -1,4 +1,11 @@
-# Root .dockerignore
+# Version Control & Local Configuration
+.git/
+.gitignore
+.env
+.env.*
+!.env.example
+
+# Python Environment & Bytecode
 __pycache__/
 *.pyc
 *.pyo
@@ -7,15 +14,55 @@ __pycache__/
 env/
 venv/
 .venv/
-.git/
-.gitignore
-.DS_Store
-*.db
-*.sqlite
-*.sqlite3
+*/venv/
+*/.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+
+# Node & Frontend Build
 node_modules/
-frontend/dist/
-frontend/build/
-data/cache/
+*/node_modules/
+dist/
+build/
+.vite/
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Database Runtime Files
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Large Datasets & Training Caches (exclude to maintain lean image)
+ml/data/raw/
+ml/data/processed/
+ml/data/external_s1/
+ml/data/*.zip
+ml/data/*.tar.gz
+ml/data/*.7z
+ml/checkpoints/*.tar.gz
+*.pth.tar
+runs/
+wandb/
+
+# Logs, Scratch & Temporary Files
 logs/
 *.log
+data/cache/
+scratch/
+.system_generated/
+
+# Test Suites & Artifacts
+backend/tests/
+ml/tests/
+*.test.*

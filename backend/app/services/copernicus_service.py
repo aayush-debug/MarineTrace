@@ -136,8 +136,8 @@ class CopernicusService:
                 end_datetime=end_iso,
                 output_directory=str(self.cache_dir),
                 output_filename=out_filename,
-                username=settings.copernicus_username or None,
-                password=settings.copernicus_password or None,
+                username=settings.effective_copernicus_user or None,
+                password=settings.effective_copernicus_pass or None,
                 overwrite=True,
                 disable_progress_bar=True,
             )

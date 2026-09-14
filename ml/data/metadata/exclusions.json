@@ -1,0 +1,20 @@
+[
+  {
+    "sample_id": "S1A_IW_GRDH_EXCLUDED_001",
+    "reason": "Header corruption: missing GeoTIFF projection tag and invalid shape [1, 256, 256]",
+    "source": "External S-1 Raw Ingest",
+    "action": "Rejected"
+  },
+  {
+    "sample_id": "S1A_IW_GRDH_EXCLUDED_002",
+    "reason": "Missing cross-polarization channel: only VV present (VV_ONLY)",
+    "source": "DARTIS Raw Ingest",
+    "action": "Quarantined in VV_ONLY pool (channel duplication prohibited)"
+  },
+  {
+    "sample_id": "S1A_IW_GRDH_EXCLUDED_003",
+    "reason": "Excessive nodata fraction: 42% invalid pixels (>20% threshold)",
+    "source": "Sentinel-1 Swath Edge",
+    "action": "Rejected"
+  }
+]

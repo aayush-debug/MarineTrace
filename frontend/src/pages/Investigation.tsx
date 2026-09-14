@@ -12,13 +12,13 @@ import {
 } from 'lucide-react';
 import { useInvestigation } from '../context/InvestigationContext';
 import { MaritimeMap } from '../components/map/MaritimeMap';
-import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapLegend } from '../components/map/MapLegend';
 import { VesselRankList } from '../components/vessel/VesselRankList';
 import { VesselDetailPanel } from '../components/vessel/VesselDetailPanel';
 import { SpillInfoPanel } from '../components/spill/SpillInfoPanel';
 import { DriftPhysicsCard } from '../components/drift/DriftPhysicsCard';
 import { EnvironmentalConditionsCard } from '../components/drift/EnvironmentalConditionsCard';
+import { DriftTimelineControl } from '../components/drift/DriftTimelineControl';
 import { InvestigationTimeline } from '../components/timeline/InvestigationTimeline';
 
 type WorkspaceTab = 'vessels' | 'drift' | 'spill' | 'evidence';
@@ -57,7 +57,7 @@ export const Investigation: React.FC = () => {
   const tabs: { id: WorkspaceTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'vessels', label: 'Suspect AIS', icon: Ship },
     { id: 'drift', label: 'Drift Matrix', icon: Compass },
-    { id: 'spill', label: 'Slick Radar', icon: Layers },
+    { id: 'spill', label: 'Spill Radar', icon: Layers },
     { id: 'evidence', label: 'Audit Log', icon: FileCheck2 },
   ];
 
@@ -111,7 +111,7 @@ export const Investigation: React.FC = () => {
         </div>
         <span className="text-slate-700">|</span>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-slate-500 text-[11px]">SLICK AREA:</span>
+          <span className="text-slate-500 text-[11px]">SPILL AREA:</span>
           <span className="text-slate-200 font-semibold tabular-nums">{spill.area_km2.toFixed(1)} km²</span>
         </div>
         <span className="text-slate-700">|</span>
@@ -141,7 +141,6 @@ export const Investigation: React.FC = () => {
         <div className="flex-1 flex flex-col min-h-0 relative">
           <div className="flex-1 relative bg-[#0b0f17]">
             <MaritimeMap />
-            <MapLayerControls />
             <MapLegend />
           </div>
         </div>
@@ -180,6 +179,7 @@ export const Investigation: React.FC = () => {
 
             {activeTab === 'drift' && (
               <>
+                <DriftTimelineControl />
                 <DriftPhysicsCard />
                 <EnvironmentalConditionsCard />
               </>

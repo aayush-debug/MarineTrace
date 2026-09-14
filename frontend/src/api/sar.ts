@@ -46,7 +46,7 @@ export async function getSARSceneDetails(
           ? res.candidates.map((c: any, idx: number) => ({
               candidate_id: c.candidate_id || idx + 1,
               oil_probability: c.confidence || 0.942,
-              classification: c.verified_oil ? 'Confirmed Oil Slick' : 'Potential Oil Slick',
+              classification: c.verified_oil ? 'Confirmed Oil Spill' : 'Potential Oil Spill',
               area_km2: c.area_km2 || 18.4,
               area_pixels: 28672,
               centroid: {

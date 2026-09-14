@@ -204,7 +204,7 @@ export const SatelliteImagery: React.FC = () => {
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-200">Analysis Summary</span>
               <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60 font-semibold uppercase">
-                Oil Slick Detected
+                Oil Spill Detected
               </span>
             </div>
 
@@ -240,12 +240,12 @@ export const SatelliteImagery: React.FC = () => {
             </div>
           </div>
 
-          {/* Extracted Slicks List */}
+          {/* Extracted Spills List */}
           <div className="p-3 bg-[#161e2e] border border-[#1e293b] rounded space-y-2.5 shadow-sm">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-200">
               <div className="flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-blue-400" />
-                <span>Extracted Slicks ({scene.candidates.length})</span>
+                <span>Extracted Spills ({scene.candidates.length})</span>
               </div>
               <span className="text-[10px] text-slate-500 font-mono">Click to Inspect</span>
             </div>

@@ -5,8 +5,8 @@ services:
   # ─────────────────────────────────────────────────────────────────
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     image: marinetrace-backend:latest
     container_name: marinetrace-backend
     ports:
@@ -15,13 +15,13 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: "sqlite:///./marinetrace.db"
+      DATABASE_URL: "sqlite:////app/db/marinetrace.db"
       USE_REAL_ML: "true"
-      AIS_API_KEY: ${AIS_API_KEY:-d23f615198ebddbc0442eb17eb7962faeecc961b}
+      AIS_API_KEY: ${AIS_API_KEY:-}
       AIS_BASE_URL: ${AIS_BASE_URL:-wss://stream.aisstream.io/v0/stream}
       AIS_PROVIDER: ${AIS_PROVIDER:-aisstream}
-      COPERNICUS_USERNAME: ${COPERNICUS_USERNAME:-SIH}
-      COPERNICUS_PASSWORD: ${COPERNICUS_PASSWORD:-Sihteam@2026}
+      COPERNICUS_USERNAME: ${COPERNICUS_USERNAME:-}
+      COPERNICUS_PASSWORD: ${COPERNICUS_PASSWORD:-}
     volumes:
       # Mount source code for live development & hot reloading
       - ./backend/app:/app/app
@@ -52,6 +52,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
     image: marinetrace-frontend:latest
     container_name: marinetrace-frontend
     ports:

@@ -184,7 +184,7 @@ export const SatelliteViewer: React.FC = () => {
           {/* Delineation Diagnostics */}
           <div className="p-3 bg-[#0d1527] border border-slate-800 rounded-lg space-y-1.5 text-xs text-slate-300">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1">
-              SLICK EXTRACTION SUMMARY
+              SPILL EXTRACTION SUMMARY
             </div>
             <div className="flex justify-between text-[11px]">
               <span className="text-slate-400">Estimated Area:</span>
@@ -200,7 +200,7 @@ export const SatelliteViewer: React.FC = () => {
             </div>
             <div className="flex justify-between text-[11px]">
               <span className="text-slate-400">Backscatter Drop:</span>
-              <span className="text-slate-100 font-semibold">-4.8 dB (Confirmed Slick)</span>
+              <span className="text-slate-100 font-semibold">-4.8 dB (Confirmed Spill)</span>
             </div>
           </div>
         </div>
@@ -231,7 +231,7 @@ export const SatelliteViewer: React.FC = () => {
               <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:6px_6px]" />
             )}
 
-            {/* Slick Dark Patch (Capillary Wave Damping Zone) */}
+            {/* Spill Dark Patch (Capillary Wave Damping Zone) */}
             <div
               className={`absolute top-[28%] left-[26%] w-56 h-36 rounded-[46%] transition-all duration-300 ${
                 activeTab === 'mask'
@@ -244,7 +244,7 @@ export const SatelliteViewer: React.FC = () => {
               {activeTab === 'overlay' && (
                 <div className="w-full h-full bg-rose-500/25 rounded-[46%] flex flex-col items-center justify-center text-rose-300">
                   <span className="text-[10px] font-bold bg-slate-950/80 px-2 py-0.5 rounded border border-rose-500/40">
-                    SLICK DETECTED ({(investigation?.spill.confidence ? investigation.spill.confidence * 100 : 92.4).toFixed(1)}%)
+                    SPILL DETECTED ({(investigation?.spill.confidence ? investigation.spill.confidence * 100 : 92.4).toFixed(1)}%)
                   </span>
                   <span className="text-[9px] text-slate-300 mt-1">
                     {investigation?.spill.area_km2.toFixed(2) || '18.40'} km²

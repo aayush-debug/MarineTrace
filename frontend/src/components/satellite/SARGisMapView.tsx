@@ -128,6 +128,9 @@ export const SARGisMapView: React.FC<SARGisMapViewProps> = ({
         center={[scene.metadata.center_coordinates.latitude, scene.metadata.center_coordinates.longitude]}
         zoom={10}
         scrollWheelZoom={true}
+        preferCanvas={true}
+        wheelPxPerZoomLevel={90}
+        wheelDebounceTime={40}
         className="w-full h-full z-0"
         zoomControl={false}
       >
@@ -138,6 +141,9 @@ export const SARGisMapView: React.FC<SARGisMapViewProps> = ({
           attribution={activeBasemap.attribution}
           subdomains={activeBasemap.subdomains || ['mt0', 'mt1', 'mt2', 'mt3']}
           maxZoom={activeBasemap.maxZoom}
+          keepBuffer={6}
+          updateWhenIdle={true}
+          updateWhenZooming={false}
         />
 
         {/* Layer 2: Georeferenced Sentinel-1 SAR Raster Overlay with Opacity */}

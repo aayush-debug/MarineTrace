@@ -1,0 +1,116 @@
+{
+  "dataset": {
+    "name": "Sentinel-1 SAR Oil Spill Image Dataset (Zenodo)",
+    "source_urls": {
+      "part1_images": "https://zenodo.org/records/8346860/files/01_Train_Val_Oil_Spill_images.7z",
+      "part1_masks": "https://zenodo.org/records/8346860/files/01_Train_Val_Oil_Spill_mask.7z",
+      "part2_no_oil_images": "https://zenodo.org/records/8253899/files/01_Train_Val_No_Oil_Images.7z",
+      "part2_no_oil_masks": "https://zenodo.org/records/8253899/files/01_Train_Val_No_Oil_mask.7z",
+      "part2_lookalike_images": "https://zenodo.org/records/8253899/files/01_Train_Val_Lookalike_images.7z",
+      "part2_lookalike_masks": "https://zenodo.org/records/8253899/files/01_Train_Val_Lookalike_mask.7z",
+      "part3": "https://zenodo.org/records/13761290"
+    },
+    "raw_dir": "data/raw",
+    "processed_dir": "data/processed",
+    "original_size": 2048,
+    "channels": 2,
+    "representation": "sigma0_db"
+  },
+  "preprocessing": {
+    "patch_size": 256,
+    "patch_stride": 256,
+    "min_valid_fraction": 0.8,
+    "min_oil_fraction": 0.0,
+    "nodata_value": null,
+    "normalization": "minmax",
+    "norm_bounds": {
+      "vv_min": -30.0,
+      "vv_max": 0.0,
+      "vh_min": -35.0,
+      "vh_max": -5.0
+    }
+  },
+  "splitting": {
+    "train_ratio": 0.7,
+    "val_ratio": 0.15,
+    "test_ratio": 0.15,
+    "seed": 42
+  },
+  "model": {
+    "architecture": "Unet",
+    "encoder_name": "resnet34",
+    "encoder_weights": "imagenet",
+    "in_channels": 2,
+    "classes": 1,
+    "activation": null,
+    "image_size": 256
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "epochs": 50,
+    "batch_size": 8,
+    "num_workers": 0,
+    "seed": 42,
+    "early_stopping_patience": 10,
+    "early_stopping_min_delta": 0.0001,
+    "scheduler": "CosineAnnealingLR",
+    "scheduler_T_max": 50,
+    "scheduler_eta_min": 1e-06,
+    "checkpoint_dir": "checkpoints",
+    "save_best_only": true,
+    "monitor_metric": "val_dice"
+  },
+  "loss": {
+    "type": "combined",
+    "bce_weight": 0.5,
+    "dice_weight": 0.5,
+    "smooth": 1.0
+  },
+  "inference": {
+    "default_threshold": 0.35,
+    "min_candidate_area_pixels": 100,
+    "tile_overlap": 64
+  },
+  "candidates": {
+    "threshold": 0.35,
+    "min_area_pixels": 100,
+    "max_candidates": 50,
+    "compute_texture_features": false
+  },
+  "visualization": {
+    "output_dir": "results/visualizations",
+    "dpi": 150,
+    "figsize": [
+      18,
+      12
+    ],
+    "colormap": "RdYlGn_r"
+  },
+  "paths": {
+    "checkpoint_dir": "checkpoints",
+    "results_dir": "results",
+    "visualization_dir": "results/visualizations",
+    "log_dir": "results/logs"
+  },
+  "model_metadata": {
+    "parameter_count": 24452287,
+    "encoder": "resnet34",
+    "architecture": "Unet",
+    "in_channels": 2,
+    "classes": 1,
+    "activation": "sigmoid_at_inference",
+    "default_threshold": 0.35,
+    "normalization": "minmax",
+    "norm_bounds": {
+      "vv_min": -30.0,
+      "vv_max": 0.0,
+      "vh_min": -35.0,
+      "vh_max": -5.0
+    },
+    "tile_size": 256,
+    "tile_overlap": 64,
+    "checkpoint_path": "checkpoints/best_model.pth"
+  }
+}

@@ -27,13 +27,13 @@ export const InvestigationTimeline: React.FC = () => {
     {
       time: formatOffset(0),
       title: 'Satellite SAR Detection',
-      detail: 'Sentinel-1 C-Band scene captured slick signature',
+      detail: 'Sentinel-1 C-Band scene captured spill signature',
       icon: Satellite,
       status: 'complete',
     },
     {
       time: formatOffset(16),
-      title: 'Slick Characterization',
+      title: 'Spill Characterization',
       detail: `${investigation.spill.area_km2.toFixed(1)} km² polygon segmented with ${(investigation.spill.confidence * 100).toFixed(0)}% confidence`,
       icon: Search,
       status: 'complete',

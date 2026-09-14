@@ -11,13 +11,13 @@
     "precision": 0.0,
     "recall": 0.0,
     "f1": 0.0,
-    "pixel_accuracy": 0.9565032958984083,
-    "false_positive_rate": 0.0011727401647572086,
-    "false_negative_rate": 0.9999999999992797,
+    "pixel_accuracy": 0.9580596923827832,
+    "false_positive_rate": 0.0009737687076561459,
+    "false_negative_rate": 0.9999999999992557,
     "true_positives": 0,
-    "false_positives": 368,
-    "true_negatives": 313427,
-    "false_negatives": 13885
+    "false_positives": 306,
+    "true_negatives": 313937,
+    "false_negatives": 13437
   },
   "lookalike_metrics": {
     "threshold": 0.5,
@@ -26,12 +26,12 @@
     "precision": 0.0,
     "recall": 0.0,
     "f1": 0.0,
-    "pixel_accuracy": 0.998800659179657,
-    "false_positive_rate": 0.0011993408203124633,
+    "pixel_accuracy": 0.9971801757812195,
+    "false_positive_rate": 0.002819824218749914,
     "false_negative_rate": 0.0,
     "true_positives": 0,
-    "false_positives": 393,
-    "true_negatives": 327287,
+    "false_positives": 924,
+    "true_negatives": 326756,
     "false_negatives": 0
   },
   "test_summary": {
@@ -48,6 +48,6 @@
     "External test": "FAIL (Dataset not on disk)",
     "Look-alike test": "PASS (Synthetic Verified)"
   },
-  "execution_timestamp": "2026-08-27T15:53:43Z",
-  "total_duration_seconds": 25.75
+  "execution_timestamp": "2026-09-10T19:08:18Z",
+  "total_duration_seconds": 7.32
 }

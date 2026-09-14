@@ -62,3 +62,7 @@ class VesselAttribution(BaseModel):
     vessel_type: str = "Unknown"
     flag: str | None = None
     trajectory: GeoJSONGeometry | None = None
+    future_trajectory: GeoJSONGeometry | None = None
+    destination: str | None = None
+    eta: str | None = None
+    route_corridor: str | None = None

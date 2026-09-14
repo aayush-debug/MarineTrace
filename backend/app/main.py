@@ -47,19 +47,18 @@ app = FastAPI(
 # ── Security Headers ────────────────────────────────
 app.add_middleware(SecurityHeadersMiddleware)
 
-# ── CORS — allow the React frontend ────────────────
+# ── CORS — allow configured origins + localhost regex ─
+cors_origins_list = settings.all_cors_origins
+# Never permit wildcard origins in production
+if not settings.debug and "*" in cors_origins_list:
+    cors_origins_list = [o for o in cors_origins_list if o != "*"]
+allow_all = "*" in cors_origins_list and settings.debug
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
-    allow_credentials=True,
+    allow_origins=["*"] if allow_all else cors_origins_list,
+    allow_origin_regex=None if allow_all else r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_credentials=False if allow_all else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

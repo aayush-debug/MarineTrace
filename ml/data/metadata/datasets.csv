@@ -1,0 +1,4 @@
+dataset_id,name,sensor,polarization,samples_count,role,license
+1,Sentinel-1 SAR Oil Spill (Zenodo 8346860/8253899),Sentinel-1 C-SAR,VV+VH,3020 scenes,Primary Multi-Scene Dual-Pol Benchmark,CC BY 4.0
+2,DARTIS 2019 (PANGAEA 980773),Sentinel-1 C-SAR,VV ONLY,3655 patches,Look-alike & Negative Verification,CC BY 4.0
+3,Synthetic High-Fidelity Physics Calibrated S-1,Sentinel-1 Dual-Pol Simulation,VV+VH,120 multi-patch scenes,Controlled Reproducible Training & Evaluation,MIT

@@ -39,7 +39,7 @@ const PRESET_SCENARIOS: ScenarioPreset[] = [
     observation_time: '2026-08-25T10:32:00',
     backward_hours: 24,
     suspect_target: 'MV Ocean Star (Crude Oil Tanker)',
-    description: 'High-confidence hydrocarbon slick trailing an international crude tanker with anomalous speed reduction inside origin perimeter.',
+    description: 'High-confidence hydrocarbon spill trailing an international crude tanker with anomalous speed reduction inside origin perimeter.',
   },
   {
     id: 'hormuz-chokepoint-02',
@@ -189,7 +189,7 @@ export const NewInvestigation: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#1e293b] font-mono text-[10px]">
                     <div>
-                      <span className="text-slate-500 block">Slick Footprint</span>
+                      <span className="text-slate-500 block">Spill Footprint</span>
                       <span className="font-bold text-slate-200">{scenario.area_km2.toFixed(1)} km²</span>
                     </div>
                     <div>

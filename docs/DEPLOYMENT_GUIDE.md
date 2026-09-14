@@ -80,9 +80,9 @@ Because MarineTrace uses **OpenDrift Lagrangian ocean modeling**, **NetCDF4**, *
    - **Instance Type**: Free or Starter
 5. Under **Environment Variables**, add:
    - `USE_REAL_ML` = `true`
-   - `AIS_API_KEY` = `d23f615198ebddbc0442eb17eb7962faeecc961b`
-   - `COPERNICUS_USERNAME` = `SIH`
-   - `COPERNICUS_PASSWORD` = `Sihteam@2026`
+   - `AIS_API_KEY` = `<your-aisstream-api-key>`
+   - `COPERNICUS_USERNAME` = `<your-copernicus-username>`
+   - `COPERNICUS_PASSWORD` = `<your-copernicus-password>`
 6. Click **Create Web Service**.
 7. Copy your Render backend URL (e.g., `https://marinetrace-api.onrender.com`).
 8. Paste that URL into your Vercel project's `VITE_API_URL` environment variable!

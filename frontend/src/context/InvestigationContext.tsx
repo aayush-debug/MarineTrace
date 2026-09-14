@@ -341,7 +341,7 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
               ],
             ],
           },
-          slick_type: 'SAR Backscatter Oil Slick Anomaly',
+          slick_type: 'SAR Backscatter Oil Spill Anomaly',
           lookalike_risk: 'Low (VV/VH Damping Verified)',
           severity: 'HIGH',
         };
@@ -377,7 +377,7 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoadingStep('Ingesting Space Shift SAR detection into MarineTrace Attribution Pipeline...');
 
     try {
-      setLoadingStep('[1/4] Extracting detected slick geometry from Space Shift SAR feed...');
+      setLoadingStep('[1/4] Extracting detected spill geometry from Space Shift SAR feed...');
       await new Promise((r) => setTimeout(r, 600));
 
       setLoadingStep('[2/4] Simulating OpenDrift hydrodynamic backward trajectories...');
@@ -399,8 +399,109 @@ export const InvestigationProvider: React.FC<{ children: React.ReactNode }> = ({
                 detectionId &&
                 p.data.investigation_id.toLowerCase().includes(detectionId.toLowerCase())) ||
               (zoneId && p.id.toLowerCase().includes(zoneId.replace('zone_', '')))
-          ) || ALL_INCIDENT_PRESETS[0];
-        return matchingPreset.data;
+          );
+
+        if (matchingPreset) {
+          return matchingPreset.data;
+        }
+
+        const targetDet = DEFAULT_SPCSFT_DETECTIONS.find((d) => d.detection_id === detectionId);
+        if (targetDet) {
+          const lat = targetDet.centroid.latitude;
+          const lon = targetDet.centroid.longitude;
+          return {
+            investigation_id: targetDet.detection_id,
+            status: 'COMPLETE' as const,
+            created_at: new Date().toISOString(),
+            observation_time: targetDet.observation_time,
+            spill: {
+              detected: true,
+              confidence: targetDet.confidence,
+              area_km2: targetDet.area_km2,
+              geometry: targetDet.geometry,
+              sheen_geometry: targetDet.sheen_geometry,
+              core_geometry: targetDet.core_geometry,
+              centroid: targetDet.centroid,
+            },
+            drift: {
+              origin: {
+                latitude: lat + 0.18,
+                longitude: lon - 0.22,
+                confidence: 0.88,
+                geometry: {
+                  type: 'Polygon',
+                  coordinates: [[
+                    [lon - 0.26, lat + 0.15],
+                    [lon - 0.18, lat + 0.14],
+                    [lon - 0.16, lat + 0.21],
+                    [lon - 0.24, lat + 0.23],
+                    [lon - 0.26, lat + 0.15],
+                  ]],
+                },
+                confidence_zones: [],
+              },
+              origin_time_window: {
+                start: '2026-08-24T10:30:00Z',
+                end: '2026-08-24T16:30:00Z',
+              },
+              backward_trajectory: {
+                direction: 'backward',
+                geometry: {
+                  type: 'LineString',
+                  coordinates: [
+                    [lon, lat],
+                    [lon - 0.08, lat + 0.06],
+                    [lon - 0.15, lat + 0.12],
+                    [lon - 0.22, lat + 0.18],
+                  ],
+                },
+                timestamps: ['T0 (Detection)', 'T-8h', 'T-16h', 'T-24h (Est. Origin)'],
+                points: [
+                  [lon, lat],
+                  [lon - 0.08, lat + 0.06],
+                  [lon - 0.15, lat + 0.12],
+                  [lon - 0.22, lat + 0.18],
+                ],
+                total_duration_hours: 24,
+                particles: [],
+              },
+              forward_trajectory: {
+                direction: 'forward',
+                geometry: {
+                  type: 'LineString',
+                  coordinates: [
+                    [lon, lat],
+                    [lon + 0.07, lat - 0.08],
+                    [lon + 0.14, lat - 0.16],
+                  ],
+                },
+                timestamps: ['T0 (Detection)', 'T+12h', 'T+24h (Forecast)'],
+                points: [
+                  [lon, lat],
+                  [lon + 0.07, lat - 0.08],
+                  [lon + 0.14, lat - 0.16],
+                ],
+                total_duration_hours: 24,
+              },
+            },
+            vessels: ALL_INCIDENT_PRESETS[0].data.vessels.map((v, i) => ({
+              ...v,
+              trajectory: {
+                type: 'LineString',
+                coordinates: [
+                  [lon - 0.35 + i * 0.05, lat + 0.30 - i * 0.04],
+                  [lon - 0.22, lat + 0.18],
+                  [lon + 0.05 + i * 0.06, lat - 0.10 - i * 0.05],
+                ],
+              },
+            })),
+            pipeline_duration_seconds: 1.48,
+            is_demo: true,
+            disclaimer: 'This analysis provides potential vessel attribution and investigative priority only.',
+          };
+        }
+
+        return ALL_INCIDENT_PRESETS[0].data;
       });
 
       setInvestigation(response);

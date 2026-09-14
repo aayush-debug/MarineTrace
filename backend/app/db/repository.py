@@ -41,11 +41,17 @@ class SQLiteInvestigationRepository(InvestigationRepository):
     (id, created_at, status, confidence, vessel_count).
     """
 
-    def __init__(self, db_path: str | Path = "marinetrace.db"):
-        self.db_path = str(db_path)
+    def __init__(self, db_path: str | Path | None = None):
+        if db_path is None:
+            from app.core.config import settings
+            self.db_path = str(settings.get_db_path())
+        else:
+            self.db_path = str(db_path)
+            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
 
     def _init_db(self):
+        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS investigations (

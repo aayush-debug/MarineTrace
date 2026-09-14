@@ -26,7 +26,10 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 
 def _get_device() -> torch.device:
-    """Select compute device."""
+    """Select compute device with environment override and safe CPU fallback."""
+    env_device = os.environ.get("ML_DEVICE", "").strip().lower()
+    if env_device:
+        return torch.device(env_device)
     if torch.cuda.is_available():
         return torch.device("cuda")
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
@@ -166,6 +169,9 @@ def detect_oil(
     else:
         config = {}
 
+    active_version = "v1"
+    v2_default_threshold = 0.60
+
     if checkpoint_path is None:
         env_ckpt = os.environ.get("ML_MODEL_PATH")
         if env_ckpt:
@@ -177,15 +183,31 @@ def detect_oil(
             for c in candidates:
                 if c.exists():
                     checkpoint_path = str(c.resolve())
+                    active_version = "v2" if "v2" in str(c).lower() else "v1"
                     break
 
         if not checkpoint_path or not os.path.exists(checkpoint_path):
-            checkpoint_path = str(
-                PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model.pth"
-            )
+            env_ver = os.environ.get("ML_MODEL_VERSION", "v2").strip().lower()
+            v2_candidate = PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model_v2.pth"
+            v1_candidate = PROJECT_ROOT / config.get("paths", {}).get("checkpoint_dir", "checkpoints") / "best_model.pth"
+
+            if env_ver != "v1" and v2_candidate.exists():
+                checkpoint_path = str(v2_candidate)
+                active_version = "v2"
+            elif v1_candidate.exists():
+                checkpoint_path = str(v1_candidate)
+                active_version = "v1"
+            else:
+                checkpoint_path = str(v2_candidate if v2_candidate.exists() else v1_candidate)
+
+    else:
+        active_version = "v2" if "v2" in str(checkpoint_path).lower() else "v1"
 
     if threshold is None:
-        threshold = config.get("inference", {}).get("default_threshold", 0.5)
+        if active_version == "v2":
+            threshold = v2_default_threshold
+        else:
+            threshold = config.get("inference", {}).get("default_threshold", 0.35)
 
     min_area = config.get("candidates", {}).get("min_area_pixels", 100)
     max_candidates = config.get("candidates", {}).get("max_candidates", 50)
@@ -259,7 +281,7 @@ def detect_oil(
         "confidence": float(candidates[0]["oil_probability"]) if candidates else 0.0,
         "observation_time": None,  # To be filled by backend from image metadata
         "image_path": str(image_path),
-        "model_version": "marinetrace-unet-v1",
+        "model_version": f"marinetrace-unet-{active_version}",
         "processing_time_seconds": round(processing_time, 2),
     }
 

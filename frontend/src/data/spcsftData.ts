@@ -157,7 +157,7 @@ export const DEFAULT_SPCSFT_DETECTIONS: SpaceShiftDetection[] = [
         ],
       ],
     },
-    slick_type: 'Heavy Crude Oil Slick (Emulsified Mousse)',
+    slick_type: 'Heavy Crude Oil Spill (Emulsified Mousse)',
     lookalike_risk: 'Low (Dual-pol VV/VH damping ratio verified)',
     severity: 'CRITICAL',
     properties: {
@@ -604,7 +604,7 @@ export const DEFAULT_SPCSFT_DETECTIONS: SpaceShiftDetection[] = [
         ],
       ],
     },
-    slick_type: 'Heavy Crude Oil Slick (Underway De-ballasting)',
+    slick_type: 'Heavy Crude Oil Spill (Underway De-ballasting)',
     lookalike_risk: 'Low (Dual-pol cross-channel anomaly confirmed)',
     severity: 'CRITICAL',
     properties: {

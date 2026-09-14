@@ -4,6 +4,7 @@ import {
   MapPin,
   FileCheck2,
   Flag,
+  Compass,
 } from 'lucide-react';
 import { useInvestigation } from '../../context/InvestigationContext';
 import { ScoreBreakdownBar } from './ScoreBreakdownBar';
@@ -147,31 +148,31 @@ export const VesselDetailPanel: React.FC = () => {
         </div>
         <div className="space-y-1.5">
           <ScoreBreakdownBar
-            label="Spatial Proximity (30%)"
+            label="Spatial Proximity"
             score={feature_scores.spatial}
             weightLabel="30%"
             color="rose"
           />
           <ScoreBreakdownBar
-            label="Temporal Correlation (25%)"
+            label="Temporal Correlation"
             score={feature_scores.temporal}
             weightLabel="25%"
             color="amber"
           />
           <ScoreBreakdownBar
-            label="Trajectory Intercept (20%)"
+            label="Trajectory Intercept"
             score={feature_scores.trajectory}
             weightLabel="20%"
             color="sky"
           />
           <ScoreBreakdownBar
-            label="Speed / Maneuver Anomaly (15%)"
+            label="Speed / Maneuver Anomaly"
             score={feature_scores.behaviour}
             weightLabel="15%"
-            color="indigo"
+            color="purple"
           />
           <ScoreBreakdownBar
-            label="Vessel Type Risk Relevance (10%)"
+            label="Vessel Type Risk Relevance"
             score={feature_scores.vessel_relevance}
             weightLabel="10%"
             color="emerald"
@@ -196,6 +197,46 @@ export const VesselDetailPanel: React.FC = () => {
           </ul>
         </div>
       )}
+
+      {/* Future Voyage & Route Mapping Forecast */}
+      <div className="bg-[#161e2e] border border-emerald-900/60 p-2.5 rounded space-y-2">
+        <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-400">
+          <div className="flex items-center gap-1.5">
+            <Compass className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Projected Voyage Route Forecast</span>
+          </div>
+          <span className="text-[10px] bg-emerald-950 text-emerald-300 font-mono px-1.5 py-0.2 rounded border border-emerald-800">
+            +24h AIS
+          </span>
+        </div>
+
+        <div className="space-y-1.5 text-[11px]">
+          <div className="flex justify-between text-slate-300">
+            <span className="text-slate-400">Destination:</span>
+            <strong className="text-emerald-300 font-mono text-right truncate max-w-[170px]">
+              {selectedVessel.destination || 'Regional TSS Transit'}
+            </strong>
+          </div>
+          {selectedVessel.eta && (
+            <div className="flex justify-between text-slate-300">
+              <span className="text-slate-400">Estimated Arrival (ETA):</span>
+              <span className="font-mono text-slate-200">{selectedVessel.eta}</span>
+            </div>
+          )}
+          {selectedVessel.route_corridor && (
+            <div className="flex justify-between text-slate-300">
+              <span className="text-slate-400">Shipping Corridor:</span>
+              <span className="text-slate-300 truncate max-w-[170px] text-right">{selectedVessel.route_corridor}</span>
+            </div>
+          )}
+          <div className="flex justify-between text-slate-300 border-t border-slate-800 pt-1">
+            <span className="text-slate-400">Projected Velocity:</span>
+            <span className="font-mono text-cyan-300">
+              {selectedVessel.speed_knots ?? selectedVessel.cpa?.speed_during_kn ?? 12.8} kn @ {selectedVessel.heading ?? 150}°
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

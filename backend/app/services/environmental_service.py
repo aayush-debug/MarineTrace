@@ -93,8 +93,8 @@ class CopernicusProvider(EnvironmentalProvider):
     """
 
     def __init__(self, username: str = "", password: str = ""):
-        self.username = username or settings.copernicus_username
-        self.password = password or settings.copernicus_password
+        self.username = username or settings.effective_copernicus_user
+        self.password = password or settings.effective_copernicus_pass
 
     async def get_ocean_currents(
         self,
@@ -147,10 +147,10 @@ class EnvironmentalService:
     def __init__(self, provider: EnvironmentalProvider | None = None):
         if provider is not None:
             self.provider = provider
-        elif settings.copernicus_username and settings.copernicus_password:
+        elif settings.effective_copernicus_user and settings.effective_copernicus_pass:
             self.provider = CopernicusProvider(
-                username=settings.copernicus_username,
-                password=settings.copernicus_password,
+                username=settings.effective_copernicus_user,
+                password=settings.effective_copernicus_pass,
             )
         else:
             self.provider = MockEnvironmentalProvider()

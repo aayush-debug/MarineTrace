@@ -33,7 +33,7 @@ export const SpillInfoPanel: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
           <span className="font-semibold text-slate-100 text-sm">
-            Oil Slick Detection
+            Oil Spill Detection
           </span>
         </div>
         <span className="text-[10px] font-medium font-mono px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800/60">
@@ -55,7 +55,7 @@ export const SpillInfoPanel: React.FC = () => {
 
         <div className="bg-[#161e2e] border border-[#1e293b] p-2.5 rounded">
           <div className="text-[11px] text-slate-400 font-medium">
-            Estimated Slick Area
+            Estimated Spill Area
           </div>
           <div className="text-xl font-bold font-mono text-amber-400 mt-1 tabular-nums">
             {spill.area_km2.toFixed(2)} <span className="text-xs font-normal text-slate-400">km²</span>

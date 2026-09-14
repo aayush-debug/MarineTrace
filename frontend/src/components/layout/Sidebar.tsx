@@ -8,6 +8,8 @@ import {
   Server,
   AlertTriangle,
   ChevronRight,
+  Clock,
+  History,
 } from 'lucide-react';
 import { useInvestigation, type PageId } from '../../context/InvestigationContext';
 
@@ -36,7 +38,14 @@ const SYSTEM_NAV: NavItem[] = [
 ];
 
 export const Sidebar: React.FC = () => {
-  const { activePage, setActivePage, investigation } = useInvestigation();
+  const {
+    activePage,
+    setActivePage,
+    investigation,
+    investigationList,
+    setInvestigation,
+    setSelectedVesselMmsi,
+  } = useInvestigation();
 
   const renderNavGroup = (title: string, items: NavItem[]) => (
     <div className="space-y-1">
@@ -88,10 +97,60 @@ export const Sidebar: React.FC = () => {
   return (
     <aside className="w-60 bg-[#111622] border-r border-[#1e293b] flex flex-col justify-between select-none z-20 shrink-0 shadow-sm no-print">
       {/* Navigation Subsystem Groups */}
-      <nav className="p-3 space-y-5 overflow-y-auto">
+      <nav className="p-3 space-y-4 overflow-y-auto flex-1">
         {renderNavGroup('Surveillance & Ingestion', SURVEILLANCE_NAV)}
         {renderNavGroup('Forensic Analysis', FORENSICS_NAV)}
         {renderNavGroup('System & Administration', SYSTEM_NAV)}
+
+        {/* Recent Case Log Subsystem */}
+        <div className="pt-3 border-t border-[#1e293b]/80 space-y-2">
+          <div className="px-1 flex items-center justify-between text-[10px] font-semibold tracking-wider text-slate-500 uppercase font-mono">
+            <span className="flex items-center gap-1.5 text-slate-400">
+              <History className="w-3 h-3 text-blue-400" />
+              <span>Recent Case Log</span>
+            </span>
+            <span className="text-[9px] text-slate-500 font-mono">Past 30 Days</span>
+          </div>
+
+          <div className="space-y-1.5">
+            {investigationList.slice(0, 4).map((inv) => {
+              const isSelected = investigation?.investigation_id === inv.investigation_id;
+              return (
+                <button
+                  key={inv.investigation_id}
+                  onClick={() => {
+                    setInvestigation(inv);
+                    setSelectedVesselMmsi(inv.vessels[0]?.mmsi || null);
+                    setActivePage('investigation');
+                  }}
+                  className={`w-full flex items-center justify-between p-2 rounded text-xs transition-all group cursor-pointer border ${
+                    isSelected
+                      ? 'bg-[#162032] border-blue-500/60 shadow-sm text-slate-100'
+                      : 'bg-[#111622] hover:bg-[#161e2e] border-[#1e293b] hover:border-slate-700 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <div className="text-left min-w-0">
+                    <div className={`text-[11px] font-mono font-medium truncate ${
+                      isSelected ? 'text-blue-400 font-bold' : 'text-slate-200 group-hover:text-blue-400'
+                    }`}>
+                      Case #{inv.investigation_id}
+                    </div>
+                    <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5 font-mono">
+                      <Clock className="w-2.5 h-2.5 text-slate-500" />
+                      <span>{new Date(inv.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[9px] font-mono font-medium text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-900/60">
+                      {inv.status}
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </nav>
 
       {/* Bottom Panel: Active Target Telemetry Module */}
@@ -117,7 +176,7 @@ export const Sidebar: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1.5 border-t border-[#1e293b]">
               <div>
-                <span className="text-slate-500 text-[10px] block">Slick Area</span>
+                <span className="text-slate-500 text-[10px] block">Spill Area</span>
                 <span className="text-slate-200 font-mono font-medium">{investigation.spill.area_km2.toFixed(1)} km²</span>
               </div>
               <div>

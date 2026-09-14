@@ -1,6 +1,7 @@
 # ─────────────────────────────────────────────────────────────────
 # MarineTrace Backend Dockerfile
 # Python 3.11-slim + Geospatial / NetCDF / PyTorch CPU + OpenDrift
+# Context: Project Root (.)
 # Compatible with linux/amd64 and linux/arm64 (Apple Silicon)
 # ─────────────────────────────────────────────────────────────────
 FROM python:3.11-slim
@@ -40,8 +41,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 # Install backend dependencies & ML inference packages
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
+COPY backend/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt && \
     pip install --no-cache-dir \
       segmentation-models-pytorch>=0.3.3 \
       rasterio>=1.3.0 \
@@ -52,10 +53,12 @@ RUN pip install --no-cache-dir -r requirements.txt && \
       pyyaml>=6.0 \
       tqdm>=4.65.0
 
-# Copy application source code
-COPY . /app
+# Copy application source code, standalone runner, and ML pipeline
+COPY backend/ /app/
+COPY ml/ /ml/
+COPY run_demo.py /app/run_demo.py
 
-# Create necessary runtime directories and configure non-root user
+# Create runtime directories and configure non-root user
 RUN mkdir -p /app/data/demo /app/data/copernicus /app/db /ml && \
     useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app /ml
@@ -66,7 +69,7 @@ EXPOSE 8000
 
 # Healthcheck — FastAPI /ping route
 HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=3 \
-  CMD curl -f http://localhost:8000/ping || exit 1
+  CMD curl -f http://localhost:${PORT:-8000}/ping || exit 1
 
-# Production default command (overridable in docker-compose for dev mode)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Production default command (supports dynamic cloud $PORT, e.g. Render/Railway)
+CMD ["sh", "-c", "uvicorn app.main:app --host ${BACKEND_HOST:-0.0.0.0} --port ${PORT:-${BACKEND_PORT:-8000}}"]

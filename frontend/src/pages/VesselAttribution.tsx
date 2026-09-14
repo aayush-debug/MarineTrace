@@ -3,7 +3,6 @@ import { useInvestigation } from '../context/InvestigationContext';
 import { VesselRankList } from '../components/vessel/VesselRankList';
 import { VesselDetailPanel } from '../components/vessel/VesselDetailPanel';
 import { MaritimeMap } from '../components/map/MaritimeMap';
-import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapLegend } from '../components/map/MapLegend';
 
 const WEIGHTS = [
@@ -145,7 +144,6 @@ export const VesselAttribution: React.FC = () => {
           </div>
           <div className="flex-1 relative bg-[#0b0f17]">
             <MaritimeMap />
-            <MapLayerControls />
             <MapLegend />
           </div>
         </div>

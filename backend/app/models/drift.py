@@ -9,6 +9,23 @@ from pydantic import BaseModel, Field
 from app.models.spill import GeoJSONGeometry
 
 
+class OriginConfidenceZone(BaseModel):
+    """Multi-tier origin confidence zone boundary."""
+
+    level: str = Field(..., description="'90%', '70%', or '50%' confidence level")
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    geometry: GeoJSONGeometry
+
+
+class DriftParticle(BaseModel):
+    """Lagrangian particle simulation point."""
+
+    lon: float
+    lat: float
+    age_hours: float = 0.0
+    dispersion_radius: float = 100.0
+
+
 class DriftOrigin(BaseModel):
     """Estimated origin of the spill from backward drift simulation."""
 
@@ -17,6 +34,9 @@ class DriftOrigin(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0, description="Origin confidence 0–1")
     geometry: GeoJSONGeometry | None = Field(
         None, description="Origin probability zone (GeoJSON Polygon)"
+    )
+    confidence_zones: list[OriginConfidenceZone] | None = Field(
+        None, description="Multi-tier probability zones (e.g. 90%, 70%, 50%)"
     )
 
 
@@ -35,6 +55,12 @@ class DriftTrajectory(BaseModel):
     timestamps: list[datetime] = Field(default_factory=list, description="Time at each point")
     points: list[list[float]] = Field(
         default_factory=list, description="[[lon, lat], …] trajectory points"
+    )
+    uncertainty_corridor: GeoJSONGeometry | None = Field(
+        None, description="Drift uncertainty dispersion corridor (GeoJSON Polygon)"
+    )
+    particles: list[DriftParticle] | None = Field(
+        None, description="Lagrangian ensemble particles"
     )
     drift_model: str = Field(
         default="geometric_fallback",

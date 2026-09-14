@@ -387,10 +387,24 @@
   background: var(--scrollbar-hover);
 }
 
-/* Leaflet GIS Map Styling */
+/* Leaflet GIS Map Styling & Hardware Acceleration */
 .leaflet-container {
   background: #0b0f17 !important;
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  contain: layout paint size;
+}
+
+.leaflet-tile-container img {
+  will-change: transform;
+}
+
+.leaflet-zoom-animated {
+  will-change: transform;
+}
+
+.vessel-directional-marker {
+  will-change: transform;
+  pointer-events: auto;
 }
 
 .leaflet-popup-content-wrapper {

@@ -1,0 +1,45 @@
+{
+  "model_version": "v1_baseline",
+  "checkpoint": "ml/checkpoints/best_model.pth",
+  "eval_dataset": "ml/data/processed/test",
+  "num_test_patches": 24,
+  "production_threshold": 0.35,
+  "latency_ms_per_patch": {
+    "mean": 21.95,
+    "std": 28.85
+  },
+  "metrics_at_default_threshold_0_35": {
+    "threshold": 0.35,
+    "dice": 0.31466320675412474,
+    "iou": 0.18670642450527586,
+    "precision": 0.18725972648920977,
+    "recall": 0.9844210044876128,
+    "f1": 0.3146632040685391,
+    "pixel_accuracy": 0.904624938964838,
+    "false_positive_rate": 0.09719022473130172,
+    "false_negative_rate": 0.015578995512101427,
+    "true_positives": 34438,
+    "false_positives": 149467,
+    "true_negatives": 1388414,
+    "false_negatives": 545
+  },
+  "metrics_at_standard_threshold_0_50": {
+    "threshold": 0.5,
+    "dice": 0.8974049947366249,
+    "iou": 0.8139026482550257,
+    "precision": 0.9622456324017005,
+    "recall": 0.8407512220218848,
+    "f1": 0.8974049897591916,
+    "pixel_accuracy": 0.9957243601481056,
+    "false_positive_rate": 0.0007503831570843209,
+    "false_negative_rate": 0.15924877797782946,
+    "true_positives": 29412,
+    "false_positives": 1154,
+    "true_negatives": 1536727,
+    "false_negatives": 5571
+  },
+  "candidate_level": {
+    "candidate_true_positives": 12,
+    "candidate_false_positives": 103
+  }
+}

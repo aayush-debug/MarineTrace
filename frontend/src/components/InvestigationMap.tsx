@@ -1,6 +1,6 @@
 /* Investigation map — renders oil spill, drift trajectories, origin zone, and vessel tracks */
 
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -27,21 +27,27 @@ interface MapProps {
   onSelectVessel: (mmsi: string | null) => void;
 }
 
-/* Fly the map to the spill when data loads */
+/* Fly the map to the spill when data loads (once per investigation to prevent interrupting pan/zoom) */
 function FitBounds({ data }: { data: InvestigationResponse | null }) {
   const map = useMap();
+  const lastFittedIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!data?.spill?.geometry) return;
+    if (!data?.spill?.geometry || !data?.investigation_id) return;
+    if (lastFittedIdRef.current === data.investigation_id) return;
+
     const positions = getPolygonPositions(data.spill.geometry);
     if (!positions || positions.length === 0) return;
     const lats = positions.map((c) => c[0]);
     const lons = positions.map((c) => c[1]);
+
+    lastFittedIdRef.current = data.investigation_id;
     map.fitBounds(
       [
         [Math.min(...lats) - 0.15, Math.min(...lons) - 0.15],
         [Math.max(...lats) + 0.15, Math.max(...lons) + 0.15],
       ],
-      { padding: [40, 40], maxZoom: 11 }
+      { padding: [40, 40], maxZoom: 11, animate: false }
     );
   }, [data, map]);
   return null;
@@ -72,6 +78,9 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
       <MapContainer
         center={defaultCenter}
         zoom={9}
+        preferCanvas={true}
+        wheelPxPerZoomLevel={90}
+        wheelDebounceTime={40}
         style={{ width: '100%', height: '100%' }}
         zoomControl={true}
       >
@@ -80,6 +89,9 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
           url={activeBasemap.url}
           subdomains={activeBasemap.subdomains || ['a', 'b', 'c']}
           maxZoom={activeBasemap.maxZoom}
+          keepBuffer={6}
+          updateWhenIdle={true}
+          updateWhenZooming={false}
         />
         <FitBounds data={data} />
 
@@ -120,7 +132,7 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
                 >
                   <Popup>
                     <div style={{ fontFamily: 'Inter, sans-serif' }}>
-                      <strong>🛢️ Detected Oil Slick (SAR C-Band)</strong><br />
+                      <strong>🛢️ Detected Oil Spill (SAR C-Band)</strong><br />
                       Confidence: {(data.spill.confidence * 100).toFixed(1)}%<br />
                       Area: {data.spill.area_km2.toFixed(2)} km²
                     </div>
@@ -262,7 +274,7 @@ export default function InvestigationMap({ data, selectedVessel, onSelectVessel 
   );
 }
 
-function VesselLayer({
+const VesselLayerComponent = ({
   vessel,
   isSelected,
   onSelect,
@@ -270,22 +282,34 @@ function VesselLayer({
   vessel: VesselAttribution;
   isSelected: boolean;
   onSelect: (mmsi: string | null) => void;
-}) {
-  if (!vessel.trajectory) return null;
-  const coords = vessel.trajectory.coordinates as number[][];
-  if (!coords || coords.length < 2) return null;
+}) => {
+  const coords = (vessel.trajectory?.coordinates as number[][]) || [];
+  const hasValidTrajectory = coords.length >= 2;
 
-  const polyCoords: [number, number][] = coords.map((c) => [c[1], c[0]]);
-  const lastPos = polyCoords[polyCoords.length - 1];
+  const polyCoords: [number, number][] = useMemo(() => {
+    if (!hasValidTrajectory) return [];
+    return coords.map((c) => [c[1], c[0]]);
+  }, [coords, hasValidTrajectory]);
 
-  const palette = RANK_COLORS[vessel.rank] || { stroke: '#8b97b0', fill: '#475569' };
-  const headingDeg = calculateHeading(polyCoords, vessel.heading, vessel.course);
-  const headingVector = getHeadingVector(lastPos, headingDeg, isSelected ? 3.5 : 2.0);
+  const palette = useMemo(
+    () => RANK_COLORS[vessel.rank] || { stroke: '#8b97b0', fill: '#475569' },
+    [vessel.rank]
+  );
+
+  const headingDeg = useMemo(() => {
+    if (polyCoords.length < 2) return vessel.heading ?? 0;
+    return calculateHeading(polyCoords, vessel.heading, vessel.course);
+  }, [polyCoords, vessel.heading, vessel.course]);
 
   const vesselIcon = useMemo(
     () => createVesselDirectionalIcon(headingDeg, palette, isSelected, vessel.rank),
     [headingDeg, palette, isSelected, vessel.rank]
   );
+
+  if (!hasValidTrajectory || polyCoords.length < 2) return null;
+
+  const lastPos = polyCoords[polyCoords.length - 1];
+  const headingVector = getHeadingVector(lastPos, headingDeg, isSelected ? 3.5 : 2.0);
 
   return (
     <>
@@ -344,4 +368,6 @@ function VesselLayer({
       </Marker>
     </>
   );
-}
+};
+
+const VesselLayer = React.memo(VesselLayerComponent);

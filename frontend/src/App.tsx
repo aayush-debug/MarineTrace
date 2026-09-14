@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { InvestigationProvider, useInvestigation } from './context/InvestigationContext';
+import { DriftAnimationProvider } from './context/DriftAnimationContext';
 
 import { TopNav } from './components/layout/TopNav';
 import { Sidebar } from './components/layout/Sidebar';
@@ -117,7 +118,9 @@ const RootApp: React.FC = () => {
 
   return (
     <InvestigationProvider>
-      <MainLayout />
+      <DriftAnimationProvider>
+        <MainLayout />
+      </DriftAnimationProvider>
     </InvestigationProvider>
   );
 };

@@ -364,6 +364,9 @@ export const SpaceShiftRealTime: React.FC = () => {
             maxBoundsViscosity={1.0}
             worldCopyJump={false}
             scrollWheelZoom={true}
+            preferCanvas={true}
+            wheelPxPerZoomLevel={90}
+            wheelDebounceTime={40}
             className="w-full h-full z-0"
             zoomControl={false}
           >
@@ -374,6 +377,9 @@ export const SpaceShiftRealTime: React.FC = () => {
               subdomains={activeBasemap.subdomains || ['mt0', 'mt1', 'mt2', 'mt3']}
               maxZoom={activeBasemap.maxZoom}
               noWrap={true}
+              keepBuffer={6}
+              updateWhenIdle={true}
+              updateWhenZooming={false}
               bounds={[[-85, -180], [85, 180]]}
             />
 
@@ -417,7 +423,7 @@ export const SpaceShiftRealTime: React.FC = () => {
                       <div className="text-[11px] text-slate-600">
                         <div><strong>Region:</strong> {zone.region}</div>
                         <div><strong>Risk Level:</strong> {zone.risk_level}</div>
-                        <div><strong>Active Slicks:</strong> {zone.active_slicks_count}</div>
+                        <div><strong>Active Spills:</strong> {zone.active_slicks_count}</div>
                         <div><strong>Coverage:</strong> {zone.satellite_coverage}</div>
                       </div>
                     </div>
@@ -540,7 +546,7 @@ export const SpaceShiftRealTime: React.FC = () => {
             <div className="text-[11px] text-slate-400 space-y-0.5">
               <div className="flex justify-between gap-4">
                 <span>Active Targets:</span>
-                <span className="font-bold text-slate-200">{displayedDetections.length} slicks</span>
+                <span className="font-bold text-slate-200">{displayedDetections.length} spills</span>
               </div>
               <div className="flex justify-between gap-4">
                 <span>Critical Spills:</span>

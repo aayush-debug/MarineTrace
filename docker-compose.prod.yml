@@ -1,0 +1,81 @@
+# ─────────────────────────────────────────────────────────────────
+# MarineTrace — Production Docker Compose
+# High-performance, immutable containers for server/cloud VM deployment
+# Usage: docker compose -f docker-compose.prod.yml up --build -d
+# ─────────────────────────────────────────────────────────────────
+
+services:
+  # ─────────────────────────────────────────────────────────────────
+  # 🛰️ Backend Service (FastAPI + OpenDrift + PyTorch ML)
+  # ─────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: marinetrace-backend:prod
+    container_name: marinetrace-backend-prod
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "sqlite:////app/db/marinetrace.db"
+      USE_REAL_ML: "true"
+      AIS_API_KEY: ${AIS_API_KEY:-}
+      AIS_BASE_URL: ${AIS_BASE_URL:-wss://stream.aisstream.io/v0/stream}
+      AIS_PROVIDER: ${AIS_PROVIDER:-aisstream}
+      COPERNICUS_USERNAME: ${COPERNICUS_USERNAME:-}
+      COPERNICUS_PASSWORD: ${COPERNICUS_PASSWORD:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://localhost:80,http://localhost:5173}
+    volumes:
+      # Persistent SQLite storage volume
+      - marinetrace_db:/app/db
+      # Persistent cache for Copernicus NetCDF metocean downloads
+      - marinetrace_copernicus:/app/data/copernicus
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/ping"]
+      interval: 20s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    networks:
+      - marinetrace_net
+
+  # ─────────────────────────────────────────────────────────────────
+  # 💻 Frontend Web Service (Nginx 1.27 Alpine Static SPA Server)
+  # ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    image: marinetrace-frontend:prod
+    container_name: marinetrace-frontend-prod
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 20s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    networks:
+      - marinetrace_net
+
+volumes:
+  marinetrace_db:
+    driver: local
+  marinetrace_copernicus:
+    driver: local
+
+networks:
+  marinetrace_net:
+    driver: bridge

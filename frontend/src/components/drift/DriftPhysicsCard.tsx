@@ -44,7 +44,7 @@ export const DriftPhysicsCard: React.FC = () => {
           <span className="text-cyan-400">U&#8407;</span><sub>Stokes</sub>
         </div>
         <p className="text-[10px] text-slate-400 leading-relaxed font-sans">
-          Total slick velocity is the vector sum of ambient ocean currents, 3.1% surface wind leeway drag (&alpha; = 0.031), and wave-induced Stokes mass drift.
+          Total spill velocity is the vector sum of ambient ocean currents, 3.1% surface wind leeway drag (&alpha; = 0.031), and wave-induced Stokes mass drift.
         </p>
       </div>
 
@@ -65,7 +65,7 @@ export const DriftPhysicsCard: React.FC = () => {
           </div>
 
           <div className="p-2.5 bg-[#161e2e] border border-[#1e293b] rounded space-y-1">
-            <span className="text-[10px] text-slate-500 block">Slick Position (T₀ Obs)</span>
+            <span className="text-[10px] text-slate-500 block">Spill Position (T₀ Obs)</span>
             <span className="font-bold text-blue-300 block">
               18.822°N, 72.418°E
             </span>

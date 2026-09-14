@@ -1,0 +1,40 @@
+{
+  "model": {
+    "architecture": "Unet",
+    "encoder_name": "resnet34",
+    "in_channels": 2,
+    "classes": 1,
+    "image_size": 256
+  },
+  "preprocessing": {
+    "normalization": "minmax",
+    "norm_bounds": {
+      "vv_min": -30.0,
+      "vv_max": 0.0,
+      "vh_min": -35.0,
+      "vh_max": -5.0
+    },
+    "tile_size": 256,
+    "tile_overlap": 64
+  },
+  "inference": {
+    "default_threshold": 0.6,
+    "min_candidate_area_pixels": 50
+  },
+  "training": {
+    "loss": "FocalDiceLoss",
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "epochs": 25,
+    "augmentations": "HFlip,VFlip,RandomRotate90,Affine,GaussNoise"
+  },
+  "metrics": {
+    "test_dice": 0.9861963845637423,
+    "test_iou": 0.9727686600716692,
+    "test_precision": 0.9829338936844098,
+    "test_recall": 0.9894806048649375,
+    "test_f1": 0.9861963795636569,
+    "test_pixel_fpr": 0.00039079746742433,
+    "lookalike_pixel_fpr": 0.0
+  }
+}
