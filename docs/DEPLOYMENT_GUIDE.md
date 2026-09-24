@@ -75,7 +75,8 @@ Because MarineTrace uses **OpenDrift Lagrangian ocean modeling**, **NetCDF4**, *
 2. Connect your GitHub repository **`MarineTrace`**.
 3. Select **Docker** as the Environment.
 4. Settings:
-   - **Docker Context**: `.` *(root directory)*
+   - **Root Directory**: `.` *(Leave this blank or set to `.` — do NOT set to `backend`. Render must clone the entire repository to access the `ml/` directory)*
+   - **Docker Build Context**: `.` *(if prompted)*
    - **Dockerfile Path**: `backend/Dockerfile`
    - **Instance Type**: Free or Starter
 5. Under **Environment Variables**, add:
