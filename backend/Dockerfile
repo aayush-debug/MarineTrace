@@ -53,10 +53,9 @@ RUN pip install --no-cache-dir -r /app/requirements.txt && \
       pyyaml>=6.0 \
       tqdm>=4.65.0
 
-# Copy application source code, standalone runner, and ML pipeline
+# Copy application source code and ML pipeline
 COPY backend/ /app/
 COPY ml/ /ml/
-COPY run_demo.py /app/run_demo.py
 
 # Create runtime directories and configure non-root user
 RUN mkdir -p /app/data/demo /app/data/copernicus /app/db /ml && \
