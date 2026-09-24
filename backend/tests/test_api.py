@@ -8,10 +8,15 @@ from app.main import app
 @pytest.mark.asyncio
 async def test_ping_endpoint():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # Test GET request
         res = await client.get("/ping")
         assert res.status_code == 200
         assert res.json() == {"status": "ok"}
-
+        
+        # Test HEAD request
+        res_head = await client.head("/ping")
+        assert res_head.status_code == 200
+        assert not res_head.content  # HEAD should have no response body
 
 @pytest.mark.asyncio
 async def test_demo_investigation_endpoint():
