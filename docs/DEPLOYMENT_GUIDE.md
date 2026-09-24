@@ -87,6 +87,7 @@ Because MarineTrace uses **OpenDrift Lagrangian ocean modeling**, **NetCDF4**, *
 6. Click **Create Web Service**.
 7. Copy your Render backend URL (e.g., `https://marinetrace-api.onrender.com`).
 8. Paste that URL into your Vercel project's `VITE_API_URL` environment variable!
+9. **Important for SQLite Persistence**: Render's free tier has an ephemeral filesystem. If you restart the server, the SQLite database (`marinetrace.db`) resets. To make it persistent (on paid tiers), go to **Disks** $\to$ **Add Disk**, name it `marinetrace_db`, set mount path to `/app/db`, and update `DATABASE_URL` environment variable to `sqlite:////app/db/marinetrace.db`.
 
 ---
 

@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: marinetrace-backend
+    env: docker
+    region: oregon
+    plan: free
+    rootDir: .
+    dockerfilePath: backend/Dockerfile
+    healthCheckPath: /ping
+    envVars:
+      - key: USE_REAL_ML
+        value: "true"
+      - key: ML_DEVICE
+        value: "cpu"
+      - key: BACKEND_PORT
+        value: "8000"
+      - key: CORS_ORIGINS
+        sync: false
+      - key: AIS_API_KEY
+        sync: false
+      - key: COPERNICUS_USERNAME
+        sync: false
+      - key: COPERNICUS_PASSWORD
+        sync: false
+    # Optional: Attach a persistent disk if you upgrade to a paid tier
+    # disk:
+    #   name: marinetrace_db
+    #   mountPath: /app/db
+    #   sizeGB: 1
