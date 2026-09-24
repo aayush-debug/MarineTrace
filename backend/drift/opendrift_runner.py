@@ -13,18 +13,23 @@ from typing import Any
 
 from app.core.logging import logger
 
-import pandas as pd
-import numpy as np
+_OPENDRIFT_AVAILABLE = None
 
-try:
-    from opendrift.models.oceandrift import OceanDrift
-    from opendrift.readers import reader_netCDF_CF_generic
-
-    OPENDRIFT_AVAILABLE = True
-except ImportError:
-    OPENDRIFT_AVAILABLE = False
-    logger.warning("OpenDrift not installed — drift simulations will use geometric mock")
-
+def check_opendrift_available() -> bool:
+    global _OPENDRIFT_AVAILABLE
+    if _OPENDRIFT_AVAILABLE is not None:
+        return _OPENDRIFT_AVAILABLE
+    try:
+        import opendrift
+        import pandas as pd
+        import numpy as np
+        from opendrift.models.oceandrift import OceanDrift
+        from opendrift.readers import reader_netCDF_CF_generic
+        _OPENDRIFT_AVAILABLE = True
+    except ImportError:
+        _OPENDRIFT_AVAILABLE = False
+        logger.warning("OpenDrift not installed — drift simulations will use geometric mock")
+    return _OPENDRIFT_AVAILABLE
 
 def run_simulation(
     seed_lon: list[float],
@@ -47,8 +52,13 @@ def run_simulation(
     backward : if True, run the simulation backwards in time
     reader_files : optional list of NetCDF files for Copernicus ocean current data
     """
-    if not OPENDRIFT_AVAILABLE:
+    if not check_opendrift_available():
         raise ImportError("OpenDrift is not installed")
+
+    import pandas as pd
+    import numpy as np
+    from opendrift.models.oceandrift import OceanDrift
+    from opendrift.readers import reader_netCDF_CF_generic
 
     logger.info(
         "OpenDrift simulation: %d particles, %s%.0fh, Δt=%dmin",

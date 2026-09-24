@@ -10,8 +10,14 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
+import concurrent.futures
 
 from app.core.logging import logger
+
+# Dedicated single-thread executor for ML inference to prevent glibc memory arena 
+# duplication across multiple worker threads, which causes massive memory bloat.
+ML_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+
 from app.models.spill import GeoJSONGeometry, SpillCentroid, SpillDetection
 
 
@@ -121,8 +127,10 @@ class RealMLClient(MLClientInterface):
             if not target_image:
                 target_image = str(ml_dir / "data" / "sample_s1.tif")
 
+            import asyncio
             logger.info("RealMLClient: executing real U-Net inference on %s", target_image)
-            res = detect_oil(target_image)
+            loop = asyncio.get_running_loop()
+            res = await loop.run_in_executor(ML_EXECUTOR, detect_oil, target_image)
             spill = res.get("spill") or {}
 
             centroid_dict = spill.get("centroid") or {}

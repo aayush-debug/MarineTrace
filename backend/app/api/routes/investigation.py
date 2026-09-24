@@ -123,8 +123,14 @@ async def detect_spill(request: DetectSpillRequest):
         if not target_image:
             target_image = str(ml_dir / "data" / "sample_s1.tif")
 
+        import asyncio
         from inference.api_interface import detect_oil
-        return detect_oil(target_image, threshold=threshold)
+        from app.services.ml_client import ML_EXECUTOR
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            ML_EXECUTOR,
+            lambda: detect_oil(target_image, checkpoint_path=None, config_path=None, threshold=threshold)
+        )
     except HTTPException:
         raise
     except Exception as e:

@@ -16,10 +16,17 @@ import sys
 import json
 import time
 from pathlib import Path
-from typing import Optional
-
 import numpy as np
 import torch
+import gc
+import threading
+
+# Serialize inference to prevent multi-threading memory duplication (OOM)
+_inference_lock = threading.Lock()
+
+# Limit PyTorch CPU threads to prevent massive memory overhead per core
+torch.set_num_threads(1)
+torch.set_num_interop_threads(1)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -64,6 +71,10 @@ def _load_model(checkpoint_path: str, config: dict, device: torch.device):
             # Fallback for PyTorch installations with complex state dict wrappers
             checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"])
+        
+        # Free checkpoint memory immediately
+        del checkpoint
+        gc.collect()
     else:
         print(f"[WARNING] No checkpoint at {checkpoint_path}. Using untrained model.")
 
@@ -111,7 +122,7 @@ def _tile_and_predict(
     prob_sum = np.zeros((ph, pw), dtype=np.float32)
     count = np.zeros((ph, pw), dtype=np.float32)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         for y in range(0, ph - tile_size + 1, stride):
             for x in range(0, pw - tile_size + 1, stride):
                 tile = padded[:, y : y + tile_size, x : x + tile_size]
@@ -155,10 +166,11 @@ def detect_oil(
         JSON-serializable dictionary with detection results.
         See mock_result.json for the schema.
     """
-    start_time = time.time()
+    with _inference_lock:
+        start_time = time.time()
 
-    # --- Load configuration ---
-    import yaml
+        # --- Load configuration ---
+        import yaml
 
     if config_path is None:
         config_path = str(PROJECT_ROOT / "config.yaml")
@@ -252,6 +264,10 @@ def detect_oil(
         tile_size=tile_size,
         overlap=tile_overlap,
     )
+    
+    # Free preprocessed image as soon as inference is done
+    del image_preprocessed
+    gc.collect()
 
     # --- Extract candidates ---
     from features.candidate_features import extract_candidates
@@ -268,6 +284,13 @@ def detect_oil(
         transform=transform,
         crs=crs,
     )
+    
+    # Save shape for metadata
+    raw_shape = image_raw.shape
+
+    # Free raw image
+    del image_raw
+    gc.collect()
 
     # --- Build result ---
     processing_time = time.time() - start_time
@@ -328,7 +351,7 @@ def detect_oil(
         "threshold_used": threshold,
         "georeferenced": bool(transform is not None and crs is not None),
         "crs": str(crs) if crs else None,
-        "image_size": [int(image_raw.shape[1]), int(image_raw.shape[2])],
+        "image_size": [int(raw_shape[1]), int(raw_shape[2])],
     }
 
     # Limitations

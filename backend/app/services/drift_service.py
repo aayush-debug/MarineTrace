@@ -16,7 +16,7 @@ from app.models.spill import SpillDetection
 from app.services.copernicus_service import CopernicusService
 from drift.backtracking import run_backward_mock, run_backward_opendrift
 from drift.forecasting import run_forward_mock, run_forward_opendrift
-from drift.opendrift_runner import OPENDRIFT_AVAILABLE
+from drift.opendrift_runner import check_opendrift_available
 
 
 class DriftService:
@@ -54,7 +54,7 @@ class DriftService:
     ) -> DriftResult:
         """Run backward drift simulation from a detected spill."""
         bh = backward_hours or settings.drift_backward_hours
-        if OPENDRIFT_AVAILABLE:
+        if check_opendrift_available():
             nc_file = await self._get_copernicus_nc(spill, bh)
             try:
                 logger.info(
@@ -79,7 +79,7 @@ class DriftService:
     ) -> DriftTrajectory:
         """Run forward drift prediction from current spill position."""
         fh = forward_hours or settings.drift_forward_hours
-        if OPENDRIFT_AVAILABLE:
+        if check_opendrift_available():
             nc_file = await self._get_copernicus_nc(spill, fh)
             try:
                 logger.info(

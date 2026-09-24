@@ -20,7 +20,7 @@ from app.services.copernicus_service import CopernicusService
 from app.services.drift_service import DriftService
 from drift.backtracking import run_backward_mock, run_backward_opendrift
 from drift.forecasting import run_forward_mock, run_forward_opendrift
-from drift.opendrift_runner import OPENDRIFT_AVAILABLE, run_simulation
+from drift.opendrift_runner import check_opendrift_available, run_simulation
 
 
 @pytest.fixture
@@ -86,7 +86,7 @@ async def test_copernicus_service_error_handling(tmp_path):
 
 # ── Test 3: OpenDrift Simulation with Copernicus Reader ──────────────
 def test_opendrift_simulation_with_copernicus_nc(sample_nc_file):
-    if not OPENDRIFT_AVAILABLE or not sample_nc_file:
+    if not check_opendrift_available() or not sample_nc_file:
         pytest.skip("OpenDrift or NetCDF not available in test environment")
 
     seed_time = datetime(2026, 8, 25, 12, 0, 0, tzinfo=timezone.utc)
@@ -109,7 +109,7 @@ def test_opendrift_simulation_with_copernicus_nc(sample_nc_file):
 
 # ── Test 4: OpenDrift Backward Simulation Result ─────────────────────
 def test_opendrift_backward_drift_result(sample_spill, sample_nc_file):
-    if not OPENDRIFT_AVAILABLE:
+    if not check_opendrift_available():
         pytest.skip("OpenDrift not installed")
 
     result = run_backward_opendrift(
@@ -128,7 +128,7 @@ def test_opendrift_backward_drift_result(sample_spill, sample_nc_file):
 
 # ── Test 5: OpenDrift Forward Simulation Trajectory ──────────────────
 def test_opendrift_forward_drift_trajectory(sample_spill, sample_nc_file):
-    if not OPENDRIFT_AVAILABLE:
+    if not check_opendrift_available():
         pytest.skip("OpenDrift not installed")
 
     traj = run_forward_opendrift(
